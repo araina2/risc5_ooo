@@ -13,6 +13,9 @@ import util._
 import Chisel.ImplicitConversions._
 import cde.{Parameters, Field}
 
+//A request bascially has the address, the write true/false, 
+//the data to b written if writing == true, with mask
+// the ways enabled
 class DCacheDataReq(implicit p: Parameters) extends L1HellaCacheBundle()(p) {
   val addr = Bits(width = untagBits)
   val write = Bool()
@@ -22,11 +25,13 @@ class DCacheDataReq(implicit p: Parameters) extends L1HellaCacheBundle()(p) {
 }
 
 class DCacheDataArray(implicit p: Parameters) extends L1HellaCacheModule()(p) {
+  //a bundle for request and response (aka input output)
   val io = new Bundle {
     val req = Valid(new DCacheDataReq).flip
     val resp = Vec(nWays, Bits(OUTPUT, rowBits))
   }
 
+  //Filling data in an array
   val addr = io.req.bits.addr >> rowOffBits
   for (w <- 0 until nWays) {
     val array = SeqMem(nSets*refillCycles, Vec(rowBytes, Bits(width=8)))
@@ -35,17 +40,23 @@ class DCacheDataArray(implicit p: Parameters) extends L1HellaCacheModule()(p) {
       val data = Vec.tabulate(rowBytes)(i => io.req.bits.wdata(8*(i+1)-1, 8*i))
       array.write(addr, data, io.req.bits.wmask.toBools)
     }
+    //OUTPUT is here
     io.resp(w) := array.read(addr, valid && !io.req.bits.write).asUInt
   }
 }
 
+//Actual DCache operations
 class DCache(implicit p: Parameters) extends L1HellaCacheModule()(p) {
   val io = new Bundle {
+   //tracking signals
     val cpu = (new HellaCacheIO).flip
     val ptw = new TLBPTWIO()
     val mem = new ClientTileLinkIO
   }
 
+  /**
+   * fq = finish queue
+   */
   val fq = Module(new FinishQueue(1))
 
   require(rowBits == encRowBits) // no ECC
@@ -58,12 +69,14 @@ class DCache(implicit p: Parameters) extends L1HellaCacheModule()(p) {
   val metaReadArb = Module(new Arbiter(new MetaReadReq, 3))
   val metaWriteArb = Module(new Arbiter(new L1MetaWriteReq, 3))
 
+  //deteriming when Data is ready 
   // data
   val data = Module(new DCacheDataArray)
   val dataArb = Module(new Arbiter(new DCacheDataReq, 4))
   data.io.req <> dataArb.io.out
   dataArb.io.out.ready := true
 
+  //Checking for readiness 
   val s1_valid = Reg(next=io.cpu.req.fire(), init=Bool(false))
   val s1_probe = Reg(next=io.mem.probe.fire(), init=Bool(false))
   val probe_bits = RegEnable(io.mem.probe.bits, io.mem.probe.fire())
@@ -75,6 +88,7 @@ class DCache(implicit p: Parameters) extends L1HellaCacheModule()(p) {
     s1_req := io.cpu.req.bits
     s1_req.addr := Cat(io.cpu.req.bits.addr >> untagBits, metaReadArb.io.out.bits.idx, io.cpu.req.bits.addr(blockOffBits-1,0))
   }
+  
   val s1_read = isRead(s1_req.cmd)
   val s1_write = isWrite(s1_req.cmd)
   val s1_readwrite = s1_read || s1_write
