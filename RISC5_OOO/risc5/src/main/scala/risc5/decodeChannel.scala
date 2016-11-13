@@ -111,7 +111,7 @@ class DecodeChannel extends Module {
         //Inputs
         val fetchInstruction = UInt(INPUT, 32)
         val fetchAddress = UInt(INPUT, 64)
-        val fetchRobTag  = UInt(INPUT, 6)
+        val fetchRobTag  = UInt(INPUT, 8)
         
         //Outputs
         val decodeOpcode = UInt(OUTPUT, 7)
@@ -123,7 +123,7 @@ class DecodeChannel extends Module {
         val decodeFunky7 = UInt(OUTPUT, 7)
         val decodeImm_I_S = UInt(OUTPUT, 12)
         val decodeImm_U = UInt(OUTPUT, 20)
-        val decodeRobTag = UInt(OUTPUT, 6)
+        val decodeRobTag = UInt(OUTPUT, 8)
         val decodeAddress = UInt(OUTPUT, 64)
 	
 	//the following 6 bits are used to indicate which riscV instruction format the decoded instruction is
@@ -147,12 +147,64 @@ class DecodeChannel extends Module {
     
     //type detection logic//
 
-    io.isR  := (io.decodeOpcode === UInt("b0111011")) || (io.decodeOpcode === UInt("b0110011"))
-    io.isI  := (io.decodeOpcode === UInt("b0000011")) || (io.decodeOpcode === UInt("b0011011")) || (io.decodeOpcode === UInt("b1100111"))
-    io.isS  := (io.decodeOpcode === UInt("b0100011"))
-    io.isSB := (io.decodeOpcode === UInt("b1100011"))
-    io.isU  := (io.decodeOpcode === UInt("b0110111")) || (io.decodeOpcode === UInt("b0010111"))
-    io.isUJ := (io.decodeOpcode === UInt("b1101111"))
+	//////////////I-Type///////////////
+    when((io.decodeOpcode === UInt(0x13))||(io.decodeOpcode === UInt(0x1B))||(io.decodeOpcode === UInt(0x67))){
+	io.isI := UInt(0x1)
+	}
+    .otherwise{
+	io.isI := UInt(0x0)
+	}
+
+    /////////////R-Type////////////////
+    //Supported Opcodes: 0111011, 0110011
+    when((io.decodeOpcode === UInt(0x3B))||(io.decodeOpcode === UInt(0x33))){
+        io.isR := UInt(0x1)
+    }
+    .otherwise{
+        io.isR := UInt(0x0)
+    }	
+    /////////////S-Type//////////////
+    //suported Opcodes: 0100011
+    when(io.decodeOpcode === UInt(0x23)){
+        io.isS := UInt(0x1)
+    }
+    .otherwise{
+        io.isS := UInt(0x0)
+    }
+    ////////////SB-Type/////////////
+    //Supported Opcodes: 1100011
+    when(io.decodeOpcode === UInt(0x63)){
+        io.isSB := UInt(0x1)
+    }
+    .otherwise{
+        io.isSB := UInt(0x0)
+    }	
+    ///////////U-Type////////////////
+    //supported Opcodes: 0110111, 0010111
+    when((io.decodeOpcode === UInt(0x37))||(io.decodeOpcode === UInt(0x17))){
+        io.isU := UInt(0x1)
+    }
+    .otherwise{
+        io.isU := UInt(0x0)
+    }
+    ///////////UJ-TYPE///////////////
+    //supported Opcodes: 1101111
+    when(io.decodeOpcode === UInt(0x6F)){	
+        io.isUJ := UInt(0x1)
+    }
+    .otherwise{
+        io.isUJ := UInt(0x0)
+    }	
+
+
+
+// OLD CODE
+//    /*io.isR  := (io.decodeOpcode === UInt("b0111011")) || (io.decodeOpcode === UInt("b0110011"))
+//    io.isI  := (io.decodeOpcode === UInt(0x03)) || (io.decodeOpcode === UInt(0x1B)) || (io.decodeOpcode === UInt(0x67))
+//    io.isS  := (io.decodeOpcode === UInt("b0100011"))
+//    io.isSB := (io.decodeOpcode === UInt("b1100011"))
+//    io.isU  := (io.decodeOpcode === UInt("b0110111")) || (io.decodeOpcode === UInt("b0010111"))
+//    io.isUJ := (io.decodeOpcode === UInt("b1101111"))*/
 
 
     //Immediate value selection logic//    
@@ -160,7 +212,7 @@ class DecodeChannel extends Module {
     io.decodeImm_I_S := Cat(io.fetchInstruction(31,25), io.fetchInstruction(11,7)) 
     }
     .elsewhen (io.isSB === UInt(1)){
-    io.decodeImm_I_S := Cat(io.fetchInstruction(31), io.fetchInstruction(30,25), io.fetchInstruction(11,8), io.fetchInstruction(11,7))
+    io.decodeImm_I_S := Cat(io.fetchInstruction(31), io.fetchInstruction(7), io.fetchInstruction(30,25), io.fetchInstruction(11,8))
     }
     .otherwise{
     io.decodeImm_I_S := io.fetchInstruction(31,20) 
@@ -168,7 +220,7 @@ class DecodeChannel extends Module {
     
    
     when(io.isUJ === UInt(1)){
-       io.decodeImm_U := Cat(io.fetchInstruction(31),  io.fetchInstruction(30, 21), io.fetchInstruction(20), io.fetchInstruction(19,12))
+       io.decodeImm_U := Cat(io.fetchInstruction(31),  io.fetchInstruction(19, 12), io.fetchInstruction(20), io.fetchInstruction(30,21))
     }
     .otherwise{
         io.decodeImm_U := io.fetchInstruction(31,12)
@@ -187,24 +239,24 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
 
 
     //poke values
-    val IsampleInstruction = BigInt("b110011001100_10000_000_00001_0010011")
-    val IsampleAddress = BigInt("b0000000000000000000000000000000000000000000000000000000000000000")
-    val IsampleRobTag = BigInt("b101100")
+    val IsampleInstruction =  0xCCC80093    //Integer.parseInt("1100 1100 1100 1000 0000 0000 1001 0011",2)
+    val IsampleAddress =      0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000000",2)
+    val IsampleRobTag =       0x2C //Integer.parseInt("101100",2)
 
     //expected values
-    val IexpectedOpcode  = BigInt("b0010011")
-    val IexpectedRd      = BigInt("b00001")
-    val IexpectedFunky3  = BigInt("b000")
-    val IexpectedRs1     = BigInt("b10000")
-    val IexpectedRs2     = BigInt("b01100")
-    val IexpectedFunky7  = BigInt("b1100110")
-    val IexpectedImm_I_S = BigInt("b110011001100")
-    val IexpectedImm_U   = BigInt("b11001100110010000000")
-
+    val IexpectedOpcode  = 0x13 //Integer.parseInt("0010011",2)
+    val IexpectedRd      = Integer.parseInt("00001",2)
+    val IexpectedFunky3  = Integer.parseInt("000",2)
+    val IexpectedRs1     = Integer.parseInt("10000",2)
+    val IexpectedRs2     = Integer.parseInt("01100",2)
+    val IexpectedFunky7  = Integer.parseInt("1100110",2)
+    val IexpectedImm_I_S = Integer.parseInt("110011001100",2)
+    val IexpectedImm_U   = Integer.parseInt("11001100110010000000",2)
+    
 
         poke(d.io.fetchInstruction, IsampleInstruction)
         poke(d.io.fetchAddress, IsampleAddress)
-        poke(d.io.fetchAddress, IsampleRobTag) 
+        poke(d.io.fetchRobTag, IsampleRobTag) 
 
         step(1)
         expect(d.io.decodeOpcode,  IexpectedOpcode)
@@ -223,30 +275,30 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
         expect(d.io.isSB, 0)
         expect(d.io.isU,  0)
         expect(d.io.isUJ, 0)
-        
+     
 
 /////////////R-Type Test///////////////////
 
 
     //poke values
-    val RsampleInstruction = BigInt("b0000000_01010_01011_000_10101_0110011")
-    val RsampleAddress = BigInt("b0000000000000000000000000000000000000000000000000000000000000001")
-    val RsampleRobTag = BigInt("b101101")
+    val RsampleInstruction = 0x00A58AB3//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
+    val RsampleAddress     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000001",2)
+    val RsampleRobTag      = 0x2D //Integer.parseInt("101101",2)
 
     //expected values
-    val RexpectedOpcode  = BigInt("b0110011")
-    val RexpectedRd      = BigInt("b10101")
-    val RexpectedFunky3  = BigInt("b000")
-    val RexpectedRs1     = BigInt("b01011")
-    val RexpectedRs2     = BigInt("b01010")
-    val RexpectedFunky7  = BigInt("b0000000")
-    val RexpectedImm_I_S = BigInt("b000000001010")
-    val RexpectedImm_U   = BigInt("b00000000101001011000")
+    val RexpectedOpcode  = Integer.parseInt("0110011",2)
+    val RexpectedRd      = Integer.parseInt("10101",2)
+    val RexpectedFunky3  = Integer.parseInt("000",2)
+    val RexpectedRs1     = Integer.parseInt("01011",2)
+    val RexpectedRs2     = Integer.parseInt("01010",2)
+    val RexpectedFunky7  = Integer.parseInt("0000000",2)
+    val RexpectedImm_I_S = Integer.parseInt("000000001010",2)
+    val RexpectedImm_U   = Integer.parseInt("00000000101001011000",2)
 
 
         poke(d.io.fetchInstruction, RsampleInstruction)
         poke(d.io.fetchAddress, RsampleAddress)
-        poke(d.io.fetchAddress, RsampleRobTag) 
+        poke(d.io.fetchRobTag, RsampleRobTag) 
 
         step(1)
         expect(d.io.decodeOpcode,  RexpectedOpcode)
@@ -271,24 +323,24 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
 
 
     //poke values
-    val SsampleInstruction = BigInt("b1010101_11111_01111_001_01010_0100011")
-    val SsampleAddress = BigInt("b0000000000000000000000000000000000000000000000000000000000000000")
-    val SsampleRobTag = BigInt("b101100")
+    val SsampleInstruction = 0xABF79523 //Integer.parseInt("1010 1011 1111 0111 100 101010 0100011",2)
+    val SsampleAddress     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000000",2)
+    val SsampleRobTag      = 0x2C //Integer.parseInt("101100",2)
 
     //expected values
-    val SexpectedOpcode  = BigInt("b0100011")
-    val SexpectedRd      = BigInt("b01010")
-    val SexpectedFunky3  = BigInt("b001")
-    val SexpectedRs1     = BigInt("b01111")
-    val SexpectedRs2     = BigInt("b11111")
-    val SexpectedFunky7  = BigInt("b1010101")
-    val SexpectedImm_I_S = BigInt("b101010111111")
-    val SexpectedImm_U   = BigInt("b10101011111101111001")
+    val SexpectedOpcode  = Integer.parseInt("0100011",2)
+    val SexpectedRd      = Integer.parseInt("01010",2)
+    val SexpectedFunky3  = Integer.parseInt("001",2)
+    val SexpectedRs1     = Integer.parseInt("01111",2)
+    val SexpectedRs2     = 0x1F //Integer.parseInt("11111",2)
+    val SexpectedFunky7  = 0x55 //Integer.parseInt("1010101",2)
+    val SexpectedImm_I_S = 0xAAA //Integer.parseInt("1010 1010 1010,2)
+    //val SexpectedImm_U   = 0xABF79 //Integer.parseInt("1010 1011 1111 0111 1001",2)
 
 
         poke(d.io.fetchInstruction, SsampleInstruction)
         poke(d.io.fetchAddress, SsampleAddress)
-        poke(d.io.fetchAddress, SsampleRobTag) 
+        poke(d.io.fetchRobTag, SsampleRobTag) 
 
         step(1)
         expect(d.io.decodeOpcode,  SexpectedOpcode)
@@ -298,7 +350,7 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
         expect(d.io.decodeRs2,     SexpectedRs2)
         expect(d.io.decodeFunky7,  SexpectedFunky7)
         expect(d.io.decodeImm_I_S, SexpectedImm_I_S)
-        expect(d.io.decodeImm_U,   SexpectedImm_U)
+      //  expect(d.io.decodeImm_U,   SexpectedImm_U)
         expect(d.io.decodeRobTag,  SsampleRobTag)
         expect(d.io.decodeAddress, SsampleAddress)
         expect(d.io.isR,  0)
@@ -313,23 +365,23 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
 
 
     //poke values
-    val SBsampleInstruction = BigInt("b1111111_00001_00010_100_00011_1100011")
-    val SBsampleAddress = BigInt("b0000000000000000000000000000000000000000000000000000000000000000")
-    val SBsampleRobTag = BigInt("b101100")
+    val SBsampleInstruction = 0xFE1141E3 //Integer.parseInt("1111 111_0 0001 _0001 0_100 _0001 1_110 0011")
+    val SBsampleAddress = 0x0000000000100000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000000")
+    val SBsampleRobTag = 0x2C //Integer.parseInt("101100")
 
     //expected values
-    val SBexpectedOpcode  = BigInt("b1100011")
-    val SBexpectedRd      = BigInt("b00011")
-    val SBexpectedFunky3  = BigInt("b100")
-    val SBexpectedRs1     = BigInt("b00010")
-    val SBexpectedRs2     = BigInt("b00001")
-    val SBexpectedFunky7  = BigInt("b1111111")
-    val SBexpectedImm_U   = BigInt("b11111110000100010100")
+    val SBexpectedOpcode  = 0x63 //Integer.parseInt("1100011")
+    val SBexpectedRd      = 0x03 // Integer.parseInt("00011")
+    val SBexpectedFunky3  = 0x4  //Integer.parseInt("100")
+    val SBexpectedRs1     = 0x02 //Integer.parseInt("00010")
+    val SBexpectedRs2     = 0x01 //Integer.parseInt("00001")
+    val SBexpectedFunky7  = 0x7F //Integer.parseInt("1111111")
+    val SBexpectedImm_I_S   = 0xFF1 //Integer.parseInt("1 111111 0000100010100")
 
 
         poke(d.io.fetchInstruction, SBsampleInstruction)
         poke(d.io.fetchAddress, SBsampleAddress)
-        poke(d.io.fetchAddress, SBsampleRobTag) 
+        poke(d.io.fetchRobTag, SBsampleRobTag) 
 
         step(1)
         expect(d.io.decodeOpcode,  SBexpectedOpcode)
@@ -338,7 +390,7 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
         expect(d.io.decodeRs1,     SBexpectedRs1)
         expect(d.io.decodeRs2,     SBexpectedRs2)
         expect(d.io.decodeFunky7,  SBexpectedFunky7)
-        expect(d.io.decodeImm_U,   SBexpectedImm_U)
+        expect(d.io.decodeImm_I_S,   SBexpectedImm_I_S)
         expect(d.io.decodeRobTag,  SBsampleRobTag)
         expect(d.io.decodeAddress, SBsampleAddress)
         expect(d.io.isR,  0)
@@ -353,24 +405,24 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
 
 
     //poke values
-    val UsampleInstruction = BigInt("b11111111111111111111_00001_0110111")
-    val UsampleAddress = BigInt("b0000000000000000000000000000000000000000000000000000000000000000")
-    val UsampleRobTag = BigInt("b101100")
+    val UsampleInstruction = 0xFFFFF0B7 //Integer.parseInt("1111 1111 1111 1111 1111 _0000 1_011 0111")
+    val UsampleAddress = 0x0000000000000002
+    val UsampleRobTag = 0x69 //Integer.parseInt("101100")
 
     //expected values
-    val UexpectedOpcode  = BigInt("b0110111")
-    val UexpectedRd      = BigInt("b00001")
-    val UexpectedFunky3  = BigInt("b111")
-    val UexpectedRs1     = BigInt("b11111")
-    val UexpectedRs2     = BigInt("b11111")
-    val UexpectedFunky7  = BigInt("b1111111")
-    val UexpectedImm_I_S = BigInt("b111111111111")
-    val UexpectedImm_U   = BigInt("b11111111111111111111")
+    val UexpectedOpcode  = 0x37//Integer.parseInt("0110111")
+    val UexpectedRd      = 0x01 //Integer.parseInt("00001")
+    val UexpectedFunky3  = 0x7 //Integer.parseInt("111")
+    val UexpectedRs1     = 0x1F //Integer.parseInt("11111")
+    val UexpectedRs2     = 0x1F //Integer.parseInt("11111")
+    val UexpectedFunky7  = 0x7F //Integer.parseInt("1111111")
+    val UexpectedImm_I_S = 0xFFF //Integer.parseInt("111111111111")
+    val UexpectedImm_U   = 0xFFFFF //Integer.parseInt("11111111111111111111")
 
 
         poke(d.io.fetchInstruction, UsampleInstruction)
         poke(d.io.fetchAddress, UsampleAddress)
-        poke(d.io.fetchAddress, UsampleRobTag) 
+        poke(d.io.fetchRobTag, UsampleRobTag) 
 
         step(1)
         expect(d.io.decodeOpcode,  UexpectedOpcode)
@@ -395,20 +447,20 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
 
 
     //poke values
-    val UJsampleInstruction = BigInt("b10000000000100000000_00001_1101111")
-    val UJsampleAddress = BigInt("b0000000000000000000000000000000000000000000000000000000000000000")
-    val UJsampleRobTag = BigInt("b101100")
+    val UJsampleInstruction = 0x801000EF //Integer.parseInt("1 000 0000 0001  00000000  _0000 1_110 1111")
+    val UJsampleAddress = 0x0000000000000004
+    val UJsampleRobTag = 0x72
 
     //expected values
-    val UJexpectedOpcode  = BigInt("b1101111")
-    val UJexpectedRd      = BigInt("b00001")
-    val UJexpectedFunky3  = BigInt("b000")
-    val UJexpectedImm_U   = BigInt("b10000000000100000000")
+    val UJexpectedOpcode  = 0x6F //Integer.parseInt("1101111")
+    val UJexpectedRd      = 0x01 //Integer.parseInt("00001")
+    val UJexpectedFunky3  = 0x0 //Integer.parseInt("000")
+    val UJexpectedImm_U   = 0x80400 //Integer.parseInt("10000000000100000000")
 
 
         poke(d.io.fetchInstruction, UJsampleInstruction)
         poke(d.io.fetchAddress, UJsampleAddress)
-        poke(d.io.fetchAddress, UJsampleRobTag) 
+        poke(d.io.fetchRobTag, UJsampleRobTag) 
 
         step(1)
         expect(d.io.decodeOpcode,  UJexpectedOpcode)
