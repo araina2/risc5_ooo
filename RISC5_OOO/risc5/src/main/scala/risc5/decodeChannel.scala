@@ -111,9 +111,13 @@ class DecodeChannel extends Module {
         //Inputs
         val fetchInstruction = UInt(INPUT, 32)
         val fetchAddress = UInt(INPUT, 64)
-        val fetchRobTag  = UInt(INPUT, 8)
+        val fetchRobTag  = UInt(INPUT, 7)
+        val fetchBranchTaken = UInt(INPUT, 1)
+	val fetchValid = UInt(INPUT, 1)
         
         //Outputs
+        val decodeBranchTaken = UInt(OUTPUT, 1)
+        val decodeValid = UInt(OUTPUT, 1)
         val decodeOpcode = UInt(OUTPUT, 7)
         val decodeType = UInt(OUTPUT, 3)
         val decodeRd = UInt(OUTPUT, 5)
@@ -125,7 +129,8 @@ class DecodeChannel extends Module {
         val decodeImm_U = UInt(OUTPUT, 20)
         val decodeRobTag = UInt(OUTPUT, 8)
         val decodeAddress = UInt(OUTPUT, 64)
-	
+	val decodeQueueSelect = UInt(OUTPUT, 1)	
+
 	//the following 6 bits are used to indicate which riscV instruction format the decoded instruction is
 	//only one of these will be high at any given time
         val isR = UInt(OUTPUT, 1)
@@ -137,6 +142,8 @@ class DecodeChannel extends Module {
     }
     
     
+    io.decodeBranchTaken := io.fetchBranchTaken
+    io.decodeValid   := io.fetchValid
     io.decodeAddress := io.fetchAddress
     io.decodeOpcode  := io.fetchInstruction(6,0)
     io.decodeRd      := io.fetchInstruction(11,7)
@@ -146,6 +153,16 @@ class DecodeChannel extends Module {
     io.decodeFunky7  := io.fetchInstruction(31,25)
     
     //type detection logic//
+
+	////////////Load,Store?////////
+	when((io.decodeOpcode === UInt(0x03)) || (io.decodeOpcode === UInt(0x23))){
+		io.decodeQueueSelect := UInt(1)
+	}
+	.otherwise{
+		io.decodeQueueSelect := UInt(0)
+	}
+	
+
 
 	//////////////I-Type///////////////
     when((io.decodeOpcode === UInt(0x13))||(io.decodeOpcode === UInt(0x1B))||(io.decodeOpcode === UInt(0x67))){
@@ -257,6 +274,7 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
         poke(d.io.fetchInstruction, IsampleInstruction)
         poke(d.io.fetchAddress, IsampleAddress)
         poke(d.io.fetchRobTag, IsampleRobTag) 
+        poke(d.io.fetchValid, 0x1)
 
         step(1)
         expect(d.io.decodeOpcode,  IexpectedOpcode)
@@ -275,7 +293,8 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
         expect(d.io.isSB, 0)
         expect(d.io.isU,  0)
         expect(d.io.isUJ, 0)
-     
+	expect(d.io.decodeValid, 1)     
+
 
 /////////////R-Type Test///////////////////
 
@@ -317,7 +336,7 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
         expect(d.io.isSB, 0)
         expect(d.io.isU,  0)
         expect(d.io.isUJ, 0)
-
+	expect(d.io.decodeQueueSelect, 0)
 
 /////////////S-Type Test///////////////////
 
@@ -359,7 +378,7 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
         expect(d.io.isSB, 0)
         expect(d.io.isU,  0)
         expect(d.io.isUJ, 0)
-
+        expect(d.io.decodeQueueSelect, 1)
 
 /////////////SB-Type Test///////////////////
 
