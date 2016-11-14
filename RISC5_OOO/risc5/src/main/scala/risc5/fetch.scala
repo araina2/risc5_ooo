@@ -7,24 +7,24 @@ class FetchModule extends Module {
 
   val io = new Bundle {
     // All INPUT ports
-    val CacheInstruction0 = UInt(INPUT,32)
-    val CacheInstruction1 = UInt(INPUT,32)
-    val CacheInstruction2 = UInt(INPUT,32)
-    val CacheInstruction3 = UInt(INPUT,32)
+    val CacheInstruction0 = UInt(INPUT,64)
+    val CacheInstruction1 = UInt(INPUT,64)
+    val CacheInstruction2 = UInt(INPUT,64)
+    val CacheInstruction3 = UInt(INPUT,64)
     val Stall = UInt(INPUT,1)
     val FUBranchMispredict = UInt(INPUT,1)
-    val FUBranchMispredictAddress = UInt(INPUT,32)
+    val FUBranchMispredictAddress = UInt(INPUT,64)
     //FUBranchTaken = UInt(INPUT,1) //rnayar:do not need this
-    val DecodeUpdateBTB = UInt(INPUT,32)
-    val PC_Decode = UInt(INPUT,32) //rnayar:not sure
+    val DecodeUpdateBTB = UInt(INPUT,64)
+    val PC_Decode = UInt(INPUT,64) //rnayar:not sure
     val cache_hit = UInt(INPUT,1)
 
     // All OUPUT ports
-    val PC = UInt(OUTPUT,32)
-    val FetchInstruction0 = UInt(OUTPUT,32)
-    val FetchInstruction1 = UInt(OUTPUT,32)
-    val FetchInstruction2 = UInt(OUTPUT,32)
-    val FetchInstruction3 = UInt(OUTPUT,32)
+    val PC = UInt(OUTPUT,64)
+    val FetchInstruction0 = UInt(OUTPUT,64)
+    val FetchInstruction1 = UInt(OUTPUT,64)
+    val FetchInstruction2 = UInt(OUTPUT,64)
+    val FetchInstruction3 = UInt(OUTPUT,64)
     val FetchBranchTakenTag0 = UInt(OUTPUT,1)
     val FetchBranchTakenTag1 = UInt(OUTPUT,1)
     val FetchBranchTakenTag2 = UInt(OUTPUT,1)
@@ -38,11 +38,11 @@ class FetchModule extends Module {
   }
   
 
-  val r0 = Reg(init = UInt(0,width=32))
-  val r1 = Reg(init = UInt(0,width=32))
-  val r2 = Reg(init = UInt(0,width=32))
-  val r3 = Reg(init = UInt(0,width=32))
-  val nextPC = Reg(init = UInt(0,width=32)) // initialsed PC to ZERO , may need to set a fuction to initialise to some other value
+  val r0 = Reg(init = UInt(0,width=64))
+  val r1 = Reg(init = UInt(0,width=64))
+  val r2 = Reg(init = UInt(0,width=64))
+  val r3 = Reg(init = UInt(0,width=64))
+  val nextPC = Reg(init = UInt(0,width=64)) // initialsed PC to ZERO , may need to set a fuction to initialise to some other value
   val FetchBranchTakenTag0 = Reg(init = UInt(0,width=1))
   val FetchBranchTakenTag1 = Reg(init = UInt(0,width=1))
   val FetchBranchTakenTag2 = Reg(init = UInt(0,width=1))
