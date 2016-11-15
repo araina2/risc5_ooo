@@ -49,7 +49,7 @@ class ReservationStationModule extends Module {
 	val FUBroadcastValue3 = UInt(INPUT,64)
 	val FUBroadcastTag3 = UInt(INPUT,7)
 	val FUBroadcastValid3 = UInt(INPUT,1) //need to be added in the document
-   
+        val FUisBusy = UInt(INPUT,1) // need to be added in the document  
         
         // All OUPUT ports
 	val IssueSourceValA = UInt(OUTPUT,64)
@@ -267,7 +267,7 @@ class ReservationStationModule extends Module {
 
   // check if all the entries in the reservation station if it is full and push the valid sources to output
   for(k<-15 to 0 by -1){
-    when((ValidEntry(k)===UInt(1)) && (IssueSourceValAValid(k)===UInt(1)) && (IssueSourceValBValid(k)===UInt(1))){
+    when((ValidEntry(k)===UInt(1)) && (IssueSourceValAValid(k)===UInt(1)) && (IssueSourceValBValid(k)===UInt(1))&&(io.FUisBusy===UInt(0))){
       io.IssueSourceValA := IssueSourceValA(k)
       io.IssueSourceValB := IssueSourceValB(k)
       io.IssueFUOpcode := Decode_Opcode(k)
