@@ -1,0 +1,133 @@
+package risc5
+
+import Chisel._
+
+
+class IssueQueueModule extends Module {
+
+  val io = new Bundle {
+    // All INPUT ports ( all the ports in the doc for the issue queue needs to be updated to 64 bits , which is not the case in the doc
+
+
+	val RenameSourceAValue0 = UInt(INPUT,64)
+	val RenameSourceAValue1 = UInt(INPUT,64)
+	val RenameSourceAValue2 = UInt(INPUT,64)
+	val RenameSourceAValue3 = UInt(INPUT,64)
+	val RenameSourceAValueValid0 = UInt(INPUT,1)
+	val RenameSourceAValueValid1 = UInt(INPUT,1)
+	val RenameSourceAValueValid2 = UInt(INPUT,1)
+	val RenameSourceAValueValid3 = UInt(INPUT,1)
+	val RenameSourceATag0 = UInt(INPUT,7)
+	val RenameSourceATag1 = UInt(INPUT,7)
+	val RenameSourceATag2 = UInt(INPUT,7)
+	val RenameSourceATag3 = UInt(INPUT,7)
+
+	val RenameSourceBValue0 = UInt(INPUT,64)
+	val RenameSourceBValue1 = UInt(INPUT,64)
+	val RenameSourceBValue2 = UInt(INPUT,64)
+	val RenameSourceBValue3 = UInt(INPUT,64)
+	val RenameSourceBValueValid0 = UInt(INPUT,1)
+	val RenameSourceBValueValid1 = UInt(INPUT,1)
+	val RenameSourceBValueValid2 = UInt(INPUT,1)
+	val RenameSourceBValueValid3 = UInt(INPUT,1)
+	val RenameSourceBTag0 = UInt(INPUT,8)
+	val RenameSourceBTag1 = UInt(INPUT,8)
+	val RenameSourceBTag2 = UInt(INPUT,8)
+	val RenameSourceBTag3 = UInt(INPUT,8)
+	val LoadStoreDestVal0 = UInt(INPUT,32)
+	val LoadStoreDestVal1 = UInt(INPUT,32)
+	val LoadStoreDestVal2 = UInt(INPUT,32)
+	val LoadStoreDestVal3 = UInt(INPUT,32)
+	val LoadStoreDestTag0 = UInt(INPUT,6)
+	val LoadStoreDestTag1 = UInt(INPUT,6)
+	val LoadStoreDestTag2 = UInt(INPUT,6)
+	val LoadStoreDestTag3 = UInt(INPUT,6)
+	val Decode_Opcode_0 = UInt(INPUT,7)
+	val Decode_Opcode_1 = UInt(INPUT,7)
+	val Decode_Opcode_2 = UInt(INPUT,7)
+	val Decode_Opcode_3 = UInt(INPUT,7)
+	val Decode_dest_0 = UInt(INPUT,5)
+	val Decode_dest_1 = UInt(INPUT,5)
+	val Decode_dest_2 = UInt(INPUT,5)
+	val Decode_dest_3 = UInt(INPUT,5)
+	val Decode_Func3_0 = UInt(INPUT,3)
+	val Decode_Func3_1 = UInt(INPUT,3)
+	val Decode_Func3_2 = UInt(INPUT,3)
+	val Decode_Func3_3 = UInt(INPUT,3)
+	val Decode_Imm_0 = UInt(INPUT,20)
+	val Decode_Imm_1 = UInt(INPUT,20)
+	val Decode_Imm_2 = UInt(INPUT,20)
+	val Decode_Imm_3 = UInt(INPUT,20)
+	val DecodeQueueSelect0 = UInt(INPUT,1)
+	val DecodeQueueSelect1 = UInt(INPUT,1)
+	val DecodeQueueSelect2 = UInt(INPUT,1)
+	val DecodeQueueSelect3 = UInt(INPUT,1)
+	val DecodeROB0 = UInt(INPUT,8)
+	val DecodeROB1 = UInt(INPUT,8)
+	val DecodeROB2 = UInt(INPUT,8)
+	val DecodeROB3 = UInt(INPUT,8)
+	val DecodeType_0 = UInt(INPUT,3)
+	val DecodeType_1 = UInt(INPUT,3)
+	val DecodeType_2 = UInt(INPUT,3)
+	val DecodeType_3 = UInt(INPUT,3)
+	val DecodeAddress0 = UInt(INPUT,64)
+	val DecodeAddress1 = UInt(INPUT,64)
+	val DecodeAddress2 = UInt(INPUT,64)
+	val DecodeAddress3 = UInt(INPUT,64)
+	val DecodeBranchTakenTag0 = UInt(INPUT,1)
+	val DecodeBranchTakenTag1 = UInt(INPUT,1)
+	val DecodeBranchTakenTag2 = UInt(INPUT,1)
+	val DecodeBranchTakenTag3 = UInt(INPUT,1)
+	val FUBroadcastValue0 = UInt(INPUT,1)
+	val FUBroadcastValue1 = UInt(INPUT,1)
+	val FUBroadcastValue2 = UInt(INPUT,1)
+	val FUBroadcastValue3 = UInt(INPUT,1)
+	val FUBroadcastTag0 = UInt(INPUT,1)
+	val FUBroadcastTag1 = UInt(INPUT,1)
+	val FUBroadcastTag2 = UInt(INPUT,1)
+	val FUBroadcastTag3 = UInt(INPUT,1)
+
+    // All OUPUT ports
+	val IssueSourceValA = UInt(INPUT,64)
+	val IssueSourceValB = UInt(INPUT,64)
+	val IssueFUOpcode = UInt(INPUT,6)
+	val IssuedestTag = UInt(INPUT,7)
+	val IssuedestTag = UInt(INPUT,8)
+
+    
+  }
+  
+  when(reset) {
+
+  }
+}
+
+class IssueQueueTester(i:IssueQueueModule) extends Tester(i) {
+
+
+}
+
+class IssueQueueTestGenerator extends TestGenerator {
+  def genMod(): Module = Module(new IssueQueueModule())
+  def genTest[T <: Module](f: T): Tester[T] = 
+    (new IssueQueueTester(f.asInstanceOf[IssueQueueModule])).asInstanceOf[Tester[T]]
+}
+    // All OUPUT ports
+    
+  }
+  
+  when(reset) {
+
+  }
+}
+
+class IssueQueueTester(i:IssueQueueModule) extends Tester(i) {
+
+
+}
+
+class IssueQueueTestGenerator extends TestGenerator {
+  def genMod(): Module = Module(new IssueQueueModule())
+  def genTest[T <: Module](f: T): Tester[T] = 
+    (new IssueQueueTester(f.asInstanceOf[IssueQueueModule])).asInstanceOf[Tester[T]]
+}
