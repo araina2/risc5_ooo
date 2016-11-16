@@ -20,10 +20,10 @@ class ReservationStationModule extends Module {
 	val RenameSourceBValueValid = UInt(INPUT,1)
 	val RenameSourceBTag = UInt(INPUT,8)
 
-        val RenameDestTag = UInt(INPUT,7)
+        val RenameDestTag = UInt(INPUT,10)
 
 	val LoadStoreDestVal = UInt(INPUT,64)
-	val LoadStoreDestTag = UInt(INPUT,6)
+	val LoadStoreDestTag = UInt(INPUT,10)
 	val LoadStoreDestValid = UInt(INPUT,1) // need to be added in the document
 
 	val Decode_Opcode = UInt(INPUT,7)
@@ -61,9 +61,10 @@ class ReservationStationModule extends Module {
         val Issue_Imm = UInt(OUTPUT,20)
         val Issue_Type = UInt(OUTPUT,3)
 
-	val IssuedestTag = UInt(OUTPUT,7)
+	val IssuedestTag = UInt(OUTPUT,10)
         val Full = UInt(OUTPUT,1)
         val Valid = UInt(OUTPUT,1) // one valid bit need to be added
+        val FreeRow = UInt(OUTPUT,4)
         
 
     
@@ -71,7 +72,7 @@ class ReservationStationModule extends Module {
 
 
 
-  val DestTag = Vec.fill(16){Reg(init = UInt(0,width=7))}
+  val DestTag = Vec.fill(16){Reg(init = UInt(0,width=10))}
 
   val IssueInstructionROB = Vec.fill(16){Reg(init = UInt(0,width=8))}
 
@@ -101,6 +102,7 @@ class ReservationStationModule extends Module {
   io.IssueFUOpcode := UInt(0)
   io.IssuedestTag := UInt(0)
   io.Valid := UInt(0)
+  io.FreeRow := UInt(0)
 
   io.Issue_Func3 := UInt(0)
   io.Issue_Func7 := UInt(0)
@@ -263,6 +265,14 @@ class ReservationStationModule extends Module {
   }
 
   io.Full := ValidEntry(0) & ValidEntry(1) & ValidEntry(2) & ValidEntry(3) & ValidEntry(4) & ValidEntry(5) & ValidEntry(6) & ValidEntry(7) & ValidEntry(8) & ValidEntry(9) & ValidEntry(10) & ValidEntry(11) & ValidEntry(12) & ValidEntry(13) & ValidEntry(14) & ValidEntry(15)
+  
+
+  for(b<-15 to 0 by -1){
+    when((ValidEntry(b)===UInt(0) && (io.Full===UInt(0)))) {
+        io.FreeRow := UInt(b) 
+    
+    }
+  }
 
 
   // check if all the entries in the reservation station if it is full and push the valid sources to output
@@ -399,6 +409,7 @@ class ReservationStationTester(r:ReservationStationModule) extends Tester(r) {
         
           peek(r.io.IssuedestTag) 
           peek(r.io.Full) 
+          peek(r.io.FreeRow) 
           peek(r.io.Valid) 
           step(1)
         
@@ -416,6 +427,7 @@ class ReservationStationTester(r:ReservationStationModule) extends Tester(r) {
         
           peek(r.io.IssuedestTag) 
           peek(r.io.Full) 
+          peek(r.io.FreeRow) 
           peek(r.io.Valid) 
           step(1)
         }
@@ -446,6 +458,7 @@ class ReservationStationTester(r:ReservationStationModule) extends Tester(r) {
         
         peek(r.io.IssuedestTag) 
         peek(r.io.Full) 
+        peek(r.io.FreeRow) 
         peek(r.io.Valid) 
 
         step(1)
@@ -460,6 +473,7 @@ class ReservationStationTester(r:ReservationStationModule) extends Tester(r) {
         
         peek(r.io.IssuedestTag) 
         peek(r.io.Full) 
+        peek(r.io.FreeRow) 
         peek(r.io.Valid) 
 
         step(1)
@@ -474,6 +488,7 @@ class ReservationStationTester(r:ReservationStationModule) extends Tester(r) {
         
         peek(r.io.IssuedestTag) 
         peek(r.io.Full) 
+        peek(r.io.FreeRow) 
         peek(r.io.Valid) 
 
         step(1)
@@ -488,6 +503,7 @@ class ReservationStationTester(r:ReservationStationModule) extends Tester(r) {
         
         peek(r.io.IssuedestTag) 
         peek(r.io.Full) 
+        peek(r.io.FreeRow) 
         peek(r.io.Valid) 
 
         step(1)
@@ -502,6 +518,7 @@ class ReservationStationTester(r:ReservationStationModule) extends Tester(r) {
         
         peek(r.io.IssuedestTag) 
         peek(r.io.Full) 
+        peek(r.io.FreeRow) 
         peek(r.io.Valid) 
 
 
@@ -517,6 +534,7 @@ class ReservationStationTester(r:ReservationStationModule) extends Tester(r) {
         
         peek(r.io.IssuedestTag) 
         peek(r.io.Full) 
+        peek(r.io.FreeRow) 
         peek(r.io.Valid) 
 
         poke(r.io.LoadStoreDestValid,1)
@@ -536,6 +554,7 @@ class ReservationStationTester(r:ReservationStationModule) extends Tester(r) {
         
         peek(r.io.IssuedestTag) 
         peek(r.io.Full) 
+        peek(r.io.FreeRow) 
         peek(r.io.Valid) 
 
 }

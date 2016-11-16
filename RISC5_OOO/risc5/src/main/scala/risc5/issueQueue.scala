@@ -7,13 +7,14 @@ class IssueQueueModule extends Module {
 
   val io = new Bundle {
     // All INPUT ports ( all the ports in the doc for the issue queue needs to be updated to 64 bits , which is not the case in the doc
-    
+    val RenameRowSelect = UInt(INPUT,6)  
 
+    val RenameValid = UInt(INPUT,1)
     // Reservation Station 0
 
     val RenameRowSelect_0 = UInt(INPUT,4)
 
-    val RenameValid_0 = UInt(INPUT,1)
+    //val RenameValid_0 = UInt(INPUT,1)
 
 
     val RenameSourceAValue_0 = UInt(INPUT,64)
@@ -24,10 +25,10 @@ class IssueQueueModule extends Module {
     val RenameSourceBValueValid_0 = UInt(INPUT,1)
     val RenameSourceBTag_0 = UInt(INPUT,8)
 
-    val RenameDestTag_0 = UInt(INPUT,7)
+    val RenameDestTag_0 = UInt(INPUT,10)
 
     val LoadStoreDestVal_0 = UInt(INPUT,64)
-    val LoadStoreDestTag_0 = UInt(INPUT,6)
+    val LoadStoreDestTag_0 = UInt(INPUT,10)
     val LoadStoreDestValid_0 = UInt(INPUT,1)
 
     val Decode_Opcode_0 = UInt(INPUT,7)
@@ -53,13 +54,12 @@ class IssueQueueModule extends Module {
     val FUBroadcastTag3_0 = UInt(INPUT,7)
     val FUBroadcastValid3_0 = UInt(INPUT,1)
     val FUisBusy_0 = UInt(INPUT,1)
-
   
     // Reservation Station 1
 
     val RenameRowSelect_1 = UInt(INPUT,4)
 
-    val RenameValid_1 = UInt(INPUT,1)
+    //val RenameValid_1 = UInt(INPUT,1)
 
 
     val RenameSourceAValue_1 = UInt(INPUT,64)
@@ -70,10 +70,10 @@ class IssueQueueModule extends Module {
     val RenameSourceBValueValid_1 = UInt(INPUT,1)
     val RenameSourceBTag_1 = UInt(INPUT,8)
 
-    val RenameDestTag_1 = UInt(INPUT,7)
+    val RenameDestTag_1 = UInt(INPUT,10)
 
     val LoadStoreDestVal_1 = UInt(INPUT,64)
-    val LoadStoreDestTag_1 = UInt(INPUT,6)
+    val LoadStoreDestTag_1 = UInt(INPUT,10)
     val LoadStoreDestValid_1 = UInt(INPUT,1)
 
     val Decode_Opcode_1 = UInt(INPUT,7)
@@ -104,7 +104,7 @@ class IssueQueueModule extends Module {
 
     val RenameRowSelect_2 = UInt(INPUT,4)
 
-    val RenameValid_2 = UInt(INPUT,1)
+    //val RenameValid_2 = UInt(INPUT,1)
 
 
     val RenameSourceAValue_2 = UInt(INPUT,64)
@@ -115,10 +115,10 @@ class IssueQueueModule extends Module {
     val RenameSourceBValueValid_2 = UInt(INPUT,1)
     val RenameSourceBTag_2 = UInt(INPUT,8)
 
-    val RenameDestTag_2 = UInt(INPUT,7)
+    val RenameDestTag_2 = UInt(INPUT,10)
 
     val LoadStoreDestVal_2 = UInt(INPUT,64)
-    val LoadStoreDestTag_2 = UInt(INPUT,6)
+    val LoadStoreDestTag_2 = UInt(INPUT,10)
     val LoadStoreDestValid_2 = UInt(INPUT,1)
 
     val Decode_Opcode_2 = UInt(INPUT,7)
@@ -149,7 +149,7 @@ class IssueQueueModule extends Module {
 
     val RenameRowSelect_3 = UInt(INPUT,4)
 
-    val RenameValid_3 = UInt(INPUT,1)
+    //val RenameValid_3 = UInt(INPUT,1)
 
 
     val RenameSourceAValue_3 = UInt(INPUT,64)
@@ -160,10 +160,10 @@ class IssueQueueModule extends Module {
     val RenameSourceBValueValid_3 = UInt(INPUT,1)
     val RenameSourceBTag_3 = UInt(INPUT,8)
 
-    val RenameDestTag_3 = UInt(INPUT,7)
+    val RenameDestTag_3 = UInt(INPUT,10)
 
     val LoadStoreDestVal_3 = UInt(INPUT,64)
-    val LoadStoreDestTag_3 = UInt(INPUT,6)
+    val LoadStoreDestTag_3 = UInt(INPUT,10)
     val LoadStoreDestValid_3 = UInt(INPUT,1)
 
     val Decode_Opcode_3 = UInt(INPUT,7)
@@ -193,7 +193,7 @@ class IssueQueueModule extends Module {
 
     // All OUTPUT ports
 
-    val Full = UInt(OUTPUT,1)
+    val IssueQueueFull = UInt(OUTPUT,1)
 
     // Reservation Station 0
     val IssueSourceValA_0 = UInt(OUTPUT,64)
@@ -205,10 +205,12 @@ class IssueQueueModule extends Module {
     val Issue_Imm_0 = UInt(OUTPUT,20)
     val Issue_Type_0 = UInt(OUTPUT,3)
     
-    val IssuedestTag_0 = UInt(OUTPUT,7)
-    //val Full_0 = UInt(OUTPUT,1)
+    val IssuedestTag_0 = UInt(OUTPUT,10)
+    val Full_0 = UInt(OUTPUT,1)
     val Valid_0 = UInt(OUTPUT,1)
   
+    val IssueBroadCastFreeRow_0 = UInt(OUTPUT,4)
+
     // Reservation Station 1
     val IssueSourceValA_1 = UInt(OUTPUT,64)
     val IssueSourceValB_1 = UInt(OUTPUT,64)
@@ -219,9 +221,10 @@ class IssueQueueModule extends Module {
     val Issue_Imm_1 = UInt(OUTPUT,20)
     val Issue_Type_1 = UInt(OUTPUT,3)
     
-    val IssuedestTag_1 = UInt(OUTPUT,7)
-    //val Full_1 = UInt(OUTPUT,1)
+    val IssuedestTag_1 = UInt(OUTPUT,10)
+    val Full_1 = UInt(OUTPUT,1)
     val Valid_1 = UInt(OUTPUT,1)
+    val IssueBroadCastFreeRow_1 = UInt(OUTPUT,4)
   
     // Reservation Station 2
     val IssueSourceValA_2 = UInt(OUTPUT,64)
@@ -233,9 +236,10 @@ class IssueQueueModule extends Module {
     val Issue_Imm_2 = UInt(OUTPUT,20)
     val Issue_Type_2 = UInt(OUTPUT,3)
     
-    val IssuedestTag_2 = UInt(OUTPUT,7)
-    //val Full_2 = UInt(OUTPUT,1)
+    val IssuedestTag_2 = UInt(OUTPUT,10)
+    val Full_2 = UInt(OUTPUT,1)
     val Valid_2 = UInt(OUTPUT,1)
+    val IssueBroadCastFreeRow_2 = UInt(OUTPUT,4)
   
     // Reservation Station 3
     val IssueSourceValA_3 = UInt(OUTPUT,64)
@@ -247,15 +251,16 @@ class IssueQueueModule extends Module {
     val Issue_Imm_3 = UInt(OUTPUT,20)
     val Issue_Type_3 = UInt(OUTPUT,3)
     
-    val IssuedestTag_3 = UInt(OUTPUT,7)
-    //val Full_3 = UInt(OUTPUT,1)
+    val IssuedestTag_3 = UInt(OUTPUT,10)
+    val Full_3 = UInt(OUTPUT,1)
     val Valid_3 = UInt(OUTPUT,1)
+    val IssueBroadCastFreeRow_3 = UInt(OUTPUT,4)
   
   }
     val rS_0 = Module(new ReservationStationModule())
     
     rS_0.io.RenameRowSelect := io.RenameRowSelect_0
-    rS_0.io.RenameValid := io.RenameValid_0
+    //rS_0.io.RenameValid := io.RenameValid_0
     
 
     rS_0.io.RenameSourceAValue := io.RenameSourceAValue_0
@@ -308,12 +313,14 @@ class IssueQueueModule extends Module {
     
     io.IssuedestTag_0 := rS_0.io.IssuedestTag
     io.Valid_0 := rS_0.io.Valid
+    io.IssueBroadCastFreeRow_0 := rS_0.io.FreeRow
+    io.Full_0 := rS_0.io.Full
 
 
     val rS_1 = Module(new ReservationStationModule())
     
     rS_1.io.RenameRowSelect := io.RenameRowSelect_1
-    rS_1.io.RenameValid := io.RenameValid_1
+    //rS_1.io.RenameValid := io.RenameValid_1
     
 
     rS_1.io.RenameSourceAValue := io.RenameSourceAValue_1
@@ -366,11 +373,13 @@ class IssueQueueModule extends Module {
     
     io.IssuedestTag_1 := rS_1.io.IssuedestTag
     io.Valid_1 := rS_1.io.Valid
+    io.IssueBroadCastFreeRow_1 := rS_1.io.FreeRow
+    io.Full_1 := rS_1.io.Full
 
     val rS_2 = Module(new ReservationStationModule())
     
     rS_2.io.RenameRowSelect := io.RenameRowSelect_2
-    rS_2.io.RenameValid := io.RenameValid_2
+    //rS_2.io.RenameValid := io.RenameValid_2
     
 
     rS_2.io.RenameSourceAValue := io.RenameSourceAValue_2
@@ -423,11 +432,13 @@ class IssueQueueModule extends Module {
     
     io.IssuedestTag_2 := rS_2.io.IssuedestTag
     io.Valid_2 := rS_2.io.Valid
+    io.IssueBroadCastFreeRow_2 := rS_2.io.FreeRow
+    io.Full_2 := rS_2.io.Full
 
     val rS_3 = Module(new ReservationStationModule())
     
     rS_3.io.RenameRowSelect := io.RenameRowSelect_3
-    rS_3.io.RenameValid := io.RenameValid_3
+    //rS_3.io.RenameValid := io.RenameValid_3
     
 
     rS_3.io.RenameSourceAValue := io.RenameSourceAValue_3
@@ -480,9 +491,23 @@ class IssueQueueModule extends Module {
     
     io.IssuedestTag_3 := rS_3.io.IssuedestTag
     io.Valid_3 := rS_3.io.Valid
+    io.IssueBroadCastFreeRow_3 := rS_3.io.FreeRow
+    io.Full_3 := rS_3.io.Full
 
-    io.Full := rS_0.io.Full | rS_1.io.Full | rS_2.io.Full | rS_3.io.Full
-    
+    io.IssueQueueFull := rS_0.io.Full | rS_1.io.Full | rS_2.io.Full | rS_3.io.Full
+
+    when(io.RenameRowSelect(5,4)===UInt(0)){
+      rS_0.io.RenameRowSelect := io.RenameRowSelect(3,0)
+    }
+    when(io.RenameRowSelect(5,4)===UInt(1)){
+      rS_1.io.RenameRowSelect := io.RenameRowSelect(3,0)
+    }
+    when(io.RenameRowSelect(5,4)===UInt(2)){
+      rS_2.io.RenameRowSelect := io.RenameRowSelect(3,0)
+    }
+    when(io.RenameRowSelect(5,4)===UInt(3)){
+      rS_3.io.RenameRowSelect := io.RenameRowSelect(3,0)
+    }
 }
 
 class IssueQueueTester(i:IssueQueueModule) extends Tester(i) {
