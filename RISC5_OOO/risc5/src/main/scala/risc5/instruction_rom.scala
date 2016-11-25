@@ -10,7 +10,7 @@ class instruction_rom(val n: Int) extends Module {
   require(n > 0 && n <= 4)
 
   val io = new Bundle {
-    //val pc = UInt(OUTPUT, 32*n)
+    //val pc = UInt(OUTPUT, 64*n)
     val stall = Bool(INPUT)
     val FetchInstruction0 = UInt(OUTPUT, 32)
     val FetchInstruction1 = UInt(OUTPUT, 32)
@@ -31,13 +31,14 @@ class instruction_rom(val n: Int) extends Module {
   io.FetchROBTag2 := UInt(0)
   io.FetchROBTag3 := UInt(0)
 
-  val index = Reg(init=UInt(0, width=32))
+  val index = Reg(init=UInt(0, width=64))
   
-  val pc_rom = Module(new Rom(makeROM("/tmp/pc.bin"), n, 32))
+  val pc_rom = Module(new Rom(makeROM("/tmp/pc.bin"), n, 64))
   val inst_rom = Module(new Rom(makeROM("/tmp/inst.bin"), n, 32))
 
   //printf ("The value of index is %d",index)
   pc_rom.io.addr := index
+  //io.pc := pc_rom.io.data
 
   inst_rom.io.addr := index
   
@@ -71,7 +72,7 @@ class instruction_rom(val n: Int) extends Module {
 class Rom(contents: Seq[Byte], n: Int, w:Int) extends Module {
 
   val io = new Bundle {
-    val addr = UInt(INPUT, 32)
+    val addr = UInt(INPUT, w)
     val data = UInt(OUTPUT, w*n)
   }
 
