@@ -1,6 +1,6 @@
 
 TOP = ..
-SBT ?= java -Xmx2G -Xss8M -XX:MaxPermSize=256M -jar $(TOP)/sbt-launch.jar
+SBT ?= java -Xmx8G -Xss16M -XX:MaxPermSize=512M -XX:-UseGCOverheadLimit -jar $(TOP)/sbt-launch.jar
 
 # Set the MODULE_GEN environment variable to the name of the module generator class
 test :
