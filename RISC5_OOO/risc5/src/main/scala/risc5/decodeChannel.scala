@@ -128,8 +128,8 @@ class DecodeChannel extends Module {
         val decodeRs1 = UInt(OUTPUT, 5)
         val decodeRs2 = UInt(OUTPUT, 5)
         val decodeFunky7 = UInt(OUTPUT, 7)
-        val decodeImm_I_S = UInt(OUTPUT, 12)
-        val decodeImm_U = UInt(OUTPUT, 20)
+        //val decodeImm_I_S = UInt(OUTPUT, 12) //no longer in use, all immediates go to 20 bit output
+        val decode_Imm = UInt(OUTPUT, 20)
         val decodeRobTag = UInt(OUTPUT, 8)
         val decodeAddress = UInt(OUTPUT, 64)
 	val decodeQueueSelect = UInt(OUTPUT, 1)	
@@ -197,8 +197,35 @@ class DecodeChannel extends Module {
 	}
 	io.decodeQueueSelect := LSQ
 	io.decodeIsStore := store
-//////////////////////////OUTDATED///////////////
+	
+	val type = Reg(UInt())
+	
+	when((fetchOpcode === UInt(0x3B))||(fetchOpcode === UInt(0x33))){
+		type := UInt(0x0) //R-Type
+	}
+        .elsewhen((fetchOpcode === UInt(0x13))||(fetchOpcode === UInt(0x1B))||(fetchOpcode === UInt(0x67))){
+		type := UInt(0x1) //I-Type
+	}
+	//S-Type
+	.elsewhen(fetchOpcode === UInt(0x23)){
+		type := UInt(0x2) //S-Type
+	}
+	.elsewhen(fetchOpcode === UInt(0x63)){
+		type := UInt(0x3) //SB-type
+	}
+	.elsewhen(fetchOpcode === UInt(0x){
+		type := UInt(0x4) //U-Type
+	}
+	.elsewhen((fetchOpcode ===)){
+		type := UInt(0x5) //UJ-type
+	}
+	.otherwise{
+		type := UInt(0x7) //garbage-type
+	}
 
+
+//////////////////////////OUTDATED///////////////
+/*
 	//////////////I-Type///////////////
     when((io.decodeOpcode === UInt(0x13))||(io.decodeOpcode === UInt(0x1B))||(io.decodeOpcode === UInt(0x67))){
 	io.isI := UInt(0x1)
@@ -247,7 +274,7 @@ class DecodeChannel extends Module {
     .otherwise{
         io.isUJ := UInt(0x0)
     }	
-
+*/
 ///////////////////////////////////////////
 
 // OLD CODE
@@ -261,13 +288,16 @@ class DecodeChannel extends Module {
 
     //Immediate value selection logic//    
     when(io.isS === UInt(1)){
-    io.decodeImm_I_S := Cat(io.fetchInstruction(31,25), io.fetchInstruction(11,7)) 
+    io.decode_Imm := Cat(io.fetchInstruction(31,25), io.fetchInstruction(11,7)) 
     }
     .elsewhen (io.isSB === UInt(1)){
-    io.decodeImm_I_S := Cat(io.fetchInstruction(31), io.fetchInstruction(7), io.fetchInstruction(30,25), io.fetchInstruction(11,8))
+    io.decode_Imm := Cat(io.fetchInstruction(31), io.fetchInstruction(7), io.fetchInstruction(30,25), io.fetchInstruction(11,8))
+    }
+    .elsewhen(io.isUJ === UInt(1)){
+         io.decode_Imm := 
     }
     .otherwise{
-    io.decodeImm_I_S := io.fetchInstruction(31,20) 
+    io.decode_Imm := io.fetchInstruction(31,20) 
     }
     
    
