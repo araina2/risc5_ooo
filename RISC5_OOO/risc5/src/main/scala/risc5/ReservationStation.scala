@@ -30,7 +30,7 @@ class ReservationStationModule extends Module {
 	val Decode_Func3 = UInt(INPUT,3)
 	val Decode_Func7 = UInt(INPUT,7)
 	val Decode_Imm = UInt(INPUT,20)
-	val DecodeROB = UInt(INPUT,8)
+	val DecodeROB = UInt(INPUT,7)
 	val DecodeType = UInt(INPUT,3)
         
         // Design is implementing four functional units
@@ -74,7 +74,7 @@ class ReservationStationModule extends Module {
 
   val DestTag = Vec.fill(16){Reg(init = UInt(0,width=10))}
 
-  val IssueInstructionROB = Vec.fill(16){Reg(init = UInt(0,width=8))}
+  val IssueInstructionROB = Vec.fill(16){Reg(init = UInt(0,width=7))}
 
   val IssueSourceValAValid = Vec.fill(16){Reg(init = UInt(0,width=1))}
   val IssueSourceValA = Vec.fill(16){Reg(init = UInt(0,width=64))}

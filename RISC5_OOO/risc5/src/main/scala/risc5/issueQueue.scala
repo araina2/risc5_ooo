@@ -35,7 +35,7 @@ class IssueQueueModule extends Module {
     val Decode_Func3_0 = UInt(INPUT,3)
     val Decode_Func7_0 = UInt(INPUT,7)
     val Decode_Imm_0 = UInt(INPUT,20)
-    val DecodeROB_0 = UInt(INPUT,8)
+    val DecodeROB_0 = UInt(INPUT,7)
     val DecodeType_0 = UInt(INPUT,3)
         
     val FUBroadcastValue0_0 = UInt(INPUT,64)
@@ -80,7 +80,7 @@ class IssueQueueModule extends Module {
     val Decode_Func3_1 = UInt(INPUT,3)
     val Decode_Func7_1 = UInt(INPUT,7)
     val Decode_Imm_1 = UInt(INPUT,20)
-    val DecodeROB_1 = UInt(INPUT,8)
+    val DecodeROB_1 = UInt(INPUT,7)
     val DecodeType_1 = UInt(INPUT,3)
         
     val FUBroadcastValue0_1 = UInt(INPUT,64)
@@ -125,7 +125,7 @@ class IssueQueueModule extends Module {
     val Decode_Func3_2 = UInt(INPUT,3)
     val Decode_Func7_2 = UInt(INPUT,7)
     val Decode_Imm_2 = UInt(INPUT,20)
-    val DecodeROB_2 = UInt(INPUT,8)
+    val DecodeROB_2 = UInt(INPUT,7)
     val DecodeType_2 = UInt(INPUT,3)
         
     val FUBroadcastValue0_2 = UInt(INPUT,64)
@@ -170,7 +170,7 @@ class IssueQueueModule extends Module {
     val Decode_Func3_3 = UInt(INPUT,3)
     val Decode_Func7_3 = UInt(INPUT,7)
     val Decode_Imm_3 = UInt(INPUT,20)
-    val DecodeROB_3 = UInt(INPUT,8)
+    val DecodeROB_3 = UInt(INPUT,7)
     val DecodeType_3 = UInt(INPUT,3)
         
     val FUBroadcastValue0_3 = UInt(INPUT,64)
