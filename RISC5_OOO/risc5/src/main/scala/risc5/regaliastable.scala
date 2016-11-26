@@ -32,19 +32,19 @@ class RegAliasTable extends Module {
      
     //Tags broadcasted from the functional units
     val FUBroadcastValue0 = UInt(INPUT,64)
-    val FUBroadcastTag0 = UInt(INPUT,7)
+    val FUBroadcastTag0 = UInt(INPUT,10)
     val FUBroadcastValue1 = UInt(INPUT,64)
-    val FUBroadcastTag1 = UInt(INPUT,7)
+    val FUBroadcastTag1 = UInt(INPUT,10)
     val FUBroadcastValue2 = UInt(INPUT,64)
-    val FUBroadcastTag2 = UInt(INPUT,7)
+    val FUBroadcastTag2 = UInt(INPUT,10)
     val FUBroadcastValue3 = UInt(INPUT,64)
-    val FUBroadcastTag3 = UInt(INPUT,7)
+    val FUBroadcastTag3 = UInt(INPUT,10)
     
     //Tags from the load/store queue
     val LoadStoreDestVal0 = UInt(INPUT,64)
     val LoadStoreDestVal1 = UInt(INPUT,64)
-    val LoadStoreDestTag0 = UInt(INPUT,7)
-    val LoadStoreDestTag1 = UInt(INPUT,7)
+    val LoadStoreDestTag0 = UInt(INPUT,10)
+    val LoadStoreDestTag1 = UInt(INPUT,10)
     
     //Free Rows from the issue queues
     val IssueBroadcastFreeRow0 = UInt(INPUT,4)
@@ -66,6 +66,11 @@ class RegAliasTable extends Module {
     
     val FUBranchMispredict = Bool(INPUT)
 
+    val DecodeStoreSelect0 = Bool(INPUT)
+    val DecodeStoreSelect1 = Bool(INPUT)
+    val DecodeStoreSelect2 = Bool(INPUT)
+    val DecodeStoreSelect3 = Bool(INPUT)
+    
     val RenameSourceAValue0 = UInt(OUTPUT,64)
     val RenameSourceAValue1 = UInt(OUTPUT,64)
     val RenameSourceAValue2 = UInt(OUTPUT,64)
@@ -74,10 +79,10 @@ class RegAliasTable extends Module {
     val RenameSourceAValueValid1 = UInt(OUTPUT,1)
     val RenameSourceAValueValid2 = UInt(OUTPUT,1)
     val RenameSourceAValueValid3 = UInt(OUTPUT,1)
-    val RenameSourceATag0 = UInt(OUTPUT,7)
-    val RenameSourceATag1 = UInt(OUTPUT,7)
-    val RenameSourceATag2 = UInt(OUTPUT,7)
-    val RenameSourceATag3 = UInt(OUTPUT,7)
+    val RenameSourceATag0 = UInt(OUTPUT,10)
+    val RenameSourceATag1 = UInt(OUTPUT,10)
+    val RenameSourceATag2 = UInt(OUTPUT,10)
+    val RenameSourceATag3 = UInt(OUTPUT,10)
     val RenameSourceBValue0 = UInt(OUTPUT,64)
     val RenameSourceBValue1 = UInt(OUTPUT,64)
     val RenameSourceBValue2 = UInt(OUTPUT,64)
@@ -86,10 +91,10 @@ class RegAliasTable extends Module {
     val RenameSourceBValueValid1 = UInt(OUTPUT,1)
     val RenameSourceBValueValid2 = UInt(OUTPUT,1)
     val RenameSourceBValueValid3 = UInt(OUTPUT,1)
-    val RenameSourceBTag0 = UInt(OUTPUT,7)
-    val RenameSourceBTag1 = UInt(OUTPUT,7)
-    val RenameSourceBTag2 = UInt(OUTPUT,7)
-    val RenameSourceBTag3 = UInt(OUTPUT,7)
+    val RenameSourceBTag0 = UInt(OUTPUT,10)
+    val RenameSourceBTag1 = UInt(OUTPUT,10)
+    val RenameSourceBTag2 = UInt(OUTPUT,10)
+    val RenameSourceBTag3 = UInt(OUTPUT,10)
     val RenameDestTag0 = UInt(OUTPUT, 10)
     val RenameDestTag1 = UInt(OUTPUT, 10)  
     val RenameDestTag2 = UInt(OUTPUT, 10)
@@ -117,6 +122,15 @@ class RegAliasTable extends Module {
     val Rename_Imm_1  = UInt(OUTPUT,20)
     val Rename_Imm_2  = UInt(OUTPUT,20)
     val Rename_Imm_3  = UInt(OUTPUT,20)
+    val RenameQueueSelect0 = Bool(OUTPUT)
+    val RenameQueueSelect1 = Bool(OUTPUT)
+    val RenameQueueSelect2 = Bool(OUTPUT)
+    val RenameQueueSelect3 = Bool(OUTPUT)
+
+    val RenameStoreSelect0 = Bool(OUTPUT)
+    val RenameStoreSelect1 = Bool(OUTPUT)
+    val RenameStoreSelect2 = Bool(OUTPUT)
+    val RenameStoreSelect3 = Bool(OUTPUT)
     //Added ports for testing whether the tags have the proper value 
     /*val Tmptag0 = UInt(OUTPUT,10)
     val Tmptag1 = UInt(OUTPUT,10)
@@ -195,6 +209,14 @@ class RegAliasTable extends Module {
     io.Rename_Imm_1  := UInt(0)
     io.Rename_Imm_2  := UInt(0)
     io.Rename_Imm_3  := UInt(0)
+    io.RenameQueueSelect0 := Bool(false)
+    io.RenameQueueSelect1 := Bool(false)
+    io.RenameQueueSelect2 := Bool(false)
+    io.RenameQueueSelect3 := Bool(false)
+    io.RenameStoreSelect0 := Bool(false)
+    io.RenameStoreSelect1 := Bool(false)
+    io.RenameStoreSelect2 := Bool(false)
+    io.RenameStoreSelect3 := Bool(false)
     
     //Added ports to test whether the expected tags are generated 
     /*io.Tmptag0  := UInt(0)
@@ -569,6 +591,15 @@ class RegAliasTable extends Module {
     io.Rename_Imm_1  := io.Decode_Imm_1
     io.Rename_Imm_2  := io.Decode_Imm_2
     io.Rename_Imm_3  := io.Decode_Imm_3
+    io.RenameQueueSelect0 := io.DecodeQueueSelect0
+    io.RenameQueueSelect1 := io.DecodeQueueSelect1
+    io.RenameQueueSelect2 := io.DecodeQueueSelect2
+    io.RenameQueueSelect3 := io.DecodeQueueSelect3
+
+    io.RenameStoreSelect0 := io.DecodeStoreSelect0
+    io.RenameStoreSelect1 := io.DecodeStoreSelect1
+    io.RenameStoreSelect2 := io.DecodeStoreSelect2
+    io.RenameStoreSelect3 := io.DecodeStoreSelect3
 }
 
 class RegAliasTableTests(c: RegAliasTable) extends Tester(c) {
