@@ -114,7 +114,10 @@ class DecodeChannel extends Module {
         val fetchRobTag  = UInt(INPUT, 7)
         val fetchBranchTaken = UInt(INPUT, 1)
 	val fetchValid = UInt(INPUT, 1)
-        
+	val lSFull = UInt(INPUT, 1)
+	val issueFull = UInt(INPUT, 1)       	
+
+ 
         //Outputs
         val decodeBranchTaken = UInt(OUTPUT, 1)
         val decodeValid = UInt(OUTPUT, 1)
@@ -130,7 +133,7 @@ class DecodeChannel extends Module {
         val decodeRobTag = UInt(OUTPUT, 8)
         val decodeAddress = UInt(OUTPUT, 64)
 	val decodeQueueSelect = UInt(OUTPUT, 1)	
-
+	val decodeIsStore = UInt(OUTPUT, 1)
 	//the following 6 bits are used to indicate which riscV instruction format the decoded instruction is
 	//only one of these will be high at any given time
         val isR = UInt(OUTPUT, 1)
@@ -142,27 +145,59 @@ class DecodeChannel extends Module {
     }
     
     
-    io.decodeBranchTaken := io.fetchBranchTaken
-    io.decodeValid   := io.fetchValid
-    io.decodeAddress := io.fetchAddress
-    io.decodeOpcode  := io.fetchInstruction(6,0)
-    io.decodeRd      := io.fetchInstruction(11,7)
-    io.decodeFunky3  := io.fetchInstruction(14,12)
-    io.decodeRs1     := io.fetchInstruction (19,15)
-    io.decodeRs2     := io.fetchInstruction(24,20)
-    io.decodeFunky7  := io.fetchInstruction(31,25)
+     val decodeBranchTaken = Reg(next = io.fetchBranchTaken) //branchTaken reg
+     io.decodeBranchTaken := decodeBranchTaken
+
+///incomplete///////
+    val valid = Reg(UInt())
+
+    when( (io.lSFull === UInt(1)) || (io.issueFull === UInt(1))){
+	valid := UInt(0)
+	}
+    .otherwise{
+	valid := UInt(1)
+	}
+
+     io.decodeValid := valid
+////////////
+
+
+
+    val decodeAddress = Reg(next = io.fetchAddress) //Address reg
+
+    io.decodeAddress := decodeAddress
+
+    val instruction = Reg(next = io.fetchInstruction) //Instruction Reg
+    val fetchOpcode = io.fetchInstruction(6,0)
+
+
+    io.decodeOpcode  := instruction(6,0)
+    io.decodeRd      := instruction(11,7)
+    io.decodeFunky3  := instruction(14,12)
+    io.decodeRs1     := instruction (19,15)
+    io.decodeRs2     := instruction(24,20)
+    io.decodeFunky7  := instruction(31,25)
     
     //type detection logic//
 
 	////////////Load,Store?////////
-	when((io.decodeOpcode === UInt(0x03)) || (io.decodeOpcode === UInt(0x23))){
-		io.decodeQueueSelect := UInt(1)
-	}
-	.otherwise{
-		io.decodeQueueSelect := UInt(0)
-	}
-	
+    val LSQ = Reg(UInt())
+    val store = Reg(UInt())
 
+	when(fetchOpcode === UInt(0x03)){
+		LSQ := UInt(1)
+		store := UInt(0)
+	}
+	.elsewhen(fetchOpcode === UInt(0x23)){
+		LSQ := UInt(1)
+		store := UInt(1)
+        }
+	.otherwise{
+		LSQ := UInt(0)
+	}
+	io.decodeQueueSelect := LSQ
+	io.decodeIsStore := store
+//////////////////////////OUTDATED///////////////
 
 	//////////////I-Type///////////////
     when((io.decodeOpcode === UInt(0x13))||(io.decodeOpcode === UInt(0x1B))||(io.decodeOpcode === UInt(0x67))){
@@ -213,7 +248,7 @@ class DecodeChannel extends Module {
         io.isUJ := UInt(0x0)
     }	
 
-
+///////////////////////////////////////////
 
 // OLD CODE
 //    /*io.isR  := (io.decodeOpcode === UInt("b0111011")) || (io.decodeOpcode === UInt("b0110011"))
@@ -277,6 +312,9 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
         poke(d.io.fetchValid, 0x1)
 
         step(1)
+        
+        poke(d.io.fetchAddress, 0x5)
+
         expect(d.io.decodeOpcode,  IexpectedOpcode)
         expect(d.io.decodeRd,      IexpectedRd)
         expect(d.io.decodeFunky3,  IexpectedFunky3)
@@ -301,7 +339,7 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
 
     //poke values
     val RsampleInstruction = 0x00A58AB3//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
-    val RsampleAddress     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000001",2)
+   val RsampleAddress     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000001",2)
     val RsampleRobTag      = 0x2D //Integer.parseInt("101101",2)
 
     //expected values
