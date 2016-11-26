@@ -65,8 +65,12 @@ class instruction_rom(val n: Int) extends Module {
     rom.array()
 
   }
-  io.FetchValid := UInt(1)
-
+  when (io.stall) {
+    io.FetchValid := UInt(0)
+  }
+  .otherwise {
+    io.FetchValid := UInt(1)
+  }
 }
 
 class Rom(contents: Seq[Byte], n: Int, w:Int) extends Module {

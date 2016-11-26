@@ -29,6 +29,19 @@ class RegAliasTable extends Module {
     val Decode_Imm_1  = UInt(INPUT,20)
     val Decode_Imm_2  = UInt(INPUT,20)
     val Decode_Imm_3  = UInt(INPUT,20)
+    val Decode_Opcode_0 = UInt(INPUT,7)
+    val Decode_Opcode_1 = UInt(INPUT,7)
+    val Decode_Opcode_2 = UInt(INPUT,7)
+    val Decode_Opcode_3 = UInt(INPUT,7)
+    val Decode_func3_0 = UInt(INPUT,7)
+    val Decode_func3_1 = UInt(INPUT,7)
+    val Decode_func3_2 = UInt(INPUT,7)
+    val Decode_func3_3 = UInt(INPUT,7)
+    val Decode_func7_0 = UInt(INPUT,7)
+    val Decode_func7_1 = UInt(INPUT,7)
+    val Decode_func7_2 = UInt(INPUT,7)
+    val Decode_func7_3 = UInt(INPUT,7)
+                                    
      
     //Tags broadcasted from the functional units
     val FUBroadcastValue0 = UInt(INPUT,64)
@@ -42,9 +55,9 @@ class RegAliasTable extends Module {
     
     //Tags from the load/store queue
     val LoadStoreDestVal0 = UInt(INPUT,64)
-    val LoadStoreDestVal1 = UInt(INPUT,64)
+    //val LoadStoreDestVal1 = UInt(INPUT,64)
     val LoadStoreDestTag0 = UInt(INPUT,10)
-    val LoadStoreDestTag1 = UInt(INPUT,10)
+    //val LoadStoreDestTag1 = UInt(INPUT,10)
     
     //Free Rows from the issue queues
     val IssueBroadcastFreeRow0 = UInt(INPUT,4)
@@ -62,7 +75,7 @@ class RegAliasTable extends Module {
     val LoadStoreFull = UInt(INPUT,1)  //Tells if all the load store queue is full
     //Free Tag information from load/store queues
     val LoadStoreBroadcastFreeTag0 = UInt(INPUT,7)
-    val LoadStoreBroadcastFreeTag1 = UInt(INPUT,7)
+    //val LoadStoreBroadcastFreeTag1 = UInt(INPUT,7)
     
     val FUBranchMispredict = Bool(INPUT)
 
@@ -122,6 +135,18 @@ class RegAliasTable extends Module {
     val Rename_Imm_1  = UInt(OUTPUT,20)
     val Rename_Imm_2  = UInt(OUTPUT,20)
     val Rename_Imm_3  = UInt(OUTPUT,20)
+    val Rename_Opcode_0 = UInt(OUTPUT,7)
+    val Rename_Opcode_1 = UInt(OUTPUT,7)
+    val Rename_Opcode_2 = UInt(OUTPUT,7)
+    val Rename_Opcode_3 = UInt(OUTPUT,7)
+    val Rename_func3_0 = UInt(OUTPUT,7)
+    val Rename_func3_1 = UInt(OUTPUT,7)
+    val Rename_func3_2 = UInt(OUTPUT,7)
+    val Rename_func3_3 = UInt(OUTPUT,7)
+    val Rename_func7_0 = UInt(OUTPUT,7)
+    val Rename_func7_1 = UInt(OUTPUT,7)
+    val Rename_func7_2 = UInt(OUTPUT,7)
+    val Rename_func7_3 = UInt(OUTPUT,7)
     val RenameQueueSelect0 = Bool(OUTPUT)
     val RenameQueueSelect1 = Bool(OUTPUT)
     val RenameQueueSelect2 = Bool(OUTPUT)
@@ -209,6 +234,18 @@ class RegAliasTable extends Module {
     io.Rename_Imm_1  := UInt(0)
     io.Rename_Imm_2  := UInt(0)
     io.Rename_Imm_3  := UInt(0)
+    io.Rename_Opcode_0 := UInt(0)
+    io.Rename_Opcode_1 := UInt(0)
+    io.Rename_Opcode_2 := UInt(0)
+    io.Rename_Opcode_3 := UInt(0)
+    io.Rename_func3_0 := UInt(0)
+    io.Rename_func3_1 := UInt(0)
+    io.Rename_func3_2 := UInt(0)
+    io.Rename_func3_3 := UInt(0)
+    io.Rename_func7_0 := UInt(0)
+    io.Rename_func7_1 := UInt(0)
+    io.Rename_func7_2 := UInt(0)
+    io.Rename_func7_3 := UInt(0)
     io.RenameQueueSelect0 := Bool(false)
     io.RenameQueueSelect1 := Bool(false)
     io.RenameQueueSelect2 := Bool(false)
@@ -226,7 +263,7 @@ class RegAliasTable extends Module {
 
     //offset := UInt(0)
  when (reset) {
-  printf("Coming in the reset")
+  //printf("Coming in the reset")
   for (i <- 0 until 32) {
       valid(i) := UInt(1)
       value(i) := UInt(0)
@@ -274,11 +311,11 @@ class RegAliasTable extends Module {
       tag(i) := UInt(0)
       value(i) := io.LoadStoreDestVal0
     } 
-    when (tag(i) === io.LoadStoreDestTag1 && (tag(i) != UInt(0))) {
+    /*when (tag(i) === io.LoadStoreDestTag1 && (tag(i) != UInt(0))) {
       valid(i) := UInt(1)
       tag(i) := UInt(0)
       value(i) := io.LoadStoreDestVal1
-    }
+    }*/
     
     //Checking whether the current register matches the values of sources and updating the output signals 
     when (UInt(i) === io.DecodeSource1_0) {
@@ -352,9 +389,9 @@ class RegAliasTable extends Module {
            when (Bool(io.LoadStoreBroadcastFreeTag0 != UInt(0)) && Bool(io.LoadStoreBroadcastFreeTag0 === UInt(j))) {
             ldst_queue_valid_table(j) := UInt(1)
           }
-           when (Bool(io.LoadStoreBroadcastFreeTag1 != UInt(0)) && Bool(io.LoadStoreBroadcastFreeTag1 === UInt(j))) {
+           /*when (Bool(io.LoadStoreBroadcastFreeTag1 != UInt(0)) && Bool(io.LoadStoreBroadcastFreeTag1 === UInt(j))) {
             ldst_queue_valid_table(j) := UInt(1)
-          }
+          }*/
         }
       
    
@@ -591,6 +628,19 @@ class RegAliasTable extends Module {
     io.Rename_Imm_1  := io.Decode_Imm_1
     io.Rename_Imm_2  := io.Decode_Imm_2
     io.Rename_Imm_3  := io.Decode_Imm_3
+    io.Rename_Opcode_0 := io.Decode_Opcode_0
+    io.Rename_Opcode_1 := io.Decode_Opcode_1
+    io.Rename_Opcode_2 := io.Decode_Opcode_2
+    io.Rename_Opcode_3 := io.Decode_Opcode_3
+    io.Rename_func3_0 := io.Decode_func3_0
+    io.Rename_func3_1 := io.Decode_func3_1
+    io.Rename_func3_2 := io.Decode_func3_2
+    io.Rename_func3_3 := io.Decode_func3_3
+    io.Rename_func7_0 := io.Decode_func7_0
+    io.Rename_func7_1 := io.Decode_func7_1
+    io.Rename_func7_2 := io.Decode_func7_2
+    io.Rename_func7_3 := io.Decode_func7_3
+    
     io.RenameQueueSelect0 := io.DecodeQueueSelect0
     io.RenameQueueSelect1 := io.DecodeQueueSelect1
     io.RenameQueueSelect2 := io.DecodeQueueSelect2
