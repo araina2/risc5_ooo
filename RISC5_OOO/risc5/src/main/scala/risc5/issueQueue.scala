@@ -7,7 +7,10 @@ class IssueQueueModule extends Module {
 
   val io = new Bundle {
     // All INPUT ports ( all the ports in the doc for the issue queue needs to be updated to 64 bits , which is not the case in the doc
-    val RenameRowSelect = UInt(INPUT,6)  
+    val RenameRowSelect0 = UInt(INPUT,6)  
+    val RenameRowSelect1 = UInt(INPUT,6)  
+    val RenameRowSelect2 = UInt(INPUT,6)  
+    val RenameRowSelect3 = UInt(INPUT,6)  
 
     val RenameValid = UInt(INPUT,1)
     // Reservation Station 0
@@ -506,27 +509,78 @@ class IssueQueueModule extends Module {
     rS_2.io.RenameValid := UInt(0)
     rS_3.io.RenameValid := UInt(0)
 
-    when(io.RenameRowSelect(5,4)===UInt(0)){
-      rS_0.io.RenameRowSelect := io.RenameRowSelect(3,0)
+    when(io.RenameRowSelect0(5,4)===UInt(0)){
+      rS_0.io.RenameRowSelect := io.RenameRowSelect0(3,0)
       rS_0.io.RenameValid := io.RenameValid
     }
-    when(io.RenameRowSelect(5,4)===UInt(1)){
-      rS_1.io.RenameRowSelect := io.RenameRowSelect(3,0)
+    when(io.RenameRowSelect0(5,4)===UInt(1)){
+      rS_1.io.RenameRowSelect := io.RenameRowSelect0(3,0)
       rS_1.io.RenameValid := io.RenameValid
     }
-    when(io.RenameRowSelect(5,4)===UInt(2)){
-      rS_2.io.RenameRowSelect := io.RenameRowSelect(3,0)
+    when(io.RenameRowSelect0(5,4)===UInt(2)){
+      rS_2.io.RenameRowSelect := io.RenameRowSelect0(3,0)
       rS_2.io.RenameValid := io.RenameValid
     }
-    when(io.RenameRowSelect(5,4)===UInt(3)){
-      rS_3.io.RenameRowSelect := io.RenameRowSelect(3,0)
+    when(io.RenameRowSelect0(5,4)===UInt(3)){
+      rS_3.io.RenameRowSelect := io.RenameRowSelect0(3,0)
+      rS_3.io.RenameValid := io.RenameValid
+    }
+
+    when(io.RenameRowSelect1(5,4)===UInt(0)){
+      rS_0.io.RenameRowSelect := io.RenameRowSelect1(3,0)
+      rS_0.io.RenameValid := io.RenameValid
+    }
+    when(io.RenameRowSelect1(5,4)===UInt(1)){
+      rS_1.io.RenameRowSelect := io.RenameRowSelect1(3,0)
+      rS_1.io.RenameValid := io.RenameValid
+    }
+    when(io.RenameRowSelect1(5,4)===UInt(2)){
+      rS_2.io.RenameRowSelect := io.RenameRowSelect1(3,0)
+      rS_2.io.RenameValid := io.RenameValid
+    }
+    when(io.RenameRowSelect1(5,4)===UInt(3)){
+      rS_3.io.RenameRowSelect := io.RenameRowSelect1(3,0)
+      rS_3.io.RenameValid := io.RenameValid
+    }
+
+    when(io.RenameRowSelect2(5,4)===UInt(0)){
+      rS_0.io.RenameRowSelect := io.RenameRowSelect2(3,0)
+      rS_0.io.RenameValid := io.RenameValid
+    }
+    when(io.RenameRowSelect2(5,4)===UInt(1)){
+      rS_1.io.RenameRowSelect := io.RenameRowSelect2(3,0)
+      rS_1.io.RenameValid := io.RenameValid
+    }
+    when(io.RenameRowSelect2(5,4)===UInt(2)){
+      rS_2.io.RenameRowSelect := io.RenameRowSelect2(3,0)
+      rS_2.io.RenameValid := io.RenameValid
+    }
+    when(io.RenameRowSelect2(5,4)===UInt(3)){
+      rS_3.io.RenameRowSelect := io.RenameRowSelect2(3,0)
+      rS_3.io.RenameValid := io.RenameValid
+    }
+
+    when(io.RenameRowSelect3(5,4)===UInt(0)){
+      rS_0.io.RenameRowSelect := io.RenameRowSelect3(3,0)
+      rS_0.io.RenameValid := io.RenameValid
+    }
+    when(io.RenameRowSelect3(5,4)===UInt(1)){
+      rS_1.io.RenameRowSelect := io.RenameRowSelect3(3,0)
+      rS_1.io.RenameValid := io.RenameValid
+    }
+    when(io.RenameRowSelect3(5,4)===UInt(2)){
+      rS_2.io.RenameRowSelect := io.RenameRowSelect3(3,0)
+      rS_2.io.RenameValid := io.RenameValid
+    }
+    when(io.RenameRowSelect3(5,4)===UInt(3)){
+      rS_3.io.RenameRowSelect := io.RenameRowSelect3(3,0)
       rS_3.io.RenameValid := io.RenameValid
     }
 }
 
 class IssueQueueTester(i:IssueQueueModule) extends Tester(i) {
   for(m<-0 until 64){
-    poke(i.io.RenameRowSelect,m)
+    poke(i.io.RenameRowSelect0,m)
     poke(i.io.RenameValid,1)
     step(1)
   }
