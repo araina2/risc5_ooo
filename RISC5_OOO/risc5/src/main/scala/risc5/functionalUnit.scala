@@ -43,6 +43,9 @@ class FunctionalUnit extends Module {
 
 		val destTag = Reg(next = io.issueDestTag(6,0))
 		io.FUBroadcastTag := destTag
+		
+	
+
 
 
 }
