@@ -44,25 +44,61 @@ class FunctionalUnit extends Module {
 		val destTag = Reg(next = io.issueDestTag(6,0))
 		io.FUBroadcastTag := destTag
 
-		val result = Reg(U
+		val result = Reg(UInt())
+		val valueA = UInt()
+		val valueB = UInt()
+
+	when (io.issue_Type === UInt(0x0)){
+		//Use R values
+		valueA := io.issueSourceValA
+		valueB := io.issueSourceValB
+
+
+	}
+	.elsewhen (io.issue_Type === UInt(0x1)){
+		//Use I Values
+		valueA := io.issueSourceValA
+		valueB := io.issue_Imm
+	}
+	
+	.elsewhen (io.issue_Type === UInt(0x2)){
+		//Use S Values
+		valueA := io.issueSourceValA
+		valueB := io.issueSourceValB
+	}
+
+	.elsewhen (io.issue_Type === UInt(0x3)){
+		//Use SB Values
+		valueA := io.issueSourceValA
+		valueB := io.issueSourceValB
+	}
 		
-		
-	when(FUOpcode === 0x03){
-		when
+	.elsewhen (io.issue_Type === UInt(0x4)){
+		//Use U Values
+	}
+	
+	.elsewhen (io.issue_Type === UInt(0x5)){
+		//Use UJ Values
+	}
+
+	
+	when(io.issueFUOpcode === UInt(0x03)){
+
+	
 	}	
-	.elsewhen(FUOpcode === 0x13){
+	.elsewhen(io.issueFUOpcode === UInt(0x13)){
 	//I Type
 		
 	}
-	.elsewhen(FUOpcode === 0x33){
+	.elsewhen(io.issueFUOpcode === UInt(0x33)){
 	//R-Type
 
 	}
-	.elsewhen(FUOpcode === 0x1B){
+	.elsewhen(io.issueFUOpcode === UInt(0x1B)){
 	//I-Type
 
 	}
-	.elsewhen(FUOpcode === 0x3B){
+	.elsewhen(io.issueFUOpcode === UInt(0x3B)){
 	//R-Type
 
 	}
