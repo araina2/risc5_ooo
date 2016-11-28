@@ -43,10 +43,29 @@ class FunctionalUnit extends Module {
 
 		val destTag = Reg(next = io.issueDestTag(6,0))
 		io.FUBroadcastTag := destTag
+
+		val result = Reg(U
 		
-	
+		
+	when(FUOpcode === 0x03){
+		when
+	}	
+	.elsewhen(FUOpcode === 0x13){
+	//I Type
+		
+	}
+	.elsewhen(FUOpcode === 0x33){
+	//R-Type
 
+	}
+	.elsewhen(FUOpcode === 0x1B){
+	//I-Type
 
+	}
+	.elsewhen(FUOpcode === 0x3B){
+	//R-Type
+
+	}
 
 }
 
