@@ -50,7 +50,6 @@ class FunctionalUnit extends Module {
 		val valueB = UInt()
 		val rawResult = UInt()	
 		
-
 		valueA := io.issueSourceValA
 	when (io.issueType === UInt(0x0)){
 		//Use R values
@@ -87,6 +86,9 @@ class FunctionalUnit extends Module {
 	.otherwise{
 		valueB := UInt(0x0)
 	}
+	
+	val signedValueA = Cat(Fill(44, io.issueImm(19)),io.issueImm)	
+
 
 /////////////////////////////////////////////////////////////////////
 	when(io.issueFUOpcode === UInt(0x03)){
@@ -133,8 +135,8 @@ class FunctionalUnit extends Module {
 
 		.elsewhen(io.issueFunc3 === UInt("b100")){
 		//XORI
-			rawResult := valueA^valueB
-			//result    := Cat(Fill(), rawResult)	
+			result := valueA^valueB
+				
 		}
 
 		.elsewhen(io.issueFunc3 === UInt("b110")){
@@ -181,34 +183,58 @@ io.FUBroadcastValue := result
 
 class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 
-	val sampleTag = 0xB5A
-	val expectedTag = 0x5A
+	val sampleTag_addi = 0xB5A
+	val expectedTag_addi = 0x5A
 	
-	val sampleOpcode  = 0x13
-	val sampleFunc3   = 0x3
-	val sampleImm     = 0x1
-	val sampleSourceA = 0x3
-	val sampleSourceB = 0x5
-	val sampleType	  = 0x1
+	val sampleOpcode_addi  = 0x13
+	val sampleFunc3_addi   = 0x3
+	val sampleImm_addi     = 0x1
+	val sampleSourceA_addi = 0x3
+	val sampleSourceB_addi = 0x5
+	val sampleType_addi    = 0x1
 	
-	val expectedResult = 0x1
+	val expectedResult_addi = 0x1
 
 
-	poke(f.io.issueDestTag, sampleTag)
-	poke(f.io.issueFUOpcode, sampleOpcode)
-	poke(f.io.issueFunc3, sampleFunc3)
-	poke(f.io.issueImm, sampleImm)
-	poke(f.io.issueSourceValA, sampleSourceA)
-	poke(f.io.issueSourceValB, sampleSourceB)
-	poke(f.io.issueType, sampleType)
+	poke(f.io.issueDestTag, sampleTag_addi)
+	poke(f.io.issueFUOpcode, sampleOpcode_addi)
+	poke(f.io.issueFunc3, sampleFunc3_addi)
+	poke(f.io.issueImm, sampleImm_addi)
+	poke(f.io.issueSourceValA, sampleSourceA_addi)
+	poke(f.io.issueSourceValB, sampleSourceB_addi)
+	poke(f.io.issueType, sampleType_addi)
 
 	step(1)
 
-	expect(f.io.FUBroadcastTag, expectedTag)
-	expect(f.io.FUBroadcastValue, expectedResult)
+	expect(f.io.FUBroadcastTag, expectedTag_addi)
+	expect(f.io.FUBroadcastValue, expectedResult_addi)
 
 
+	 val sampleTag_xori = 0xB51
+	 val expectedTag_xori = 0x51
+	
+	 val sampleOpcode_xori  = 0x13
+	 val sampleFunc3_xori   = 0x4
+	 val sampleImm_xori     = 0x1
+	 val sampleSourceA_xori = 0x3
+	 val sampleSourceB_xori = 0x5
+	 val sampleType_xori    = 0x3
+	
+	val expectedResult_xori = 0x6
 
+
+	poke(f.io.issueDestTag, sampleTag_xori)
+	poke(f.io.issueFUOpcode, sampleOpcode_xori)
+	poke(f.io.issueFunc3, sampleFunc3_xori)
+	poke(f.io.issueImm, sampleImm_xori)
+	poke(f.io.issueSourceValA, sampleSourceA_xori)
+	poke(f.io.issueSourceValB, sampleSourceB_xori)
+	poke(f.io.issueType, sampleType_xori)
+
+	step(1)
+
+	expect(f.io.FUBroadcastTag, expectedTag_xori)
+	expect(f.io.FUBroadcastValue, expectedResult_xori)
 
 
 }
