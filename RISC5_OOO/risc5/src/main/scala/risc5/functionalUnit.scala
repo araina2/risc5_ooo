@@ -48,29 +48,32 @@ class FunctionalUnit extends Module {
 
 		val valueA = UInt()
 		val valueB = UInt()
+		val rawResult = UInt()	
+		
 
+		valueA := io.issueSourceValA
 	when (io.issueType === UInt(0x0)){
 		//Use R values
-		valueA := io.issueSourceValA
+		//valueA := io.issueSourceValA
 		valueB := io.issueSourceValB
 
 
 	}
 	.elsewhen (io.issueType === UInt(0x1)){
 		//Use I Values
-		valueA := io.issueSourceValA
+	//	valueA := io.issueSourceValA
 		valueB := io.issueImm
 	}
 	
 	.elsewhen (io.issueType === UInt(0x2)){
 		//Use S Values
-		valueA := io.issueSourceValA
+	//	valueA := io.issueSourceValA
 		valueB := io.issueSourceValB
 	}
 
 	.elsewhen (io.issueType === UInt(0x3)){
 		//Use SB Values
-		valueA := io.issueSourceValA
+	//	valueA := io.issueSourceValA
 		valueB := io.issueSourceValB
 	}
 		
@@ -80,6 +83,9 @@ class FunctionalUnit extends Module {
 	
 	.elsewhen (io.issueType === UInt(0x5)){
 		//Use UJ Values
+	}
+	.otherwise{
+		valueB := UInt(0x0)
 	}
 
 /////////////////////////////////////////////////////////////////////
@@ -106,7 +112,7 @@ class FunctionalUnit extends Module {
 		when(io.issueFunc3 === UInt("b000")){
 		//ADDI
 		//Add Value A and Value B
-			result := io.issueSourceValA + io.issueSourceValB
+			result := valueA + valueB
 		}
 
 		.elsewhen(io.issueFunc3 === UInt("b010")){
@@ -117,17 +123,25 @@ class FunctionalUnit extends Module {
 		.elsewhen(io.issueFunc3 === UInt("b011")){
 		//SLTIU
 		//Set RD to 1 if Imm < RS (operands are unsigned)
+			when(valueB < valueA){
+				result := UInt(0x1)
+			}
+			.otherwise{
+				result := UInt(0x0)
+			}
 		}
 
 		.elsewhen(io.issueFunc3 === UInt("b100")){
 		//XORI
+			rawResult := valueA^valueB
+			//result    := Cat(Fill(), rawResult)	
 		}
 
 		.elsewhen(io.issueFunc3 === UInt("b110")){
 		//ORI
 		}
 
-//		.elsewhen(io.issueFunc3		
+//				
 		
 		
 	}
@@ -146,6 +160,14 @@ class FunctionalUnit extends Module {
 	//R-Type
 
 	}
+	.elsewhen(io.issueFUOpcode === UInt(0x73)){
+
+	}
+	.otherwise{
+	
+
+	}
+//	.elsewhen(io.issueFU
 
 
 io.FUBroadcastValue := result
@@ -161,10 +183,32 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 
 	val sampleTag = 0xB5A
 	val expectedTag = 0x5A
+	
+	val sampleOpcode  = 0x13
+	val sampleFunc3   = 0x3
+	val sampleImm     = 0x1
+	val sampleSourceA = 0x3
+	val sampleSourceB = 0x5
+	val sampleType	  = 0x1
+	
+	val expectedResult = 0x1
+
 
 	poke(f.io.issueDestTag, sampleTag)
+	poke(f.io.issueFUOpcode, sampleOpcode)
+	poke(f.io.issueFunc3, sampleFunc3)
+	poke(f.io.issueImm, sampleImm)
+	poke(f.io.issueSourceValA, sampleSourceA)
+	poke(f.io.issueSourceValB, sampleSourceB)
+	poke(f.io.issueType, sampleType)
+
 	step(1)
+
 	expect(f.io.FUBroadcastTag, expectedTag)
+	expect(f.io.FUBroadcastValue, expectedResult)
+
+
+
 
 
 }
