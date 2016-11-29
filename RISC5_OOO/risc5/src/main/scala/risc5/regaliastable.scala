@@ -484,11 +484,13 @@ class RegAliasTable extends Module {
         }
 
         when ((Bool(UInt(i) === io.Decode_dest_0) && Bool(io.DecodeQueueSelect0 === Bool(true)))) {
-          valid(i) := UInt(0)
-          io.RenameDestTag0 := (tag(i) + UInt(1)) % UInt(32) + UInt(128)
-          //count_loadstore_tag0 := (count_loadstore_tag0 + UInt(1)) % UInt(32) + UInt(128)
-          tag(i) := (tag(i) + UInt(1)) % UInt(32) + UInt(128)//count_issue_tag0
-          //io.Tmptag0 := tag(i)
+          when (io.DecodeStoreSelect0 === Bool(false)) { 
+            valid(i) := UInt(0)
+            io.RenameDestTag0 := (tag(i) + UInt(1)) % UInt(32) + UInt(128)
+            //count_loadstore_tag0 := (count_loadstore_tag0 + UInt(1)) % UInt(32) + UInt(128)
+            tag(i) := (tag(i) + UInt(1)) % UInt(32) + UInt(128)//count_issue_tag0
+            //io.Tmptag0 := tag(i)
+          }
           
           for (j <- 31 to 0 by -1) {
             when (ldst_queue_valid_table(j) === UInt(1)) {
@@ -503,11 +505,13 @@ class RegAliasTable extends Module {
         }
 
         when ((Bool(UInt(i) === io.Decode_dest_1) && Bool(io.DecodeQueueSelect1 === Bool(true)))) {
-          valid(i) := UInt(0)
-          io.RenameDestTag1 := (tag(i) + UInt(1)) % UInt(32) + UInt(160)
-          //count_loadstore_tag1 := (count_loadstore_tag1 + UInt(1)) % UInt(32) + UInt(160)
-          tag(i) := (tag(i) + UInt(1)) % UInt(32) + UInt(160)//count_issue_tag0
-          //io.Tmptag1 := tag(i)
+          when (io.DecodeStoreSelect1 === Bool(false)) { 
+            valid(i) := UInt(0)
+            io.RenameDestTag1 := (tag(i) + UInt(1)) % UInt(32) + UInt(160)
+            //count_loadstore_tag1 := (count_loadstore_tag1 + UInt(1)) % UInt(32) + UInt(160)
+            tag(i) := (tag(i) + UInt(1)) % UInt(32) + UInt(160)//count_issue_tag0
+            //io.Tmptag1 := tag(i)
+          }
           
           for (j <- 31 to 0 by -1) {
             when (ldst_queue_valid_table(j) === UInt(1)) {
@@ -533,11 +537,13 @@ class RegAliasTable extends Module {
         }
 
         when ((Bool(UInt(i) === io.Decode_dest_2) && Bool(io.DecodeQueueSelect2 === Bool(true)))) {
-          valid(i) := UInt(0)
-          io.RenameDestTag2 := (tag(i) + UInt(1)) % UInt(32) + UInt(192)
-          tag(i) := (tag(i) + UInt(1)) % UInt(32) + UInt(192)
-          //io.Tmptag2 := tag(i)
-          //tag(i) := count_loadstore_tag2
+          when (io.DecodeStoreSelect2 === Bool(false)) { 
+            valid(i) := UInt(0)
+            io.RenameDestTag2 := (tag(i) + UInt(1)) % UInt(32) + UInt(192)
+            tag(i) := (tag(i) + UInt(1)) % UInt(32) + UInt(192)
+            //io.Tmptag2 := tag(i)
+            //tag(i) := count_loadstore_tag2
+          }
           
           for (j <- 31 to 0 by -1) {
             when (ldst_queue_valid_table(j) === UInt(1)) {
@@ -570,11 +576,13 @@ class RegAliasTable extends Module {
         }
 
         when ((Bool(UInt(i) === io.Decode_dest_3) && Bool(io.DecodeQueueSelect3 === Bool(true)))) {
-          valid(i) := UInt(0)
-          io.RenameDestTag3 := (tag(i) + UInt(1)) % UInt(32) + UInt(224)
-          tag(i) := (tag(i) + UInt(1)) % UInt(32) + UInt(224)
-          //io.Tmptag3 := tag(i)
-          //tag(i) := count_loadstore_tag3
+          when (io.DecodeStoreSelect3 === Bool(false)) { 
+            valid(i) := UInt(0)
+            io.RenameDestTag3 := (tag(i) + UInt(1)) % UInt(32) + UInt(224)
+            tag(i) := (tag(i) + UInt(1)) % UInt(32) + UInt(224)
+            //io.Tmptag3 := tag(i)
+            //tag(i) := count_loadstore_tag3
+          }
           
           for (j <- 31 to 0 by -1) {
             when (ldst_queue_valid_table(j) === UInt(1)) {
@@ -655,6 +663,7 @@ class RegAliasTable extends Module {
 class RegAliasTableTests(c: RegAliasTable) extends Tester(c) {
   
   poke(c.io.DecodeQueueSelect0, 1 )
+  poke(c.io.DecodeStoreSelect0, 1 )
   poke(c.io.DecodeQueueSelect1, 1 )
   poke(c.io.DecodeQueueSelect2, 1 )
   poke(c.io.DecodeQueueSelect3, 1 )
@@ -696,7 +705,7 @@ class RegAliasTableTests(c: RegAliasTable) extends Tester(c) {
   expect(c.io.RenameSourceBValueValid1, 1)
   expect(c.io.RenameSourceAValueValid2, 1)
   expect(c.io.RenameSourceBValueValid2, 1)
-  expect(c.io.RenameSourceAValueValid3, 0)
+  expect(c.io.RenameSourceAValueValid3, 1)
   expect(c.io.RenameSourceBValueValid3, 1)
   expect(c.io.Decode_dest_0, 1)
   expect(c.io.Decode_dest_1, 4)
