@@ -215,12 +215,12 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	
 	 val sampleOpcode_xori  = 0x13
 	 val sampleFunc3_xori   = 0x4
-	 val sampleImm_xori     = 0x1
-	 val sampleSourceA_xori = 0x3
+	 val sampleImm_xori     = 0x3
+	 val sampleSourceA_xori = (-0x1)
 	 val sampleSourceB_xori = 0x5
-	 val sampleType_xori    = 0x3
+	 val sampleType_xori    = 0x1
 	
-	val expectedResult_xori = 0x6
+	val expectedResult_xori = (-0x4)
 
 
 	poke(f.io.issueDestTag, sampleTag_xori)
