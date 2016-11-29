@@ -43,8 +43,9 @@ class FunctionalUnit extends Module {
 
 		val destTag = Reg(next = io.issueDestTag(6,0))
 		io.FUBroadcastTag := destTag
-
+		// Register Input
 		val result = Reg(UInt())
+
 		val valueA = UInt()
 		val valueB = UInt()
 
@@ -81,7 +82,7 @@ class FunctionalUnit extends Module {
 		//Use UJ Values
 	}
 
-	
+/////////////////////////////////////////////////////////////////////
 	when(io.issueFUOpcode === UInt(0x03)){
 		
 	
@@ -105,7 +106,7 @@ class FunctionalUnit extends Module {
 		when(io.issueFunc3 === UInt("b000")){
 		//ADDI
 		//Add Value A and Value B
-
+			result := io.issueSourceValA + io.issueSourceValB
 		}
 
 		.elsewhen(io.issueFunc3 === UInt("b010")){
@@ -146,9 +147,12 @@ class FunctionalUnit extends Module {
 
 	}
 
+
+io.FUBroadcastValue := result
+
 }
 
-
+//////////////////////////////////////////////////////////////////
 
 
 
