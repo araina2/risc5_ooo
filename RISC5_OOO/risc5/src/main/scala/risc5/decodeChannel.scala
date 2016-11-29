@@ -205,9 +205,9 @@ class DecodeChannel extends Module {
 	val iType = Reg(UInt())
 	val immediate = Reg(UInt())
 
-	when((fetchOpcode === UInt(0x3B))||(fetchOpcode === UInt(0x33))){
+	when((fetchOpcode === UInt("h3B"))||(fetchOpcode === UInt("h33"))){
 		iType := UInt(0x0) //R-Type
-		immediate := UInt(0)
+		immediate := UInt("h0")
 	}
         .elsewhen((fetchOpcode === UInt(0x13))||(fetchOpcode === UInt(0x1B))||(fetchOpcode === UInt(0x67))){
 		iType := UInt(0x1) //I-Type

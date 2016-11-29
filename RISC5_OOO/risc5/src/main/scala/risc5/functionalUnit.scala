@@ -26,10 +26,10 @@ class FunctionalUnit extends Module {
 		val issueSourceValA  = UInt(INPUT, 64)
 		val issueSourceValB  = UInt(INPUT, 64)
 		val issueFUOpcode    = UInt(INPUT, 7)
-		val issue_Func3      = UInt(INPUT, 3)
-		val issue_Func7      = UInt(INPUT, 7)
-                val issue_Imm        = UInt(INPUT, 20)
-		val issue_Type       = UInt(INPUT, 3)
+		val issueFunc3       = UInt(INPUT, 3)
+		val issueFunc7       = UInt(INPUT, 7)
+                val issueImm         = UInt(INPUT, 20)
+		val issueType        = UInt(INPUT, 3)
 		val issueDestTag     = UInt(INPUT, 10)
 		val issueFull        = UInt(INPUT, 1)
 		val issueValid       = UInt(INPUT, 1)
@@ -48,50 +48,93 @@ class FunctionalUnit extends Module {
 		val valueA = UInt()
 		val valueB = UInt()
 
-	when (io.issue_Type === UInt(0x0)){
+	when (io.issueType === UInt(0x0)){
 		//Use R values
 		valueA := io.issueSourceValA
 		valueB := io.issueSourceValB
 
 
 	}
-	.elsewhen (io.issue_Type === UInt(0x1)){
+	.elsewhen (io.issueType === UInt(0x1)){
 		//Use I Values
 		valueA := io.issueSourceValA
-		valueB := io.issue_Imm
+		valueB := io.issueImm
 	}
 	
-	.elsewhen (io.issue_Type === UInt(0x2)){
+	.elsewhen (io.issueType === UInt(0x2)){
 		//Use S Values
 		valueA := io.issueSourceValA
 		valueB := io.issueSourceValB
 	}
 
-	.elsewhen (io.issue_Type === UInt(0x3)){
+	.elsewhen (io.issueType === UInt(0x3)){
 		//Use SB Values
 		valueA := io.issueSourceValA
 		valueB := io.issueSourceValB
 	}
 		
-	.elsewhen (io.issue_Type === UInt(0x4)){
+	.elsewhen (io.issueType === UInt(0x4)){
 		//Use U Values
 	}
 	
-	.elsewhen (io.issue_Type === UInt(0x5)){
+	.elsewhen (io.issueType === UInt(0x5)){
 		//Use UJ Values
 	}
 
 	
 	when(io.issueFUOpcode === UInt(0x03)){
-
+		
 	
 	}	
 	.elsewhen(io.issueFUOpcode === UInt(0x13)){
 	//I Type
+        //~~~~~~~~~~~~~~~~~~~~~~
+	// f3  |  INST| f7
+	//~~~~~~~~~~~~~~~~~~~~~~   
+	// 000 | ADDI |X
+	// 010 | SLTI |X
+	// 011 | SLTIU|X
+	// 100 | XORI |X
+	// 110 | ORI  |X
+	// 111 | ANDI |X
+	// 001 | SLLI | 0000000
+	// 101 | SRLI | 0000000
+	// 101 | SRAI | 0100000
+	//~~~~~~~~~~~~~~~~~~~~~~~~
+		
+		when(io.issueFunc3 === UInt("b000")){
+		//ADDI
+		//Add Value A and Value B
+
+		}
+
+		.elsewhen(io.issueFunc3 === UInt("b010")){
+		//SLTI
+		//Set RD to 1 if Imm < RS (operands are signed)
+		}
+
+		.elsewhen(io.issueFunc3 === UInt("b011")){
+		//SLTIU
+		//Set RD to 1 if Imm < RS (operands are unsigned)
+		}
+
+		.elsewhen(io.issueFunc3 === UInt("b100")){
+		//XORI
+		}
+
+		.elsewhen(io.issueFunc3 === UInt("b110")){
+		//ORI
+		}
+
+//		.elsewhen(io.issueFunc3		
+		
 		
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x33)){
 	//R-Type
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//
+	
 
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x1B)){
@@ -104,6 +147,11 @@ class FunctionalUnit extends Module {
 	}
 
 }
+
+
+
+
+
 
 class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 
