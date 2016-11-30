@@ -291,25 +291,25 @@ class ReservationStationModule extends Module {
       rowPlace:=SInt(k)
       //printf("\nrowPlace:%d pushed out of the reservation station",rowPlace)
 
-      when(rowPlace===SInt(15)){
+      //when(rowPlace===SInt(15)){
 
-          
-          IssueSourceValA(15):= UInt(0)
-          IssueSourceValATag(15):=UInt(0)
-          IssueSourceValB(15):= UInt(0)
-          IssueSourceValBTag(15):= UInt(0)
-          Decode_Opcode(15):= UInt(0)
-          DestTag(15):= UInt(0)
-          Decode_Func3(15):= UInt(0)
-          Decode_Func7(15):= UInt(0)
-          Decode_Imm(15):= UInt(0)
-          DecodeType(15):= UInt(0)
-          ValidEntry(15):= UInt(0)
-          IssueSourceValAValid(15):= UInt(0)
-          IssueSourceValBValid(15):= UInt(0)
-          IssueInstructionROB(15):= UInt(0)
-      }
-      .otherwise{
+      //    
+      //    IssueSourceValA(15):= UInt(0)
+      //    IssueSourceValATag(15):=UInt(0)
+      //    IssueSourceValB(15):= UInt(0)
+      //    IssueSourceValBTag(15):= UInt(0)
+      //    Decode_Opcode(15):= UInt(0)
+      //    DestTag(15):= UInt(0)
+      //    Decode_Func3(15):= UInt(0)
+      //    Decode_Func7(15):= UInt(0)
+      //    Decode_Imm(15):= UInt(0)
+      //    DecodeType(15):= UInt(0)
+      //    ValidEntry(15):= UInt(0)
+      //    IssueSourceValAValid(15):= UInt(0)
+      //    IssueSourceValBValid(15):= UInt(0)
+      //    IssueInstructionROB(15):= UInt(0)
+      //}
+      //.otherwise{
       
         for(t<-k until 15){
 
@@ -346,7 +346,7 @@ class ReservationStationModule extends Module {
 
           IssueInstructionROB(15):= UInt(0)
       
-      }
+      //}
 
     }// when((ValidEntry(k)===UInt(1)) && (IssueSourceValAValid(k)===UInt(1)) && (IssueSourceValBValid(k)===UInt(1)))
 
@@ -444,7 +444,7 @@ class ReservationStationTester(r:ReservationStationModule) extends Tester(r) {
         poke(r.io.FUBroadcastValue2,32)
         
         poke(r.io.FUBroadcastValid3,1)
-        poke(r.io.FUBroadcastTag3,14)
+        poke(r.io.FUBroadcastTag3,15)
         poke(r.io.FUBroadcastValue3,93)
         step(1)
         peek(r.io.IssueSourceValA) 
