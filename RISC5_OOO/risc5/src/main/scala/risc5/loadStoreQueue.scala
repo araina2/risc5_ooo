@@ -102,20 +102,25 @@ class LoadStoreQueueModule extends Module {
         val Rename_dest_3 = UInt(INPUT,5)
 
         //D-cache parameters
-        val Dcache_Val0 = UInt(INPUT,64)
-        val Dcache_Val1 = UInt(INPUT,64)
-        val Dcache_Val2 = UInt(INPUT,64)
-        val Dcache_Val3 = UInt(INPUT,64)
+       // val Dcache_Val0 = UInt(INPUT,64)
+       // val Dcache_Val1 = UInt(INPUT,64)
+       // val Dcache_Val2 = UInt(INPUT,64)
+       // val Dcache_Val3 = UInt(INPUT,64)
 
-        val Dcache_Valid0 = UInt(INPUT,1)// one valid bit must be there for decache
-        val Dcache_Valid1 = UInt(INPUT,1)// one valid bit must be there for decache
-        val Dcache_Valid2 = UInt(INPUT,1)// one valid bit must be there for decache
-        val Dcache_Valid3 = UInt(INPUT,1)// one valid bit must be there for decache
+       // val Dcache_Valid0 = UInt(INPUT,1)// one valid bit must be there for decache
+       // val Dcache_Valid1 = UInt(INPUT,1)// one valid bit must be there for decache
+       // val Dcache_Valid2 = UInt(INPUT,1)// one valid bit must be there for decache
+       // val Dcache_Valid3 = UInt(INPUT,1)// one valid bit must be there for decache
 
-        val Dcache_Tag0 = UInt(INPUT,64)
-        val Dcache_Tag1 = UInt(INPUT,64)
-        val Dcache_Tag2 = UInt(INPUT,64)
-        val Dcache_Tag3 = UInt(INPUT,64)
+       // val Dcache_Tag0 = UInt(INPUT,64)
+       // val Dcache_Tag1 = UInt(INPUT,64)
+       // val Dcache_Tag2 = UInt(INPUT,64)
+       // val Dcache_Tag3 = UInt(INPUT,64)
+
+        val Dcache_hit = UInt(INPUT,1)
+        val Dcache_tag_out = UInt(INPUT,7)
+        val Dcache_data_out = UInt(INPUT,64)
+        val Dcache_Valid = UInt(INPUT,1)
 
 	val FUBroadcastValue0 = UInt(INPUT,64)
 	val FUBroadcastTag0 = UInt(INPUT,7)
@@ -139,15 +144,22 @@ class LoadStoreQueueModule extends Module {
 
         // All OUPUT ports
 
-        val LoadStoreDestTag_out = UInt(OUTPUT,10)
+        val LoadStoreDestTag_out = UInt(OUTPUT,7)
         val LoadStoreDestAddress = UInt(OUTPUT,64)
         val LoadStoreDestValue = UInt(OUTPUT,64)
         val LoadStoreDestValid_out = UInt(OUTPUT,1)
+        val LoadStoreCacheValid_out = UInt(OUTPUT,1)
 
         val LoadStoreSelect = Bool(OUTPUT)
         val LoadStoreROBTag = UInt(OUTPUT,7)
 
         val LoadStoreFull = UInt(OUTPUT,1)
+        
+        val Cache_enable = UInt(OUTPUT,1)
+        val Cache_Address = UInt(OUTPUT,64)
+        val Cache_Compare = UInt(OUTPUT,1)
+        val Cache_tag_in = UInt(OUTPUT,7)
+        val Cache_valid_in = UInt(OUTPUT,1)
         
         
 
@@ -164,7 +176,7 @@ class LoadStoreQueueModule extends Module {
   val rs2_tag = Vec.fill(32){Reg(init = UInt(0,width=7))}
 
   val Opcode = Vec.fill(32){Reg(init = UInt(0,width=7))}
-  val DestTag = Vec.fill(32){Reg(init = UInt(0,width=10))}
+  val DestTag = Vec.fill(32){Reg(init = UInt(0,width=7))}
   val func3 = Vec.fill(32){Reg(init = UInt(0,width=3))}
   val func7 = Vec.fill(32){Reg(init = UInt(0,width=7))}
   val Imm = Vec.fill(32){Reg(init = UInt(0,width=12))}
@@ -191,19 +203,31 @@ class LoadStoreQueueModule extends Module {
   val onlyStoreInstructions = Bool()
 
   
+  val sign_extended_value0 = UInt(width=56)
+  val sign_extended_value1 = UInt(width=48)
+  val sign_extended_value2 = UInt(width=32)
  
   // setting the default values for output ports    
         io.LoadStoreDestTag_out := UInt(0)
         io.LoadStoreDestAddress := UInt(0)
         io.LoadStoreDestValue := UInt(0)
         io.LoadStoreDestValid_out := UInt(0)
+        io.LoadStoreCacheValid_out := UInt(0)
 
         io.LoadStoreSelect := Bool(false)
         io.LoadStoreROBTag := UInt(0)
         io.LoadStoreFull := UInt(0)
+        io.Cache_enable := UInt(0)
+        io.Cache_Address := UInt(0)
+        io.Cache_Compare := UInt(0)
+        io.Cache_tag_in := UInt(0)
+        io.Cache_valid_in := UInt(0)
         lowestROB_Load := UInt(127)
 
         onlyStoreInstructions := Bool(false)
+        sign_extended_value0:= UInt(0)
+        sign_extended_value1:= UInt(0)
+        sign_extended_value2:= UInt(0)
  
   // reset all the register values
   when(reset) {
@@ -332,7 +356,25 @@ class LoadStoreQueueModule extends Module {
     }
   }// when(io.FUBroadcastValid3===1)
 
-  // Update the entry in the reservatio station based on L/S broadcast
+  when(io.Dcache_Valid===UInt(1)&& io.Dcache_hit===UInt(1)){
+    
+    for(j<-0 until 32){
+      when((io.Dcache_tag_out === DestTag(j)) && (DestAddressValid(j) === UInt(1)) && (ValidEntry(j) === UInt(1)) && (DestLoadstoreSelect(j) === Bool(false)) && (DestValueValid(j) === UInt(0))){
+      
+        DestValue(j) := io.Dcache_data_out
+        DestValueValid(j) := UInt(1)
+        io.LoadStoreDestTag_out := io.Dcache_tag_out
+        io.LoadStoreDestValid_out := UInt(1)
+        io.LoadStoreCacheValid_out := UInt(1)
+        //printf("\n updated with Dcache value for destValue")
+
+      }
+    }
+    
+    
+  }// when(io.Dcache_Valid===1)
+
+  // Update the entry in the L/S queue based on L/S broadcast
   when(io.LoadStoreDestValid===UInt(1)){
     
     for(j<-0 until 32){
@@ -493,7 +535,7 @@ class LoadStoreQueueModule extends Module {
         
           
           OrderingBit(lowestROB_Load):=UInt(1)
-  }
+    }
 // check all the enteries in the l/s queue and push the ready ones out of the queue
   
   for(k<-31 to 0 by -1){
@@ -609,29 +651,122 @@ class LoadStoreQueueModule extends Module {
       DestAddressValid(k):= UInt(1)
     }
     when(rs2_valid(k)===UInt(1)){
+      // SB instruction take 8 bits from rs2 sign extend it to 64 bit
       when(func3(k)===UInt(0)){
+        // Sign extention
+        when(rs2(k)(7)===UInt(1)){
+          sign_extended_value0:=Fill(56,UInt(1,width=1))
       
-        DestValue(k):= Cat(Fill(56,UInt(0,width=1)),rs2(k)(7,0))
-        DestValueValid(k):=UInt(1)
+          DestValue(k):= Cat(sign_extended_value0,rs2(k)(7,0))
+          DestValueValid(k):=UInt(1)
+        }
+        .elsewhen(rs2(k)(7)===UInt(0)){
+          sign_extended_value0:=Fill(56,UInt(0,width=1))
+      
+          DestValue(k):= Cat(sign_extended_value0,rs2(k)(7,0))
+          DestValueValid(k):=UInt(1)
+        }
+      
       }
+      // SH instruction take 16 bits from rs2 sign extend it to 64 bit
+      .elsewhen(func3(k)===UInt(1)){
+        // Sign extention
+        when(rs2(k)(15)===UInt(1)){
+          sign_extended_value1:=Fill(48,UInt(1,width=1))
+      
+          DestValue(k):= Cat(sign_extended_value1,rs2(k)(15,0))
+          DestValueValid(k):=UInt(1)
+        }
+        .elsewhen(rs2(k)(15)===UInt(0)){
+          sign_extended_value1:=Fill(48,UInt(0,width=1))
+      
+          DestValue(k):= Cat(sign_extended_value1,rs2(k)(15,0))
+          DestValueValid(k):=UInt(1)
+        }
+      
+      }
+      // SW instruction take 32 bits from rs2 sign extend it to 64 bit
       .elsewhen(func3(k)===UInt(2)){
-
-        DestValue(k):= Cat(Fill(48,UInt(0,width=1)),rs2(k)(15,0))
-        DestValueValid(k):=UInt(1)
+        // Sign extention
+        when(rs2(k)(32)===UInt(1)){
+          sign_extended_value2:=Fill(32,UInt(1,width=1))
+      
+          DestValue(k):= Cat(sign_extended_value2,rs2(k)(31,0))
+          DestValueValid(k):=UInt(1)
+        }
+        .elsewhen(rs2(k)(32)===UInt(0)){
+          sign_extended_value2:=Fill(32,UInt(0,width=1))
+      
+          DestValue(k):= Cat(sign_extended_value2,rs2(k)(31,0))
+          DestValueValid(k):=UInt(1)
+        }
+      
       }
+      // SD instruction take 64 bits from rs2 sign extend it to 64 bit
       .elsewhen(func3(k)===UInt(3)){
-
-        DestValue(k):= Cat(Fill(32,UInt(0,width=1)),rs2(k)(31,0))
-        DestValueValid(k):=UInt(1)
-      }
-      .elsewhen(func3(k)===UInt(4)){
 
         DestValue(k):= rs2(k)
         DestValueValid(k):=UInt(1)
       }
+      // SBU instruction take 8 bits from rs2 sign extend it to 64 bit
+      .elsewhen(func3(k)===UInt(4)){
+        // Un-Sign extention
+          sign_extended_value0:=Fill(56,UInt(0,width=1))
+      
+          DestValue(k):= Cat(sign_extended_value0,rs2(k)(7,0))
+          DestValueValid(k):=UInt(1)
+      
+      }
+      // SHU instruction take 16 bits from rs2 sign extend it to 64 bit
+      .elsewhen(func3(k)===UInt(5)){
+        // Un-Sign extention
+          sign_extended_value1:=Fill(48,UInt(0,width=1))
+      
+          DestValue(k):= Cat(sign_extended_value1,rs2(k)(15,0))
+          DestValueValid(k):=UInt(1)
+      
+      }
+      // SWU instruction take 32 bits from rs2 sign extend it to 64 bit
+      .elsewhen(func3(k)===UInt(6)){
+        // Un-Sign extention
+          sign_extended_value2:=Fill(32,UInt(0,width=1))
+      
+          DestValue(k):= Cat(sign_extended_value2,rs2(k)(31,0))
+          DestValueValid(k):=UInt(1)
     
-    }
+      }
 
+
+    }
+  }
+// update the dest address and make it ready to  send a read req to cache for all load instructions
+  when((ValidEntry(k)===UInt(1)) && ((DestAddressValid(k)===UInt(0))) && (DestLoadstoreSelect(k)===Bool(false))){
+
+    when(rs1_valid(k)===UInt(1)){
+      //DestAddress:= Cat(rs1(63,12),(rs1(11,0) + Imm))
+      DestAddress(k):= rs1(k) + Cat(Fill(52,UInt(0,width=1)),Imm(k))
+      DestAddressValid(k):= UInt(1)
+    }
+  }
+
+// update the dest address and make it ready to  send a read req to cache for all load instructions
+  when((ValidEntry(k)===UInt(1)) && ((DestAddressValid(k)===UInt(0))) && (DestLoadstoreSelect(k)===Bool(false))){
+
+    when(rs1_valid(k)===UInt(1)){
+      //DestAddress:= Cat(rs1(63,12),(rs1(11,0) + Imm))
+      DestAddress(k):= rs1(k) + Cat(Fill(52,UInt(0,width=1)),Imm(k))
+      DestAddressValid(k):= UInt(1)
+    }
+  }
+
+// check for a ready load instruction and send a request to the D-Cache
+  when((ValidEntry(k)===UInt(1)) && ((DestAddressValid(k)===UInt(1))) && (DestLoadstoreSelect(k)===Bool(false))&&(DestValueValid(k)===UInt(0))){
+
+    io.Cache_enable:= UInt(1)
+    io.Cache_Address:= DestAddress(k)
+    io.Cache_Compare:= UInt(1)
+    io.Cache_tag_in:= DestTag(k)
+    io.Cache_valid_in:= UInt(1)
 
   }
 
