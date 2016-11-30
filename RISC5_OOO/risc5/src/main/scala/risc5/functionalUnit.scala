@@ -48,7 +48,7 @@ class FunctionalUnit extends Module {
 
 		val valueA = UInt()
 		val valueB = UInt()
-		val rawResult = UInt()	
+		val rawResult = UInt()//result before sign extension	
 		
 		valueA := io.issueSourceValA
 	when (io.issueType === UInt(0x0)){
@@ -163,8 +163,7 @@ class FunctionalUnit extends Module {
 		// STORE Commands, Treat as no op.
 		io.FUBroadcastValid := UInt(0x0)
 	}
-
-	.elsewhen(io.issueFUOpcode === UInt(0x13)){
+	.elsewhen(io.issueFUOpcode === UInt(0x13)){ //matt
 	//I Type
         //~~~~~~~~~~~~~~~~~~~~~~
 	// f3  |  INST| f7
@@ -210,29 +209,49 @@ class FunctionalUnit extends Module {
 
 		.elsewhen(io.issueFunc3 === UInt("b110")){
 		//ORI
+			result := valueA | valueB
 		}
-
-//				
-		
-		
+		.elsewhen(io.issueFunc3 === UInt("b111")){
+			result := valueA & valueB
+		}
 	}
-	.elsewhen(io.issueFUOpcode === UInt(0x33)){
+	.elsewhen(io.issueFUOpcode === UInt(0x33)){ //matt
 	//R-Type
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~
-	//
-	
+	// f3  | INST  | f7
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 000 | ADD   | 0000000
+	// 000 | SUB   | 0100000
+	// 001 | SLL   | X
+	// 010 | SLT   | X
+	// 011 | SLTU  | X
+	// 100 | XOR   | X
+	// 101 | SRL   | 0000000
+	// 101 | SRA   | 0100000
+	// 110 | OR    | X
+	// 111 | AND   | X
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x1B)){
 	//I-Type
 
 	}
-	.elsewhen(io.issueFUOpcode === UInt(0x3B)){
+	.elsewhen(io.issueFUOpcode === UInt(0x3B)){ //matt
 	//R-Type
-
+	//~~~~~~~~~~~~~~~~~~~~~~~~~
+	// f3  | INST  | f7
+	//~~~~~~~~~~~~~~~~~~~~~~~~~
+	// 000 | ADDW  | 0000000
+	// 000 | SUBW  | 0100000
+	// 001 | SLLW  | X
+	// 101 | SRLW  | 0000000
+	// 101 | SRAW  | 0100000
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
 	}
-	.elsewhen(io.issueFUOpcode === UInt(0x73)){
-
+	.elsewhen(io.issueFUOpcode === UInt(0x73)){ //matt
+	//this is a NOOP
 	}
 	.otherwise{
 	
@@ -252,17 +271,19 @@ io.FUBroadcastValue := result
 
 class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 
+//////////////////ADDI///////////////////
+
 	val sampleTag_addi = 0xB5A
 	val expectedTag_addi = 0x5A
 	
 	val sampleOpcode_addi  = 0x13
-	val sampleFunc3_addi   = 0x3
+	val sampleFunc3_addi   = 0x0
 	val sampleImm_addi     = 0x1
 	val sampleSourceA_addi = 0x3
 	val sampleSourceB_addi = 0x5
 	val sampleType_addi    = 0x1
 	
-	val expectedResult_addi = 0x1
+	val expectedResult_addi = 0x4
 
 
 	poke(f.io.issueDestTag, sampleTag_addi)
@@ -278,6 +299,7 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	expect(f.io.FUBroadcastTag, expectedTag_addi)
 	expect(f.io.FUBroadcastValue, expectedResult_addi)
 
+//////////////////////XORI///////////////////
 
 	 val sampleTag_xori = 0xB51
 	 val expectedTag_xori = 0x51
@@ -464,6 +486,34 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 
 	step(1)
 
+	expect(f.io.FUBroadcastValid, 0x0)
+//////////////////////SLTIU////////////////////	
+
+	val sampleTag_sltiu = 0xB52
+	val expectedTag_sltiu = 0x52
+	
+	val sampleOpcode_sltiu  = 0x13
+	val sampleFunc3_sltiu   = 0x3
+	val sampleImm_sltiu     = 0x1
+	val sampleSourceA_sltiu = 0x3
+	val sampleSourceB_sltiu = 0x5
+	val sampleType_sltiu    = 0x1
+	
+	val expectedResult_sltiu = 0x1
+
+
+	poke(f.io.issueDestTag, sampleTag_sltiu)
+	poke(f.io.issueFUOpcode, sampleOpcode_sltiu)
+	poke(f.io.issueFunc3, sampleFunc3_sltiu)
+	poke(f.io.issueImm, sampleImm_sltiu)
+	poke(f.io.issueSourceValA, sampleSourceA_sltiu)
+	poke(f.io.issueSourceValB, sampleSourceB_sltiu)
+	poke(f.io.issueType, sampleType_sltiu)
+
+	step(1)
+
+	expect(f.io.FUBroadcastTag, expectedTag_sltiu)
+	expect(f.io.FUBroadcastValue, expectedResult_sltiu)
 	expect(f.io.FUBroadcastValid, 0x0)
 }
 
