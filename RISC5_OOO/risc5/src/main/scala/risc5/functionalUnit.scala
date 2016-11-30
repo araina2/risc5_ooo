@@ -40,6 +40,8 @@ class FunctionalUnit extends Module {
 		val FUBroadcastValid = UInt(OUTPUT, 1)
 
 	}
+		val valid = Reg(UInt())
+
 
 		val destTag = Reg(next = io.issueDestTag(6,0))
 		io.FUBroadcastTag := destTag
@@ -53,7 +55,7 @@ class FunctionalUnit extends Module {
 		valueA := io.issueSourceValA
 	when (io.issueType === UInt(0x0)){
 		//Use R values
-		//valueA := io.issueSourceValA
+		valueA := io.issueSourceValA
 		valueB := io.issueSourceValB
 
 
@@ -99,13 +101,13 @@ class FunctionalUnit extends Module {
 		// Opcode = 1100111
 		// JALR: Jump And Link Register
 		// Treat as NO OP, since we use perfect branch predictor
-		io.FUBroadcastValid := UInt(0x0)
+		valid := UInt(0x0)
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x6F)){
 		// Opcode = 1101111
 		// JAL: Jump And Link
 		// Treat as NO OP, since we use perfect branch predictor
-		io.FUBroadcastValid := UInt(0x0)
+		valid := UInt(0x0)
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x63)){
 		// Opcode = 1100011
@@ -113,42 +115,42 @@ class FunctionalUnit extends Module {
 			// func3 = 000
 			// BEQ: Branch Equal
 			// Treat as NO OP, since we use perfect branch predictor
-			io.FUBroadcastValid := UInt(0x0)
+			valid := UInt(0x0)
 
 		}
 		.elsewhen(io.issueFunc3 === UInt(0x1)){
 			// func3 = 001
 			// BNE: Branch Not Equal
 			// Treat as NO OP, since we use perfect branch predictor
-			io.FUBroadcastValid := UInt(0x0)
+			valid := UInt(0x0)
 
 		}
 		.elsewhen(io.issueFunc3 === UInt(0x4)){
 			// func3 = 100
 			// BLT: Branch Less Than
 			// Treat as NO OP, since we use perfect branch predictor
-			io.FUBroadcastValid := UInt(0x0)
+			valid := UInt(0x0)
 
 		}
 		.elsewhen(io.issueFunc3 === UInt(0x5)){
 			// func3 = 101
 			// BGE: Branch Greater or Equal
 			// Treat as NO OP, since we use perfect branch predictor
-			io.FUBroadcastValid := UInt(0x0)
+			valid := UInt(0x0)
 
 		}
 		.elsewhen(io.issueFunc3 === UInt(0x6)){
 			// func3 = 110
 			// BLTU: Branch Less Than or Unequal
 			// Treat as NO OP, since we use perfect branch predictor
-			io.FUBroadcastValid := UInt(0x0)
+			valid := UInt(0x0)
 
 		}
 		.elsewhen(io.issueFunc3 === UInt(0x7)){
 			// func3 = 111
 			// BGEU: Branch Greater or Equal
 			// Treat as NO OP, since we use perfect branch predictor
-			io.FUBroadcastValid := UInt(0x0)
+			valid := UInt(0x0)
 
 		}
 
@@ -156,12 +158,12 @@ class FunctionalUnit extends Module {
 	.elsewhen(io.issueFUOpcode === UInt(0x3)){
 		// Opcode = 0000011
 		// LOAD Commands, Treat as no op.
-		io.FUBroadcastValid := UInt(0x0)
+		valid := UInt(0x0)
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x23)){
 		// Opcode = 0100011
 		// STORE Commands, Treat as no op.
-		io.FUBroadcastValid := UInt(0x0)
+		valid := UInt(0x0)
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x13)){ //matt
 	//I Type
@@ -199,6 +201,7 @@ class FunctionalUnit extends Module {
 			.otherwise{
 				result := UInt(0x0)
 			}
+			valid := UInt(1)
 		}
 
 		.elsewhen(io.issueFunc3 === UInt("b100")){
@@ -231,7 +234,39 @@ class FunctionalUnit extends Module {
 	// 110 | OR    | X
 	// 111 | AND   | X
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		when((io.issueFunc3 === UInt("b000")) && (io.issueFunc7 === UInt(0x0))){
+			result := valueA + valueB
+		}
+		
+		.elsewhen((io.issueFunc3 === UInt("b000")) && (io.issueFunc7 === UInt(0x20))){
+			result := valueA - valueB
+		}
+		.elsewhen(io.issueFunc3 === UInt("b001")){
+			
+		}
+		.elsewhen(io.issueFunc3 === UInt("b010")){
 
+		}
+		.elsewhen(io.issueFunc3 === UInt("b011")){
+
+		}
+		.elsewhen(io.issueFunc3 === UInt("b100")){
+			result := valueA^valueB
+		}
+		.elsewhen(io.issueFunc3 === UInt("b101")){
+			when(io.issueFunc7 === UInt("b0000000")){
+				//SRL
+			}
+			.elsewhen(io.issueFunc7 === UInt("b0100000")){
+				//SRA
+			}
+		}
+		.elsewhen(io.issueFunc3 === UInt("b110")){
+			result := valueA | valueB
+		}
+		.elsewhen(io.issueFunc3 === UInt("b111")){
+			result := valueA & valueB
+		}		
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x1B)){
 	//I-Type
@@ -248,20 +283,21 @@ class FunctionalUnit extends Module {
 	// 101 | SRLW  | 0000000
 	// 101 | SRAW  | 0100000
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~
-	
+			
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x73)){ //matt
 	//this is a NOOP
+		valid := UInt(0)
 	}
 	.otherwise{
-	
+		valid := UInt(0)	
 
 	}
-//	.elsewhen(io.issueFU
+
 
 
 io.FUBroadcastValue := result
-
+io.FUBroadcastValid := valid
 }
 
 //////////////////////////////////////////////////////////////////
@@ -270,6 +306,11 @@ io.FUBroadcastValue := result
 
 
 class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
+
+
+/////////////////////////////////////////
+//		OPCODE 0x13
+/////////////////////////////////////////
 
 //////////////////ADDI///////////////////
 
@@ -327,6 +368,41 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	expect(f.io.FUBroadcastTag, expectedTag_xori)
 	expect(f.io.FUBroadcastValue, expectedResult_xori)
 
+
+//////////////////////SLTIU////////////////////	
+
+	val sampleTag_sltiu = 0xB52
+	val expectedTag_sltiu = 0x52
+	
+	val sampleOpcode_sltiu  = 0x13
+	val sampleFunc3_sltiu   = 0x3
+	val sampleImm_sltiu     = 0x1
+	val sampleSourceA_sltiu = 0x3
+	val sampleSourceB_sltiu = 0x5
+	val sampleType_sltiu    = 0x1
+	
+	val expectedResult_sltiu = 0x1
+
+
+	poke(f.io.issueDestTag, sampleTag_sltiu)
+	poke(f.io.issueFUOpcode, sampleOpcode_sltiu)
+	poke(f.io.issueFunc3, sampleFunc3_sltiu)
+	poke(f.io.issueImm, sampleImm_sltiu)
+	poke(f.io.issueSourceValA, sampleSourceA_sltiu)
+	poke(f.io.issueSourceValB, sampleSourceB_sltiu)
+	poke(f.io.issueType, sampleType_sltiu)
+
+	step(1)
+
+	expect(f.io.FUBroadcastTag, expectedTag_sltiu)
+	expect(f.io.FUBroadcastValue, expectedResult_sltiu)
+	expect(f.io.FUBroadcastValid, 0x1)
+
+////////////////////////////////////////
+//		OPCODE 0x67
+////////////////////////////////////////
+
+
 	// Tyler Testing
 	// JAL
 	poke(f.io.issueSourceValA, 0x46)
@@ -343,6 +419,10 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	step(1)
 
 	expect(f.io.FUBroadcastValid, 0x0)
+
+//////////////////////////////////////////
+//		OPCODE 0x6F
+//////////////////////////////////////////
 
 	// JALR
 	poke(f.io.issueSourceValA, 0x46)
@@ -455,6 +535,10 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	step(1)
 
 	expect(f.io.FUBroadcastValid, 0x0)
+
+////////////////////////////////////////////
+//		OPCODE 0x3
+////////////////////////////////////////////
 	
 	// LOADS
 	poke(f.io.issueSourceValA, 0x46)
@@ -487,34 +571,39 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	step(1)
 
 	expect(f.io.FUBroadcastValid, 0x0)
-//////////////////////SLTIU////////////////////	
 
-	val sampleTag_sltiu = 0xB52
-	val expectedTag_sltiu = 0x52
+//////////////////////////////////////////
+//		OPCODE 0x33
+//////////////////////////////////////////
+
+////////////////////XOR///////////////////
+
+	 val sampleTag_xor = 0xB53
+	 val expectedTag_xor = 0x53
 	
-	val sampleOpcode_sltiu  = 0x13
-	val sampleFunc3_sltiu   = 0x3
-	val sampleImm_sltiu     = 0x1
-	val sampleSourceA_sltiu = 0x3
-	val sampleSourceB_sltiu = 0x5
-	val sampleType_sltiu    = 0x1
+	 val sampleOpcode_xor  = 0x33
+	 val sampleFunc3_xor   = 0x4
+	 val sampleImm_xor     = 0x5
+	 val sampleSourceA_xor = (-0x1)
+	 val sampleSourceB_xor = 0x3
+	 val sampleType_xor    = 0x0
 	
-	val expectedResult_sltiu = 0x1
+	val expectedResult_xor = (-0x4)
 
 
-	poke(f.io.issueDestTag, sampleTag_sltiu)
-	poke(f.io.issueFUOpcode, sampleOpcode_sltiu)
-	poke(f.io.issueFunc3, sampleFunc3_sltiu)
-	poke(f.io.issueImm, sampleImm_sltiu)
-	poke(f.io.issueSourceValA, sampleSourceA_sltiu)
-	poke(f.io.issueSourceValB, sampleSourceB_sltiu)
-	poke(f.io.issueType, sampleType_sltiu)
+	poke(f.io.issueDestTag, sampleTag_xor)
+	poke(f.io.issueFUOpcode, sampleOpcode_xor)
+	poke(f.io.issueFunc3, sampleFunc3_xor)
+	poke(f.io.issueImm, sampleImm_xor)
+	poke(f.io.issueSourceValA, sampleSourceA_xor)
+	poke(f.io.issueSourceValB, sampleSourceB_xor)
+	poke(f.io.issueType, sampleType_xor)
 
 	step(1)
 
-	expect(f.io.FUBroadcastTag, expectedTag_sltiu)
-	expect(f.io.FUBroadcastValue, expectedResult_sltiu)
-	expect(f.io.FUBroadcastValid, 0x0)
+	expect(f.io.FUBroadcastTag, expectedTag_xor)
+	expect(f.io.FUBroadcastValue, expectedResult_xor)
+
 }
 
 class FunctionalModuleGenerator extends TestGenerator {
