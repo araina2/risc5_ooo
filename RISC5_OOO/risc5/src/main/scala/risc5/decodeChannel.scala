@@ -136,6 +136,10 @@ class DecodeChannel extends Module {
 	val decodeIsStore = UInt(OUTPUT, 1)
 	//the following 6 bits are used to indicate which riscV instruction format the decoded instruction is
 	}    
+
+/////////////////////////////////////////////////////////
+//		Branch Taken Register
+/////////////////////////////////////////////////////////
     
      val decodeBranchTaken = Reg(next = io.fetchBranchTaken) //branchTaken reg
      io.decodeBranchTaken := decodeBranchTaken
@@ -192,6 +196,7 @@ class DecodeChannel extends Module {
         }
 	.otherwise{
 		LSQ := UInt(0)
+		store := UInt(0)
 	}
 	io.decodeQueueSelect := LSQ
 	io.decodeIsStore := store
