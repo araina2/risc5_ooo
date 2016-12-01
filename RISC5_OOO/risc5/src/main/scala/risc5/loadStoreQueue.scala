@@ -26,10 +26,10 @@ class LoadStoreQueueModule extends Module {
         val RenameSourceAValueValid2 = UInt(INPUT,1)
         val RenameSourceAValueValid3 = UInt(INPUT,1)
 
-        val RenameSourceATag0 = UInt(INPUT,1)
-        val RenameSourceATag1 = UInt(INPUT,1)
-        val RenameSourceATag2 = UInt(INPUT,1)
-        val RenameSourceATag3 = UInt(INPUT,1)
+        val RenameSourceATag0 = UInt(INPUT,10)
+        val RenameSourceATag1 = UInt(INPUT,10)
+        val RenameSourceATag2 = UInt(INPUT,10)
+        val RenameSourceATag3 = UInt(INPUT,10)
 
         // Source "B" parameters in the loadstore queue
         val RenameSourceBValue0 = UInt(INPUT,64)
@@ -42,10 +42,10 @@ class LoadStoreQueueModule extends Module {
         val RenameSourceBValueValid2 = UInt(INPUT,1)
         val RenameSourceBValueValid3 = UInt(INPUT,1)
 
-        val RenameSourceBTag0 = UInt(INPUT,1)
-        val RenameSourceBTag1 = UInt(INPUT,1)
-        val RenameSourceBTag2 = UInt(INPUT,1)
-        val RenameSourceBTag3 = UInt(INPUT,1)
+        val RenameSourceBTag0 = UInt(INPUT,10)
+        val RenameSourceBTag1 = UInt(INPUT,10)
+        val RenameSourceBTag2 = UInt(INPUT,10)
+        val RenameSourceBTag3 = UInt(INPUT,10)
 
         //Decode parameters
 
@@ -60,20 +60,20 @@ class LoadStoreQueueModule extends Module {
         val Rename_destTag_2 = UInt(INPUT,10)
         val Rename_destTag_3 = UInt(INPUT,10)
 
-        val Rename_func3_0 = UInt(INPUT,7)
-        val Rename_func3_1 = UInt(INPUT,7)
-        val Rename_func3_2 = UInt(INPUT,7)
-        val Rename_func3_3 = UInt(INPUT,7)
+        val Rename_func3_0 = UInt(INPUT,3)
+        val Rename_func3_1 = UInt(INPUT,3)
+        val Rename_func3_2 = UInt(INPUT,3)
+        val Rename_func3_3 = UInt(INPUT,3)
         
         val Rename_func7_0 = UInt(INPUT,7)
         val Rename_func7_1 = UInt(INPUT,7)
         val Rename_func7_2 = UInt(INPUT,7)
         val Rename_func7_3 = UInt(INPUT,7)
         
-        val Rename_Imm_0 = UInt(INPUT,7)
-        val Rename_Imm_1 = UInt(INPUT,7)
-        val Rename_Imm_2 = UInt(INPUT,7)
-        val Rename_Imm_3 = UInt(INPUT,7)
+        val Rename_Imm_0 = UInt(INPUT,12)
+        val Rename_Imm_1 = UInt(INPUT,12)
+        val Rename_Imm_2 = UInt(INPUT,12)
+        val Rename_Imm_3 = UInt(INPUT,12)
         
         val RenameQueueSelect0 = Bool(INPUT)// use this in the top module to select L/S queue or IssueQueue
         val RenameQueueSelect1 = Bool(INPUT)// use this in the top module to select L/S queue or IssueQueue
@@ -95,11 +95,11 @@ class LoadStoreQueueModule extends Module {
         val RenameType_2 = UInt(INPUT,3)// check with Anshu if this is needed
         val RenameType_3 = UInt(INPUT,3)// check with Anshu if this is needed
 
-        //(destination register names)
-        val Rename_dest_0 = UInt(INPUT,5)
-        val Rename_dest_1 = UInt(INPUT,5)
-        val Rename_dest_2 = UInt(INPUT,5)
-        val Rename_dest_3 = UInt(INPUT,5)
+        //(destination register names) , dest Tag takes care of this, it is not required
+        //val Rename_dest_0 = UInt(INPUT,5)
+        //val Rename_dest_1 = UInt(INPUT,5)
+        //val Rename_dest_2 = UInt(INPUT,5)
+        //val Rename_dest_3 = UInt(INPUT,5)
 
         //D-cache parameters
        // val Dcache_Val0 = UInt(INPUT,64)
@@ -123,32 +123,31 @@ class LoadStoreQueueModule extends Module {
         val Dcache_Valid = UInt(INPUT,1)
 
 	val FUBroadcastValue0 = UInt(INPUT,64)
-	val FUBroadcastTag0 = UInt(INPUT,7)
+	val FUBroadcastTag0 = UInt(INPUT,10)
 	val FUBroadcastValid0 = UInt(INPUT,1) //need to be added in the document
 
 	val FUBroadcastValue1 = UInt(INPUT,64)
-	val FUBroadcastTag1 = UInt(INPUT,7)
+	val FUBroadcastTag1 = UInt(INPUT,10)
 	val FUBroadcastValid1 = UInt(INPUT,1) //need to be added in the document
 
 	val FUBroadcastValue2 = UInt(INPUT,64)
-	val FUBroadcastTag2 = UInt(INPUT,7)
+	val FUBroadcastTag2 = UInt(INPUT,10)
 	val FUBroadcastValid2 = UInt(INPUT,1) //need to be added in the document
 
 	val FUBroadcastValue3 = UInt(INPUT,64)
-	val FUBroadcastTag3 = UInt(INPUT,7)
+	val FUBroadcastTag3 = UInt(INPUT,10)
 	val FUBroadcastValid3 = UInt(INPUT,1) //need to be added in the document
 	
         val LoadStoreDestVal = UInt(INPUT,64)
-	val LoadStoreDestTag = UInt(INPUT,7)
+	val LoadStoreDestTag = UInt(INPUT,10)
 	val LoadStoreDestValid = UInt(INPUT,1) // need to be added in the document
 
         // All OUPUT ports
 
-        val LoadStoreDestTag_out = UInt(OUTPUT,7)
+        val LoadStoreDestTag_out = UInt(OUTPUT,10)
         val LoadStoreDestAddress = UInt(OUTPUT,64)
         val LoadStoreDestValue = UInt(OUTPUT,64)
         val LoadStoreDestValid_out = UInt(OUTPUT,1)
-        val LoadStoreCacheValid_out = UInt(OUTPUT,1)
 
         val LoadStoreSelect = Bool(OUTPUT)
         val LoadStoreROBTag = UInt(OUTPUT,7)
@@ -170,19 +169,19 @@ class LoadStoreQueueModule extends Module {
 
   val rs1 = Vec.fill(32){Reg(init = UInt(0,width=64))}
   val rs1_valid = Vec.fill(32){Reg(init = UInt(0,width=1))}
-  val rs1_tag = Vec.fill(32){Reg(init = UInt(0,width=7))}
+  val rs1_tag = Vec.fill(32){Reg(init = UInt(0,width=10))}
   val rs2 = Vec.fill(32){Reg(init = UInt(0,width=64))}
   val rs2_valid = Vec.fill(32){Reg(init = UInt(0,width=1))}
-  val rs2_tag = Vec.fill(32){Reg(init = UInt(0,width=7))}
+  val rs2_tag = Vec.fill(32){Reg(init = UInt(0,width=10))}
 
   val Opcode = Vec.fill(32){Reg(init = UInt(0,width=7))}
-  val DestTag = Vec.fill(32){Reg(init = UInt(0,width=7))}
+  val DestTag = Vec.fill(32){Reg(init = UInt(0,width=10))}
   val func3 = Vec.fill(32){Reg(init = UInt(0,width=3))}
   val func7 = Vec.fill(32){Reg(init = UInt(0,width=7))}
   val Imm = Vec.fill(32){Reg(init = UInt(0,width=12))}
   val DestLoadstoreSelect = Vec.fill(32){Reg(init =Bool(false))}
   val DestROB = Vec.fill(32){Reg(init = UInt(0,width=7))}
-  val DestRegister = Vec.fill(32){Reg(init = UInt(0,width=5))}
+  //val DestRegister = Vec.fill(32){Reg(init = UInt(0,width=5))}
   val DestAddress = Vec.fill(32){Reg(init = UInt(0,width=64))}
   val DestValue = Vec.fill(32){Reg(init = UInt(0,width=64))}
 
@@ -192,14 +191,13 @@ class LoadStoreQueueModule extends Module {
 
   val OrderingBit = Vec.fill(32){Reg(init = UInt(0,width=1))}
 
-  val rowPlace = Reg(init = SInt(-1,width=1))
-
+  //val rowPlace = Reg(init = SInt(-1,width=1))
+  val ROB_list = Vec.fill(128){Reg(init = UInt(0,width=1))}
+// wire 
   val lowestROB_Load = UInt(width=7)
 
-  val ROB_list = Vec.fill(128){Reg(init = UInt(0,width=1))}
 
 
-// wire 
   val onlyStoreInstructions = Bool()
 
   
@@ -212,7 +210,6 @@ class LoadStoreQueueModule extends Module {
         io.LoadStoreDestAddress := UInt(0)
         io.LoadStoreDestValue := UInt(0)
         io.LoadStoreDestValid_out := UInt(0)
-        io.LoadStoreCacheValid_out := UInt(0)
 
         io.LoadStoreSelect := Bool(false)
         io.LoadStoreROBTag := UInt(0)
@@ -223,7 +220,7 @@ class LoadStoreQueueModule extends Module {
         io.Cache_tag_in := UInt(0)
         io.Cache_valid_in := UInt(0)
         lowestROB_Load := UInt(127)
-
+// default values for wires
         onlyStoreInstructions := Bool(false)
         sign_extended_value0:= UInt(0)
         sign_extended_value1:= UInt(0)
@@ -248,7 +245,7 @@ class LoadStoreQueueModule extends Module {
       Imm(i) := UInt(0)
       DestLoadstoreSelect(i) := Bool(false)
       DestROB(i) := UInt(0)
-      DestRegister(i) := UInt(0)
+      //DestRegister(i) := UInt(0)
       DestAddress(i) := UInt(0)
       DestValue(i) := UInt(0)
 
@@ -261,7 +258,7 @@ class LoadStoreQueueModule extends Module {
       ROB_list(i) := UInt(0)
 
     }
-      rowPlace := SInt(-1)
+      //rowPlace := SInt(-1)
 
   } 
   // Update the entry in the load-store-queue based on FU broadcast for FU0
@@ -355,18 +352,128 @@ class LoadStoreQueueModule extends Module {
     
     }
   }// when(io.FUBroadcastValid3===1)
-
+// use the dcache output the update the values in the load instructions in the l/s queue TODO(INCOMPLETE)
   when(io.Dcache_Valid===UInt(1)&& io.Dcache_hit===UInt(1)){
     
     for(j<-0 until 32){
-      when((io.Dcache_tag_out === DestTag(j)) && (DestAddressValid(j) === UInt(1)) && (ValidEntry(j) === UInt(1)) && (DestLoadstoreSelect(j) === Bool(false)) && (DestValueValid(j) === UInt(0))){
+      when((io.Dcache_tag_out === DestROB(j)) && (DestAddressValid(j) === UInt(1)) && (ValidEntry(j) === UInt(1)) && (DestLoadstoreSelect(j) === Bool(false)) && (DestValueValid(j) === UInt(0))){
       
-        DestValue(j) := io.Dcache_data_out
-        DestValueValid(j) := UInt(1)
-        io.LoadStoreDestTag_out := io.Dcache_tag_out
-        io.LoadStoreDestValid_out := UInt(1)
-        io.LoadStoreCacheValid_out := UInt(1)
         //printf("\n updated with Dcache value for destValue")
+      // LB instruction take 8 bits from rs2 sign extend it to 64 bit
+      when(func3(j)===UInt(0)){
+        // Sign extention
+        when(io.Dcache_data_out(7)===UInt(1)){
+          sign_extended_value0:=Fill(56,UInt(1,width=1))
+      
+          DestValue(j):= Cat(sign_extended_value0,io.Dcache_data_out(7,0))
+          DestValueValid(j):=UInt(1)
+          io.LoadStoreDestTag_out := DestTag(j)
+          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestValue := Cat(sign_extended_value0,io.Dcache_data_out(7,0))
+        }
+        .elsewhen(io.Dcache_data_out(7)===UInt(0)){
+          sign_extended_value0:=Fill(56,UInt(0,width=1))
+      
+          DestValue(j):= Cat(sign_extended_value0,io.Dcache_data_out(7,0))
+          DestValueValid(j):=UInt(1)
+          io.LoadStoreDestTag_out :=  DestTag(j)
+          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestValue := Cat(sign_extended_value0,io.Dcache_data_out(7,0))
+        }
+      
+      }
+      // LH instruction take 16 bits from rs2 sign extend it to 64 bit
+      .elsewhen(func3(j)===UInt(1)){
+        // Sign extention
+        when(io.Dcache_data_out(15)===UInt(1)){
+          sign_extended_value1:=Fill(48,UInt(1,width=1))
+      
+          DestValue(j):= Cat(sign_extended_value1,io.Dcache_data_out(15,0))
+          DestValueValid(j):=UInt(1)
+          io.LoadStoreDestTag_out := DestTag(j) 
+          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestValue := Cat(sign_extended_value1,io.Dcache_data_out(15,0))
+        }
+        .elsewhen(io.Dcache_data_out(15)===UInt(0)){
+          sign_extended_value1:=Fill(48,UInt(0,width=1))
+      
+          DestValue(j):= Cat(sign_extended_value1,io.Dcache_data_out(15,0))
+          DestValueValid(j):=UInt(1)
+          io.LoadStoreDestTag_out := DestTag(j)
+          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestValue := Cat(sign_extended_value1,io.Dcache_data_out(15,0))
+        }
+      
+      }
+      // LW instruction take 32 bits from rs2 sign extend it to 64 bit
+      .elsewhen(func3(j)===UInt(2)){
+        // Sign extention
+        when(io.Dcache_data_out(32)===UInt(1)){
+          sign_extended_value2:=Fill(32,UInt(1,width=1))
+      
+          DestValue(j):= Cat(sign_extended_value2,io.Dcache_data_out(31,0))
+          DestValueValid(j):=UInt(1)
+          io.LoadStoreDestTag_out := DestTag(j)
+          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestValue := Cat(sign_extended_value2,io.Dcache_data_out(31,0))
+        }
+        .elsewhen(io.Dcache_data_out(32)===UInt(0)){
+          sign_extended_value2:=Fill(32,UInt(0,width=1))
+      
+          DestValue(j):= Cat(sign_extended_value2,io.Dcache_data_out(31,0))
+          DestValueValid(j):=UInt(1)
+          io.LoadStoreDestTag_out := DestTag(j)
+          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestValue := Cat(sign_extended_value2,io.Dcache_data_out(31,0))
+        }
+      
+      }
+      // LD instruction take 64 bits from rs2 sign extend it to 64 bit
+      .elsewhen(func3(j)===UInt(3)){
+
+        DestValue(j):= io.Dcache_data_out
+        DestValueValid(j):=UInt(1)
+        io.LoadStoreDestTag_out := DestTag(j)
+        io.LoadStoreDestValid_out := UInt(1)
+        io.LoadStoreDestValue := io.Dcache_data_out
+      }
+      // LBU instruction take 8 bits from rs2 sign extend it to 64 bit
+      .elsewhen(func3(j)===UInt(4)){
+        // Un-Sign extention
+          sign_extended_value0:=Fill(56,UInt(0,width=1))
+      
+          DestValue(j):= Cat(sign_extended_value0,io.Dcache_data_out(7,0))
+          DestValueValid(j):=UInt(1)
+          io.LoadStoreDestTag_out := DestTag(j)
+          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestValue := Cat(sign_extended_value0,io.Dcache_data_out(7,0))
+      
+      }
+      // LHU instruction take 16 bits from rs2 sign extend it to 64 bit
+      .elsewhen(func3(j)===UInt(5)){
+        // Un-Sign extention
+          sign_extended_value1:=Fill(48,UInt(0,width=1))
+      
+          DestValue(j):= Cat(sign_extended_value1,io.Dcache_data_out(15,0))
+          DestValueValid(j):=UInt(1)
+          io.LoadStoreDestTag_out := DestTag(j)
+          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestValue := Cat(sign_extended_value1,io.Dcache_data_out(15,0))
+      
+      }
+      // LWU instruction take 32 bits from rs2 sign extend it to 64 bit
+      .elsewhen(func3(j)===UInt(6)){
+        // Un-Sign extention
+          sign_extended_value2:=Fill(32,UInt(0,width=1))
+      
+          DestValue(j):= Cat(sign_extended_value2,io.Dcache_data_out(31,0))
+          DestValueValid(j):=UInt(1)
+          io.LoadStoreDestTag_out := DestTag(j)
+          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestValue := Cat(sign_extended_value2,io.Dcache_data_out(31,0))
+    
+      }
+
 
       }
     }
@@ -487,10 +594,10 @@ class LoadStoreQueueModule extends Module {
       ROB_list(io.RenameROBtag2) := UInt(1)
       ROB_list(io.RenameROBtag3) := UInt(1)
 
-      DestRegister(rownumber0) := io.Rename_dest_0
-      DestRegister(rownumber1) := io.Rename_dest_1
-      DestRegister(rownumber2) := io.Rename_dest_2
-      DestRegister(rownumber3) := io.Rename_dest_3
+      //DestRegister(rownumber0) := io.Rename_dest_0
+      //DestRegister(rownumber1) := io.Rename_dest_1
+      //DestRegister(rownumber2) := io.Rename_dest_2
+      //DestRegister(rownumber3) := io.Rename_dest_3
 
 
     }
@@ -499,9 +606,6 @@ class LoadStoreQueueModule extends Module {
 
 
 
-// TODO rework
-//val onlyStoreInstructions = (DestLoadstoreSelect(0)) && (DestLoadstoreSelect(1)) &&(DestLoadstoreSelect(2)) &&(DestLoadstoreSelect(3)) &&(DestLoadstoreSelect(4)) &&(DestLoadstoreSelect(5)) &&(DestLoadstoreSelect(6)) &&(DestLoadstoreSelect(7)) &&(DestLoadstoreSelect(8)) &&(DestLoadstoreSelect(9)) &&(DestLoadstoreSelect(10)) &&(DestLoadstoreSelect(11)) &&(DestLoadstoreSelect(12)) &&(DestLoadstoreSelect(13)) &&(DestLoadstoreSelect(14)) &&(DestLoadstoreSelect(15)) &&(DestLoadstoreSelect(16)) &&(DestLoadstoreSelect(17)) &&(DestLoadstoreSelect(18)) &&(DestLoadstoreSelect(19)) &&(DestLoadstoreSelect(20)) &&(DestLoadstoreSelect(21)) &&(DestLoadstoreSelect(22)) &&(DestLoadstoreSelect(23)) &&(DestLoadstoreSelect(24)) &&(DestLoadstoreSelect(25)) &&(DestLoadstoreSelect(26)) &&(DestLoadstoreSelect(27)) &&(DestLoadstoreSelect(28)) &&(DestLoadstoreSelect(29)) &&(DestLoadstoreSelect(30)) &&(DestLoadstoreSelect(31))
-//
 
   for(x<-31 to 0 by -1){
 
@@ -549,43 +653,43 @@ class LoadStoreQueueModule extends Module {
       io.LoadStoreDestValid_out := UInt(1)
       io.LoadStoreSelect := DestLoadstoreSelect(k)
       io.LoadStoreROBTag := DestROB(k)
-      rowPlace:=SInt(k) 
+      //rowPlace:=SInt(k) 
 // remove the ROB tag from the ROB list
       for(d<-0 to 127) {      
 
-        when(ROB_list(d)===DestROB(k)){
+        when(UInt(d)===DestROB(k)){
           ROB_list(d)===UInt(0)
         }
       }
 
-      when(rowPlace===UInt(31)){
-        rs1(31) := UInt(0)
-        rs1_valid(31) := UInt(0)
-        rs1_tag(31) := UInt(0)
-        rs2(31) := UInt(0)
-        rs2_valid(31) := UInt(0)
-        rs2_tag(31) := UInt(0)
+      //when(rowPlace===UInt(31)){
+      //  rs1(31) := UInt(0)
+      //  rs1_valid(31) := UInt(0)
+      //  rs1_tag(31) := UInt(0)
+      //  rs2(31) := UInt(0)
+      //  rs2_valid(31) := UInt(0)
+      //  rs2_tag(31) := UInt(0)
 
-        Opcode(31) := UInt(0)
-        DestTag(31) := UInt(0)
-        func3(31) := UInt(0)
-        func7(31) := UInt(0)
-        Imm(31) := UInt(0)
-        DestLoadstoreSelect(31) := UInt(0)
-        DestROB(31) := UInt(0)
-        DestRegister(31) := UInt(0)
-        DestAddress(31) := UInt(0)
-        DestValue(31) := UInt(0)
+      //  Opcode(31) := UInt(0)
+      //  DestTag(31) := UInt(0)
+      //  func3(31) := UInt(0)
+      //  func7(31) := UInt(0)
+      //  Imm(31) := UInt(0)
+      //  DestLoadstoreSelect(31) := UInt(0)
+      //  DestROB(31) := UInt(0)
+      //  //DestRegister(31) := UInt(0)
+      //  DestAddress(31) := UInt(0)
+      //  DestValue(31) := UInt(0)
 
-        ValidEntry(31) := UInt(0)
-        DestAddressValid(31) := UInt(0)
-        DestValueValid(31) := UInt(0)
+      //  ValidEntry(31) := UInt(0)
+      //  DestAddressValid(31) := UInt(0)
+      //  DestValueValid(31) := UInt(0)
 
-        OrderingBit(31) := UInt(0)
+      //  OrderingBit(31) := UInt(0)
 
-        }
+      //  }
 
-      .otherwise{
+      //.otherwise{
 
         for(y<-k until 31){
           rs1(y)  :=           rs1(y+1) 
@@ -601,7 +705,7 @@ class LoadStoreQueueModule extends Module {
           Imm(y)  :=           Imm(y+1) 
           DestLoadstoreSelect(y)  :=           DestLoadstoreSelect(y+1) 
           DestROB(y)  :=           DestROB(y+1) 
-          DestRegister(y)  :=           DestRegister(y+1) 
+          //DestRegister(y)  :=           DestRegister(y+1) 
           DestAddress(y)  :=           DestAddress(y+1) 
           DestValue(y)  :=           DestValue(y+1) 
           ValidEntry(y)  :=           ValidEntry(y+1) 
@@ -625,7 +729,7 @@ class LoadStoreQueueModule extends Module {
           Imm(31) := UInt(0)
           DestLoadstoreSelect(31) := UInt(0)
           DestROB(31) := UInt(0)
-          DestRegister(31) := UInt(0)
+          //DestRegister(31) := UInt(0)
           DestAddress(31) := UInt(0)
           DestValue(31) := UInt(0)
 
@@ -635,7 +739,7 @@ class LoadStoreQueueModule extends Module {
 
           OrderingBit(31) := UInt(0)
 
-      }
+      //}
 
 
 
@@ -765,7 +869,7 @@ class LoadStoreQueueModule extends Module {
     io.Cache_enable:= UInt(1)
     io.Cache_Address:= DestAddress(k)
     io.Cache_Compare:= UInt(1)
-    io.Cache_tag_in:= DestTag(k)
+    io.Cache_tag_in:= DestROB(k)
     io.Cache_valid_in:= UInt(1)
 
   }
