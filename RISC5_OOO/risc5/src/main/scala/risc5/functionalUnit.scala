@@ -36,14 +36,14 @@ class FunctionalUnit extends Module {
 
 		//OUTPUTS
 		val FUBroadcastValue = UInt(OUTPUT, 64)
-		val FUBroadcastTag   = UInt(OUTPUT, 7)
+		val FUBroadcastTag   = UInt(OUTPUT, 10)
 		val FUBroadcastValid = UInt(OUTPUT, 1)
 
 	}
 		val valid = Reg(UInt())
 
 
-		val destTag = Reg(next = io.issueDestTag(6,0))
+		val destTag = Reg(next = io.issueDestTag)
 		io.FUBroadcastTag := destTag
 		// Register Input
 		val result = Reg(UInt())
@@ -189,7 +189,14 @@ class FunctionalUnit extends Module {
 
 		.elsewhen(io.issueFunc3 === UInt("b010")){
 		//SLTI
-		//Set RD to 1 if Imm < RS (operands are signed)
+		//Set RD to 1 if Imm < RS (operands are signed)	
+			when(valueB < valueA){
+				result := UInt(0x1)
+			}
+			.otherwise{
+				result := UInt(0x0)
+			}
+			valid := UInt(1)
 		}
 
 		.elsewhen(io.issueFunc3 === UInt("b011")){
@@ -242,13 +249,27 @@ class FunctionalUnit extends Module {
 			result := valueA - valueB
 		}
 		.elsewhen(io.issueFunc3 === UInt("b001")){
-			
+			result := valueA << valueB		
 		}
 		.elsewhen(io.issueFunc3 === UInt("b010")){
-
+			//SLT
+			when(valueB < valueA){
+				result := UInt(0x1)
+			}
+			.otherwise{
+				result := UInt(0x0)
+			}
+			valid := UInt(1)
 		}
 		.elsewhen(io.issueFunc3 === UInt("b011")){
-
+			//SLTU
+			when(valueB < valueA){
+				result := UInt(0x1)
+			}
+			.otherwise{
+				result := UInt(0x0)
+			}
+			valid := UInt(1)
 		}
 		.elsewhen(io.issueFunc3 === UInt("b100")){
 			result := valueA^valueB
@@ -283,7 +304,27 @@ class FunctionalUnit extends Module {
 	// 101 | SRLW  | 0000000
 	// 101 | SRAW  | 0100000
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+		when(io.issueFunc3 === UInt("b000")){
+			when(io.issueFunc7 === UInt("b0000000")){
+			//ADDW
+			}
+			.elsewhen(io.issueFunc7 === UInt("b0100000")){
+			//SUBW
+			}
+		}
+		.elsewhen(io.issueFunc3 === UInt("b001")){
+		//SLLW
+
+		}
+		.elsewhen(io.issueFunc3 === UInt("b101")){
+			when(io.issueFunc7 === UInt("b0000000")){
 			
+			}
+			.elsewhen(io.issueFunc7 === UInt("b0100000")){
+
+			}		
+		}		
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x73)){ //matt
 	//this is a NOOP
@@ -315,7 +356,7 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 //////////////////ADDI///////////////////
 
 	val sampleTag_addi = 0xB5A
-	val expectedTag_addi = 0x5A
+	val expectedTag_addi = 0xB5A
 	
 	val sampleOpcode_addi  = 0x13
 	val sampleFunc3_addi   = 0x0
@@ -343,7 +384,7 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 //////////////////////XORI///////////////////
 
 	 val sampleTag_xori = 0xB51
-	 val expectedTag_xori = 0x51
+	 val expectedTag_xori = 0xB51
 	
 	 val sampleOpcode_xori  = 0x13
 	 val sampleFunc3_xori   = 0x4
@@ -372,7 +413,7 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 //////////////////////SLTIU////////////////////	
 
 	val sampleTag_sltiu = 0xB52
-	val expectedTag_sltiu = 0x52
+	val expectedTag_sltiu = 0xB52
 	
 	val sampleOpcode_sltiu  = 0x13
 	val sampleFunc3_sltiu   = 0x3
@@ -579,7 +620,7 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 ////////////////////XOR///////////////////
 
 	 val sampleTag_xor = 0xB53
-	 val expectedTag_xor = 0x53
+	 val expectedTag_xor = 0xB53
 	
 	 val sampleOpcode_xor  = 0x33
 	 val sampleFunc3_xor   = 0x4
