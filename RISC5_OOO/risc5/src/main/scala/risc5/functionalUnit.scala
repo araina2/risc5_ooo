@@ -314,21 +314,32 @@ class FunctionalUnit extends Module {
 		when(io.issueFunc3 === UInt("b000")){
 			when(io.issueFunc7 === UInt("b0000000")){
 			//ADDW
+			result := valueA + valueB
+			result := Cat(Fill(32, result(31)), result)
 			}
 			.elsewhen(io.issueFunc7 === UInt("b0100000")){
 			//SUBW
+			result := valueA - valueB
+			result := Cat(Fill(32, result(31)), result)
 			}
 		}
 		.elsewhen(io.issueFunc3 === UInt("b001")){
 		//SLLW
-
+			result := valueA << (valueB & UInt(0x1F))
+			result := Cat(Fill(32, result(31)), result)
 		}
 		.elsewhen(io.issueFunc3 === UInt("b101")){
 			when(io.issueFunc7 === UInt("b0000000")){
-			
+				// SRLW
+				result := (valueA >> shiftAmmnt) 
+				result := Cat(Fill(32, result(31)), result)
 			}
 			.elsewhen(io.issueFunc7 === UInt("b0100000")){
-
+				// SRAW
+				val derp = SInt()
+				derp := valueA >> shiftAmmnt
+				result := derp	
+				result := Cat(Fill(32, result(31)), result)
 			}		
 		}		
 	}
