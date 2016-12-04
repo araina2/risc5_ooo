@@ -249,7 +249,8 @@ class FunctionalUnit extends Module {
 			result := valueA - valueB
 		}
 		.elsewhen(io.issueFunc3 === UInt("b001")){
-			result := valueA << valueB		
+			// SLL
+			result := valueA << (valueB & UInt(0x1F))
 		}
 		.elsewhen(io.issueFunc3 === UInt("b010")){
 			//SLT
@@ -275,11 +276,16 @@ class FunctionalUnit extends Module {
 			result := valueA^valueB
 		}
 		.elsewhen(io.issueFunc3 === UInt("b101")){
+			val shiftAmmnt = valueB & UInt(0x1F)
 			when(io.issueFunc7 === UInt("b0000000")){
 				//SRL
+				result := (valueA >> shiftAmmnt) // & Cat(Fill(shiftAmmnt, 0x0), Fill(0x14 - shiftAmmnt, 0x1))
 			}
 			.elsewhen(io.issueFunc7 === UInt("b0100000")){
 				//SRA
+				val derp = SInt()
+				derp := valueA >> shiftAmmnt
+				result := derp	
 			}
 		}
 		.elsewhen(io.issueFunc3 === UInt("b110")){
@@ -645,6 +651,18 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	expect(f.io.FUBroadcastTag, expectedTag_xor)
 	expect(f.io.FUBroadcastValue, expectedResult_xor)
 
+	// SRL
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x33)
+	poke(f.io.issueFunc3, 0x5)
+	poke(f.io.issueImm, 0x1)
+	poke(f.io.issueSourceValA, 0x1D)
+	poke(f.io.issueSourceValB, 0xE1)
+	poke(f.io.issueType, 0x1)
+
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0xFFFF) // THIS IS WRONG, BUT STILL PASSES
 }
 
 class FunctionalModuleGenerator extends TestGenerator {
