@@ -329,6 +329,7 @@ class FunctionalUnit extends Module {
 			result := Cat(Fill(32, result(31)), result)
 		}
 		.elsewhen(io.issueFunc3 === UInt("b101")){
+			val shiftAmmnt = valueB & UInt(0x1F)
 			when(io.issueFunc7 === UInt("b0000000")){
 				// SRLW
 				result := (valueA >> shiftAmmnt) 
@@ -666,11 +667,11 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	poke(f.io.issueDestTag, 0x1)
 	poke(f.io.issueFUOpcode, 0x33)
 	poke(f.io.issueFunc3, 0x5)
-	poke(f.io.issueImm, 0x1)
+	poke(f.io.issueImm, 0x0)
 	poke(f.io.issueSourceValA, 0x1D)
 	poke(f.io.issueSourceValB, 0xE1)
 	poke(f.io.issueType, 0x1)
-
+	poke(f.io.issueFunc7, 0x0)
 	step(1)
 
 	expect(f.io.FUBroadcastValue, 0xFFFF) // THIS IS WRONG, BUT STILL PASSES
