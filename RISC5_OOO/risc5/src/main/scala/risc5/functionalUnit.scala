@@ -51,7 +51,8 @@ class FunctionalUnit extends Module {
 		val valueA = UInt()
 		val valueB = UInt()
 		val rawResult = UInt()//result before sign extension	
-		
+		val derp = SInt()
+		val derp2 = SInt()		
 		valueA := io.issueSourceValA
 	when (io.issueType === UInt(0x0)){
 		//Use R values
@@ -283,7 +284,7 @@ class FunctionalUnit extends Module {
 			}
 			.elsewhen(io.issueFunc7 === UInt("b0100000")){
 				//SRA
-				val derp = SInt()
+		//		val derp = SInt()
 				derp := valueA >> shiftAmmnt
 				result := derp	
 			}
@@ -314,49 +315,55 @@ class FunctionalUnit extends Module {
 		when(io.issueFunc3 === UInt("b000")){
 			when(io.issueFunc7 === UInt("b0000000")){
 			//ADDW
-			result := valueA + valueB
-			result := Cat(Fill(32, result(31)), result)
+			derp := valueA + valueB
+			result := Cat(Fill(32, derp(31)), derp)
 			}
 			.elsewhen(io.issueFunc7 === UInt("b0100000")){
 			//SUBW
-			result := valueA - valueB
-			result := Cat(Fill(32, result(31)), result)
+			derp := valueA - valueB
+			result := Cat(Fill(32, derp(31)), derp)
 			}
 		}
 		.elsewhen(io.issueFunc3 === UInt("b001")){
 		//SLLW
-			result := valueA << (valueB & UInt(0x1F))
-			result := Cat(Fill(32, result(31)), result)
+			derp := valueA << (valueB & UInt(0x1F))
+			result := Cat(Fill(32, derp(31)), derp)
+	
 		}
 		.elsewhen(io.issueFunc3 === UInt("b101")){
 			val shiftAmmnt = valueB & UInt(0x1F)
 			when(io.issueFunc7 === UInt("b0000000")){
 				// SRLW
-				result := (valueA >> shiftAmmnt) 
-				result := Cat(Fill(32, result(31)), result)
+				derp := (valueA >> shiftAmmnt) 
+				result := Cat(Fill(32, derp(31)), derp)
+	
 			}
 			.elsewhen(io.issueFunc7 === UInt("b0100000")){
 				// SRAW
-				val derp = SInt()
-				derp := valueA >> shiftAmmnt
-				result := derp	
-				result := Cat(Fill(32, result(31)), result)
+			//	val derp = SInt()
+				derp2 := valueA >> shiftAmmnt
+					
+				result := Cat(Fill(32, derp2(31)), derp2)
 			}		
 		}		
-	}
+
+	}	
 	.elsewhen(io.issueFUOpcode === UInt(0x73)){ //matt
 	//this is a NOOP
 		valid := UInt(0)
 	}
+
 	.otherwise{
 		valid := UInt(0)	
-
+		derp := UInt(0)
+		derp2 := UInt(0)
 	}
 
 
 
 io.FUBroadcastValue := result
 io.FUBroadcastValid := valid
+
 }
 
 //////////////////////////////////////////////////////////////////
