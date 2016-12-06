@@ -197,7 +197,6 @@ class LoadStoreQueueModule extends Module {
         io.LoadStoreROBTag := UInt(0)
         io.LoadStoreFull := UInt(0)
  
-/*
   // reset all the register values
   when(reset) {
     for(i<-0 until 32) {
@@ -533,27 +532,11 @@ class LoadStoreQueueModule extends Module {
 
     }// when
   }//for loop
-  */
 
 }//Module
 
 class LoadStoreQueueTester(l:LoadStoreQueueModule) extends Tester(l) {
   
-        poke(l.io.FUBroadcastValid0,1)
-        poke(l.io.FUBroadcastTag0,0)
-        poke(l.io.FUBroadcastValue0,52)
-        
-        poke(l.io.FUBroadcastValid1,1)
-        poke(l.io.FUBroadcastTag1,5)
-        poke(l.io.FUBroadcastValue1,57)
-        
-        poke(l.io.FUBroadcastValid2,1)
-        poke(l.io.FUBroadcastTag2,8)
-        poke(l.io.FUBroadcastValue2,32)
-        
-        poke(l.io.FUBroadcastValid3,1)
-        poke(l.io.FUBroadcastTag3,14)
-        poke(l.io.FUBroadcastValue3,93)
 
     
 
