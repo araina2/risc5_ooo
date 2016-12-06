@@ -1,17 +1,33 @@
+package risc5
+
 import Chisel._
+import scala.sys.process._
+
+
+class intAll extends Module {
+//add (implicit val p: Parameters) before extends if using param
+        
+        val io = new Bundle {
+
+        val fetchstart = UInt(INPUT, 3)
+
+
+        }
+        //need to run Perl script - can do in scala, but Chisel???
+        
 
 
 
-class intDecodeRename extends Module {
+
 
         /////////////////////////////////
         // Module INstantiation
         //4 decodes go to one rename.....
         ///////////////////////////////////
-        val d0 = Module(new decodeChannel())
-        val d1 = Module(new decodeChannel())
-        val d2 = Module(new decodeChannel())
-        val d3 = Module(new decodeChannel())
+        val d0 = Module(new DecodeChannel())
+        val d1 = Module(new DecodeChannel())
+        val d2 = Module(new DecodeChannel())
+        val d3 = Module(new DecodeChannel())
         
         val r = Module(new RegAliasTable())
 
@@ -54,21 +70,7 @@ class intDecodeRename extends Module {
         r.io.IssueBroadcastFreeRow1
         r.io.IssueBroadcastFreeRow2 
         r.io.IssueBroadcastFreeRow3
-        r.io.IssueFull0 
-        r.io.IssueFull1 
-        r.io.IssueFull2 
-        r.io.IssueFull3 
-        r.io.IssueFull 
-        r.io.LoadStoreFull 
-        r.io.LoadStoreBroadcastFreeTag0     
-        r.io.FUBranchMispredict
-     */
 
-
-
-        ////////////////////////////////////////////////////////
-       //ASsigning vals form out of decode to in of renameing
-       ///////////////////////////////////////////////////////
 
         r.io.DecodeQueueSelect0 := d0.io.decodeQueueSelect 
         r.io.DecodeQueueSelect1 := d1.io.decodeQueueSelect 
@@ -117,22 +119,11 @@ class intDecodeRename extends Module {
         r.io.DecodeStoreSelect2 := d2.io.decodeIsStore 
         r.io.DecodeStoreSelect3 := d3.io.decodeIsStore 
 
-}
+        */
 
 
-class inteDRTests extends Tester(c){
 
-//All pokes go to Decode and all expecteds come from RAT
 
-  
-        
-        //is testing even legal here?
 
-}
-
-class intDRTestGenerator extends TestGenerator{
-
-        //def genMod(): Module = Module(new intDecodeRename())
-        //def genTest[T <: Module](c:T):Tester[T] = 
 
 }
