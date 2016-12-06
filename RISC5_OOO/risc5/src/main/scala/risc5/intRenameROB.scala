@@ -1,8 +1,10 @@
+package risc5
+
 import Chisel._
 
 
 
-class intDecodeRename extends Module {
+class intRenameROB extends Module {
 
         /////////////////////////////////
         // Module INstantiation
@@ -10,9 +12,46 @@ class intDecodeRename extends Module {
         val r = Module(new RegAliasTable())
         val rob = Module(new ROB())
 
-      
+        val io = new Bundle{
 
-      /*
+        val FUBroadcastValue0 = UInt(INPUT,64)
+        val FUBroadcastTag0 = UInt(INPUT,10)
+        val FUBroadcastValue1 = UInt(INPUT,64)
+        val FUBroadcastTag1 = UInt(INPUT,10)
+        val FUBroadcastValue2 = UInt(INPUT,64)
+        val FUBroadcastTag2 = UInt(INPUT,10)
+        val FUBroadcastValue3 = UInt(INPUT,64)
+        val FUBroadcastTag3 = UInt(INPUT,10)
+    
+        //Tags from the load/store queue
+        val LoadStoreDestVal0 = UInt(INPUT,64)
+        val LoadStoreDestTag0 = UInt(INPUT,10)
+       val LoadStoreDestReg0 = UInt(INPUT,5)
+         
+              val LoadStoreDestAddress0 = UInt(INPUT,64)
+
+
+        val ROBStoreSelect0 = Bool(OUTPUT)
+                 val ROBStoreSelect1 = Bool(OUTPUT)
+                    val ROBStoreSelect2 = Bool(OUTPUT)
+                       val ROBStoreSelect3 = Bool(OUTPUT)
+                          val ROBMemAddress0 = UInt(OUTPUT,64) 
+                             val ROBMemAddress1 = UInt(OUTPUT,64) 
+                                val ROBMemAddress2 = UInt(OUTPUT,64) 
+                                   val ROBMemAddress3 = UInt(OUTPUT,64) 
+                                      val ROBValue0 = UInt(OUTPUT,64) 
+                                         val ROBValue1 = UInt(OUTPUT,64) 
+                                            val ROBValue2 = UInt(OUTPUT,64) 
+                                               val ROBValue3 = UInt(OUTPUT,64) 
+                                                  val ROBValueValid0 = UInt(OUTPUT,1) 
+                                                     val ROBValueValid1 = UInt(OUTPUT,1) 
+                                                        val ROBValueValid2 = UInt(OUTPUT,1)
+                                                           val ROBValueValid3 = UInt(OUTPUT,1)
+        }
+
+
+
+       /* 
         Rename inputs required
         r.io.FUBroadcastValue0 
         r.io.FUBroadcastTag0 
@@ -42,9 +81,9 @@ class intDecodeRename extends Module {
         r.io.DecodeQueueSelect3 := d3.io.decodeQueueSelect 
        //pretty sure we need 4 of these?? commenting out 3 just in case...
         r.io.DecodeType :=  d0.io.decodeType
-        //r.io.DecodeType1 := d1.io.decodeType
-        //r.io.DecodeType2 :=  d2.io.decodeType
-        //r.io.DecodeType3 :=  d3.io.decodeType
+        r.io.DecodeType1 := d1.io.decodeType
+        r.io.DecodeType2 :=  d2.io.decodeType
+        r.io.DecodeType3 :=  d3.io.decodeType
         r.io.Decode_dest_0 := d0.io.decodeRd 
         r.io.Decode_dest_1 := d1.io.decodeRd 
         r.io.Decode_dest_2 := d2.io.decodeRd 
@@ -123,7 +162,7 @@ class intDecodeRename extends Module {
 }
 
 
-class intRR extends Tester(c){
+/*class intRR extends Tester{
 
 //All pokes go to Decode and all expecteds come from RAT
 
@@ -138,4 +177,4 @@ class intRRTestGenerator extends TestGenerator{
         //def genMod(): Module = Module(new intRenameROB())
         //def genTest[T <: Module](c:T):Tester[T] = 
 
-}
+}*/
