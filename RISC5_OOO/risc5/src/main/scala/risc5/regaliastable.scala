@@ -8,7 +8,10 @@ class RegAliasTable extends Module {
     val DecodeQueueSelect1 = Bool(INPUT)
     val DecodeQueueSelect2 = Bool(INPUT)
     val DecodeQueueSelect3 = Bool(INPUT)
-    val DecodeType  = UInt(INPUT,3)
+    val DecodeType0  = UInt(INPUT,3)
+    val DecodeType1  = UInt(INPUT,3)
+    val DecodeType2  = UInt(INPUT,3)
+    val DecodeType3  = UInt(INPUT,3)
     val Decode_dest_0 = UInt(INPUT,5)
     val Decode_dest_1 = UInt(INPUT,5)
     val Decode_dest_2 = UInt(INPUT,5)
@@ -162,6 +165,12 @@ class RegAliasTable extends Module {
     val RenameLoadStoreValid1 = UInt(OUTPUT,1)
     val RenameLoadStoreValid2 = UInt(OUTPUT,1)
     val RenameLoadStoreValid3 = UInt(OUTPUT,1)
+
+
+    val RenameType0  = UInt(OUTPUT,3)
+    val RenameType1  = UInt(OUTPUT,3)
+    val RenameType2  = UInt(OUTPUT,3)
+    val RenameType3  = UInt(OUTPUT,3)
     //Added ports for testing whether the tags have the proper value 
     /*val Tmptag0 = UInt(OUTPUT,10)
     val Tmptag1 = UInt(OUTPUT,10)
@@ -264,7 +273,11 @@ class RegAliasTable extends Module {
     io.RenameLoadStoreValid1 := UInt(0)
     io.RenameLoadStoreValid2 := UInt(0)
     io.RenameLoadStoreValid3 := UInt(0)
-    
+   
+    io.RenameType0 := UInt(0)
+    io.RenameType1 := UInt(0)
+    io.RenameType2 := UInt(0)
+    io.RenameType3 := UInt(0)
     //Added ports to test whether the expected tags are generated 
     /*io.Tmptag0  := UInt(0)
     io.Tmptag1  := UInt(0)
@@ -672,6 +685,11 @@ class RegAliasTable extends Module {
     io.RenameStoreSelect1 := io.DecodeStoreSelect1
     io.RenameStoreSelect2 := io.DecodeStoreSelect2
     io.RenameStoreSelect3 := io.DecodeStoreSelect3
+
+    io.RenameType0 := io.DecodeType0
+    io.RenameType1 := io.DecodeType1
+    io.RenameType2 := io.DecodeType2
+    io.RenameType3 := io.DecodeType3
 }
 
 class RegAliasTableTests(c: RegAliasTable) extends Tester(c) {
