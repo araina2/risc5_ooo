@@ -74,7 +74,7 @@ class RegAliasTable extends Module {
                                                              
     val LoadStoreFull = UInt(INPUT,1)  //Tells if all the load store queue is full
     //Free Tag information from load/store queues
-    val LoadStoreBroadcastFreeTag0 = UInt(INPUT,7)
+    val LoadStoreBroadcastFreeRow0 = UInt(INPUT,5)
     //val LoadStoreBroadcastFreeTag1 = UInt(INPUT,7)
     
     val FUBranchMispredict = Bool(INPUT)
@@ -396,7 +396,7 @@ class RegAliasTable extends Module {
         }
         //Updating the internal valid for the load/store queue
         for (j <- 0 until 32) {
-           when (Bool(io.LoadStoreBroadcastFreeTag0 != UInt(0)) && Bool(io.LoadStoreBroadcastFreeTag0 === UInt(j))) {
+           when (Bool(io.LoadStoreBroadcastFreeRow0 != UInt(0)) && Bool(io.LoadStoreBroadcastFreeRow0 === UInt(j))) {
             ldst_queue_valid_table(j) := UInt(1)
           }
            /*when (Bool(io.LoadStoreBroadcastFreeTag1 != UInt(0)) && Bool(io.LoadStoreBroadcastFreeTag1 === UInt(j))) {
