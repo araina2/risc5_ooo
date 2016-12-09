@@ -681,7 +681,85 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	poke(f.io.issueFunc7, 0x0)
 	step(1)
 
-	expect(f.io.FUBroadcastValue, 0xFFFF) // THIS IS WRONG, BUT STILL PASSES
+	expect(f.io.FUBroadcastValue, 0xE)
+
+	// SRA
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x33)
+	poke(f.io.issueFunc3, 0x5)
+	poke(f.io.issueImm, 0x0)
+	poke(f.io.issueSourceValA, 0x1D)
+	poke(f.io.issueSourceValB, 0xE1)
+	poke(f.io.issueType, 0x1)
+	poke(f.io.issueFunc7, 0x20)
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0xE)
+
+	// ADDW
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x3B)
+	poke(f.io.issueFunc3, 0x0)
+	poke(f.io.issueImm, 0x0)
+	poke(f.io.issueSourceValA, 0xE)
+	poke(f.io.issueSourceValB, 0xF)
+	poke(f.io.issueType, 0x1)
+	poke(f.io.issueFunc7, 0x0)
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0x1D)
+
+	// SUBW
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x3B)
+	poke(f.io.issueFunc3, 0x0)
+	poke(f.io.issueImm, 0x0)
+	poke(f.io.issueSourceValA, 0x5)
+	poke(f.io.issueSourceValB, 0x1)
+	poke(f.io.issueType, 0x1)
+	poke(f.io.issueFunc7, 0x20)
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0x4)
+
+	// SLLW
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x3B)
+	poke(f.io.issueFunc3, 0x1)
+	poke(f.io.issueImm, 0x0)
+	poke(f.io.issueSourceValA, 0x3FFFFFFF)
+	poke(f.io.issueSourceValB, 0x81)
+	poke(f.io.issueType, 0x1)
+	poke(f.io.issueFunc7, 0x0)
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0x7FFFFFFE)
+
+	// SRLW
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x3B)
+	poke(f.io.issueFunc3, 0x5)
+	poke(f.io.issueImm, 0x0)
+	poke(f.io.issueSourceValA, 0xFFFFFFFE)
+	poke(f.io.issueSourceValB, 0x81)
+	poke(f.io.issueType, 0x1)
+	poke(f.io.issueFunc7, 0x0)
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0xFFFFFFFF)
+
+	// SRAW
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x3B)
+	poke(f.io.issueFunc3, 0x5)
+	poke(f.io.issueImm, 0x0)
+	poke(f.io.issueSourceValA, 0x7FFFFFFE)
+	poke(f.io.issueSourceValB, 0x81)
+	poke(f.io.issueType, 0x1)
+	poke(f.io.issueFunc7, 0x20)
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0x3FFFFFFF)
 }
 
 class FunctionalModuleGenerator extends TestGenerator {
