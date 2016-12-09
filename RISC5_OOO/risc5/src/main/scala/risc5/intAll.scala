@@ -168,7 +168,7 @@ class intAll extends Module {
         rob.io.Rename_dest_1 := r.io.Rename_dest_1
         rob.io.Rename_dest_2 := r.io.Rename_dest_2
         rob.io.Rename_dest_3 := r.io.Rename_dest_3
-        rob.io.RenameValid := r.io.RenameValid
+        //TODO(need fix)rob.io.RenameValid := r.io.RenameValid
         rob.io.RenameROBtag0 := r.io.RenameROBtag0
         rob.io.RenameROBtag1 := r.io.RenameROBtag1
         rob.io.RenameROBtag2 := r.io.RenameROBtag2
@@ -190,7 +190,10 @@ class intAll extends Module {
         //////////////////////////////////////////////////////////
         //
         //QUESTION TODO Is tyupe never poased out of register alsisa tanle stage?
-        iss.io.RenameValid := r.io.RenameValid
+        iss.io.RenameValid_0 := r.io.RenameIssueValid0
+        iss.io.RenameValid_1 := r.io.RenameIssueValid1
+        iss.io.RenameValid_2 := r.io.RenameIssueValid2
+        iss.io.RenameValid_3 := r.io.RenameIssueValid3
         iss.io.FUBroadcastValue0_0 := f0.io.FUBroadcastValue
         iss.io.FUBroadcastTag0_0 := f0.io.FUBroadcastTag
         iss.io.FUBroadcastValue1_0 := f1.io.FUBroadcastValue
