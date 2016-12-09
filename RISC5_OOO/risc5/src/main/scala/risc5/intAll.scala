@@ -9,7 +9,14 @@ class intAll extends Module {
         
         val io = new Bundle {
 
-        val fetchstart = UInt(INPUT, 3)
+        val fetchInstructiond0 = UInt(INPUT,32) 
+        val fetchAddressd0 = UInt(INPUT, 64)
+        val fetchRobTagd0  = UInt(INPUT, 7)
+        val fetchBranchTaken= UInt(INPUT, 1)
+        val fetchValidd0= UInt(INPUT, 1)
+        val lSFulld0 = UInt(INPUT, 1)
+        val issueFulld0 = UInt(INPUT, 1)
+       
 
 
         }
@@ -60,8 +67,15 @@ class intAll extends Module {
       //        Deocde Channles - Make 4 :)                 //
       ///////////////////////////////////////////////////////
 
-        // d0.io.issueFull := iss.io.
-        // do.io.lsFull :=
+       d0.io.issueFull := iss.io.issueQueueFull
+       d0.io.lsFull := lsq.io.LoadStoreFull
+       d0.io.fetchInstruction := io.fetchInstructiond0 
+       d0.io.fetchAddress := io.fetchAddressd0
+       d0.io.fetchRobTag  := io.fetchRobTagd0
+       d0.io.fetchBranchTaken := io.fetchBrancTakend0
+       d0.io.fetchValid := io.fetchValidd0
+       d0.io.lSFull := io.lsFulld0
+       d0.io.issueFull := io.issueFulld0
       
 
       ////////////////////////////////////////////////////////
@@ -89,7 +103,7 @@ class intAll extends Module {
         r.io.IssueFull3 := iss.io.Full_3
         r.io.IssueFull := iss.io.IssueQueueFull
         r.io.LoadStoreFull := lsq.io.LoadStoreFull
-   //TODO     r.io.LoadStoreBroadcastFreeTag0 := lsq.io.LoadStoreBroadcastFreeTag
+        r.io.LoadStoreBroadcastFreeTag0 := lsq.io.LoadStoreFreeRow 
         r.io.DecodeQueueSelect0 := d0.io.decodeQueueSelect 
         r.io.DecodeQueueSelect1 := d1.io.decodeQueueSelect 
         r.io.DecodeQueueSelect2 := d2.io.decodeQueueSelect 
@@ -150,7 +164,7 @@ class intAll extends Module {
         rob.io.FUBroadcastTag3 := f3.io.FUBroadcastTag
         rob.io.LoadStoreDestVal0 := lsq.io.LoadStoreDestValue
         rob.io.LoadStoreDestTag0 := lsq.io.LoadStoreDestTag_out
-       //TODO:  rob.io.LoadStoreDestReg0 := lsq.io.LoadStoreDestReg <- doesn't exist in LSQ?
+       // rob.io.LoadStoreDestReg0 := lsq.io.LoadStoreDestReg //Currently not using
         rob.io.LoadStoreDestAddress0 := lsq.io.LoadStoreDestAddress
         rob.io.RenameDestTag0 := r.io.RenameDestTag0
         rob.io.RenameDestTag1 := r.io.RenameDestTag1
@@ -193,10 +207,10 @@ class intAll extends Module {
         iss.io.FUBroadcastTag3_0 := f3.io.FUBroadcastTag
         iss.io.LoadStoreDestVal_0 := lsq.io.LoadStoreDestValue
         iss.io.LoadStoreDestTag_0 := lsq.io.LoadStoreDestTag_out
-       //TODO: iss.io.LoadStoreDestTagValid_0 
+        iss.io.LoadStoreDestTagValid_0 := r.io.LoadStoreDestTagValid_out
         iss.io.FUBroadcastValid0_0 := f0.io.FUBroadcastValid
         //TODO iss.io.FUisBusy_0 := f0.io.busy
-       //TODO: Which row?  iss.io.RenameRowSelect0 := r.io.RenameRowSelect0
+        iss.io.RenameRowSelect0 := r.io.RenameIssueRowSelect0
         iss.io.RenameSourceAValue_0 := r.io.RenameSourceAValue0
         iss.io.RenameSourceAValueValid_0 := r.io.RenameSourceAValueValid0
         iss.io.RenameSourceATag_0 := r.io.RenameSourceATag0
@@ -221,10 +235,9 @@ class intAll extends Module {
         iss.io.FUBroadcastTag3_1 := f3.io.FUBroadcastTag
         iss.io.LoadStoreDestVal_1 := lsq.io.LoadStoreDestValue
         iss.io.LoadStoreDestTag_1 := lsq.io.LoadStoreDestTag_out
-       //TODO: iss.io.LoadStoreDestTagValid_0 
         iss.io.FUBroadcastValid0_1 := f1.io.FUBroadcastValid
         //TODOiss.io.FUisBusy_1 := f1.io.busy
-        //TODOD Which row? iss.io.RenameRowSelect1 := r.io.RenameRowSelect1
+        iss.io.RenameRowSelect1 := r.io.RenameIssueRowSelect1
         iss.io.RenameSourceAValue_1 := r.io.RenameSourceAValue1
         iss.io.RenameSourceAValueValid_1 := r.io.RenameSourceAValueValid1
         iss.io.RenameSourceATag_1 := r.io.RenameSourceATag1
@@ -249,10 +262,10 @@ class intAll extends Module {
         iss.io.FUBroadcastTag3_2 := f3.io.FUBroadcastTag
         iss.io.LoadStoreDestVal_2 := lsq.io.LoadStoreDestValue
         iss.io.LoadStoreDestTag_2 := lsq.io.LoadStoreDestTag_out
-       //TODO: iss.io.LoadStoreDestTagValid_0 
+  
         iss.io.FUBroadcastValid0_2 := f2.io.FUBroadcastValid
        //TODO: iss.io.FUisBusy_2 := f2.io.busy
-       //TODOD Which row? iss.io.RenameRowSelect2 := r.io.RenameRowSelect2
+        iss.io.RenameRowSelect2 := r.io.RenameIssueRowSelect2
         iss.io.RenameSourceAValue_2 := r.io.RenameSourceAValue2
         iss.io.RenameSourceAValueValid_2 := r.io.RenameSourceAValueValid2
         iss.io.RenameSourceATag_2 := r.io.RenameSourceATag2
@@ -277,10 +290,10 @@ class intAll extends Module {
         iss.io.FUBroadcastTag3_3 := f3.io.FUBroadcastTag
         iss.io.LoadStoreDestVal_3 := lsq.io.LoadStoreDestValue
         iss.io.LoadStoreDestTag_3 := lsq.io.LoadStoreDestTag_out
-       //TODO: iss.io.LoadStoreDestTagValid_0 
+ 
         iss.io.FUBroadcastValid0_3 := f3.io.FUBroadcastValid
        //TODO iss.io.FUisBusy_3 := f3.io.busy
-        //TODO whcih row? iss.io.RenameRowSelect3:= r.io.RenameRowSelect3
+        iss.io.RenameRowSelect3:= r.io.RenameIssueRowSelect3
         iss.io.RenameSourceAValue_3 := r.io.RenameSourceAValue3
         iss.io.RenameSourceAValueValid_3 := r.io.RenameSourceAValueValid3
         iss.io.RenameSourceATag_3 := r.io.RenameSourceATag3
@@ -415,11 +428,11 @@ class intAll extends Module {
         lsq.io.RenameROBtag1 := r.io.RenameROBtag1
         lsq.io.RenameROBtag2 := r.io.RenameROBtag2
         lsq.io.RenameROBtag3 := r.io.RenameROBtag3
-        //TODO: Find types 
-        //lsq.io.RenameType_0 := r.io.RenameType_0
-        //lsq.io.RenameType_1 := r.io.RenameType_1
-        //lsq.io.RenameType_2 := r.io.RenameType_2
-        //lsq.io.RenameType_3 := r.io.RenameType_3
+        
+        lsq.io.RenameType_0 := r.io.RenameType0
+        lsq.io.RenameType_1 := r.io.RenameType1
+        lsq.io.RenameType_2 := r.io.RenameType2
+        lsq.io.RenameType_3 := r.io.RenameType3
         lsq.io.FUBroadcastValue0 := f0.io.FUBroadcastValue
         lsq.io.FUBroadcastTag0 := f0.io.FUBroadcastTag
         lsq.io.FUBroadcastValid0 := f0.io.FUBroadcastValid
@@ -432,10 +445,10 @@ class intAll extends Module {
         lsq.io.FUBroadcastValue3 := f3.io.FUBroadcastValue
         lsq.io.FUBroadcastTag3 := f3.io.FUBroadcastTag
         lsq.io.FUBroadcastValid3 := f3.io.FUBroadcastValid
-//TODO        lsq.io.LoadStoreDestTag
-//        lsq.io.LoadStoreDestVal
-//        lsq.io.LoadStoreDestValid
-//Naming convention suggests the above should be from withing itself?
+        lsq.io.LoadStoreDestTag := lsq.io.LoadStoreTag_out
+        lsq.io.LoadStoreDestVal := lsq.io.LoadStoreDestValue
+        lsq.io.LoadStoreDestValid := lsq.LoadStoreDestValid_out
+
         lsq.io.Dcache_busy := dmem.io.busy
         lsq.io.Dcache_tag_out := dmem.io.TAG_out
         lsq.io.Dcache_data_out := dmem.io.dout
