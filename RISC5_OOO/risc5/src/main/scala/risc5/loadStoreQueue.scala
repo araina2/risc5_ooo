@@ -17,6 +17,7 @@ class LoadStoreQueueModule extends Module {
         val RenameLoadStoreValid1 = UInt(INPUT,1)
         val RenameLoadStoreValid2 = UInt(INPUT,1)
         val RenameLoadStoreValid3 = UInt(INPUT,1)
+        val LoadStoreFreeRow = UInt(OUTPUT,5)
    
         // Source "A" parameters in the loadstore queue
         val RenameSourceAValue0 = UInt(INPUT,64)
@@ -229,6 +230,8 @@ class LoadStoreQueueModule extends Module {
         sign_extended_value0:= UInt(0)
         sign_extended_value1:= UInt(0)
         sign_extended_value2:= UInt(0)
+        
+        io.LoadStoreFreeRow := UInt(0)
  
   // reset all the register values
   when(reset) {
@@ -511,6 +514,12 @@ class LoadStoreQueueModule extends Module {
   //Check if the entry is full in the L/S queue
   io.LoadStoreFull := ValidEntry(0) & ValidEntry(1) & ValidEntry(2) & ValidEntry(3) & ValidEntry(4) & ValidEntry(5) & ValidEntry(6) & ValidEntry(7) & ValidEntry(8) & ValidEntry(9) & ValidEntry(10) & ValidEntry(11) & ValidEntry(12) & ValidEntry(13) & ValidEntry(14) & ValidEntry(15) & ValidEntry(16) & ValidEntry(16) & ValidEntry(17) & ValidEntry(18) & ValidEntry(19) & ValidEntry(20) & ValidEntry(21) & ValidEntry(22) & ValidEntry(23) & ValidEntry(24) & ValidEntry(25) & ValidEntry(26) & ValidEntry(27) & ValidEntry(28) & ValidEntry(29) & ValidEntry(30) & ValidEntry(31)
 
+  for(b<-31 to 0 by -1){
+      when((ValidEntry(b)===UInt(0) && (io.LoadStoreFull===UInt(0)))) {
+          io.LoadStoreFreeRow := UInt(b) 
+      
+      }
+    }
 
       val rownumber0 = UInt(width=5)
       val rownumber1 = UInt(width=5)
