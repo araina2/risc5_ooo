@@ -153,8 +153,13 @@ class DecodeChannel extends Module {
 	valid := UInt(0)
 	}
     .otherwise{
+	when(io.fetchValid === UInt(1)){
 	valid := UInt(1)
 	}
+	.otherwise{
+	valid := UInt(0)
+	}
+    }
 
      io.decodeValid := valid
 /////////////////////////////////////////////////////////
@@ -252,95 +257,6 @@ class DecodeChannel extends Module {
 
 
 
-//////////////////////////OUTDATED///////////////
-/*
-	//////////////I-Type///////////////
-    when((io.decodeOpcode === UInt(0x13))||(io.decodeOpcode === UInt(0x1B))||(io.decodeOpcode === UInt(0x67))){
-	io.isI := UInt(0x1)
-	}
-    .otherwise{
-	io.isI := UInt(0x0)
-	}
-
-    /////////////R-Type////////////////
-    //Supported Opcodes: 0111011, 0110011
-    when((io.decodeOpcode === UInt(0x3B))||(io.decodeOpcode === UInt(0x33))){
-        io.isR := UInt(0x1)
-    }
-    .otherwise{
-        io.isR := UInt(0x0)
-    }	
-    /////////////S-Type//////////////
-    //suported Opcodes: 0100011
-    when(io.decodeOpcode === UInt(0x23)){
-        io.isS := UInt(0x1)
-    }
-    .otherwise{
-        io.isS := UInt(0x0)
-    }
-    ////////////SB-Type/////////////
-    //Supported Opcodes: 1100011
-    when(io.decodeOpcode === UInt(0x63)){
-        io.isSB := UInt(0x1)
-    }
-    .otherwise{
-        io.isSB := UInt(0x0)
-    }	
-    ///////////U-Type////////////////
-    //supported Opcodes: 0110111, 0010111
-    when((io.decodeOpcode === UInt(0x37))||(io.decodeOpcode === UInt(0x17))){
-        io.isU := UInt(0x1)
-    }
-    .otherwise{
-        io.isU := UInt(0x0)
-    }
-    ///////////UJ-TYPE///////////////
-    //supported Opcodes: 1101111
-    when(io.decodeOpcode === UInt(0x6F)){	
-        io.isUJ := UInt(0x1)
-    }
-    .otherwise{
-        io.isUJ := UInt(0x0)
-    }	
-*/
-///////////////////////////////////////////
-
-// OLD CODE
-//    /*io.isR  := (io.decodeOpcode === UInt("b0111011")) || (io.decodeOpcode === UInt("b0110011"))
-//    io.isI  := (io.decodeOpcode === UInt(0x03)) || (io.decodeOpcode === UInt(0x1B)) || (io.decodeOpcode === UInt(0x67))
-//    io.isS  := (io.decodeOpcode === UInt("b0100011"))
-//    io.isSB := (io.decodeOpcode === UInt("b1100011"))
-//    io.isU  := (io.decodeOpcode === UInt("b0110111")) || (io.decodeOpcode === UInt("b0010111"))
-//    io.isUJ := (io.decodeOpcode === UInt("b1101111"))*/
-
-/*
-	
-
-    //Immediate value selection logic//    
-    When(io.decodeType === UInt()){
-    io.decode_Imm := Cat(io.fetchInstruction(31,25), io.fetchInstruction(11,7)) 
-    }
-    .elsewhen (io.isSB === UInt(1)){
-    io.decode_Imm := Cat(io.fetchInstruction(31), io.fetchInstruction(7), io.fetchInstruction(30,25), io.fetchInstruction(11,8))
-    }
-    .elsewhen(io.isUJ === UInt(1)){
-         io.decode_Imm := Cat(io.fetchInstruction(31), io.fetchInstruction(19, 12), io.fetchInstruction(20), io.fetchInstruction(30,21))
-    }
-    .otherwise{
-    io.decode_Imm := io.fetchInstruction(31,20) 
-    }
-    
-   
-    when(io.isUJ === UInt(1)){
-       io.decode_Imm := Cat(io.fetchInstruction(31),  io.fetchInstruction(19, 12), io.fetchInstruction(20), io.fetchInstruction(30,21))
-    }
-    .otherwise{
-        io.decode_Imm := io.fetchInstruction(31,12)
-    }
-    
-    io.decodeRobTag := io.fetchRobTag    
-    
-*/
 
 
 
@@ -377,10 +293,12 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
         poke(d.io.fetchAddress, IsampleAddress)
         poke(d.io.fetchRobTag, IsampleRobTag) 
         poke(d.io.fetchValid, 0x1)
+	poke(d.io.lSFull, 0x0)
+	poke(d.io.issueFull, 0x0)
 
         step(1)
         
-        poke(d.io.fetchAddress, 0x5)
+       // poke(d.io.fetchAddress, 0x5)
 
         expect(d.io.decodeOpcode,  IexpectedOpcode)
         expect(d.io.decodeRd,      IexpectedRd)
@@ -405,23 +323,24 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
 
 
     //poke values
-   val RsampleInstruction = 0x00528093//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
+   val RsampleInstruction = 0x00A58AB3//Integer.parseInt("0000 000 01010 01011 000 10101 0110011",2)
    val RsampleAddress     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000001",2)
     val RsampleRobTag      = 0x2D //Integer.parseInt("101101",2)
 
     //expected values
-    val RexpectedOpcode  = Integer.parseInt("0010011",2)
-    val RexpectedRd      = Integer.parseInt("00001",2)
+    val RexpectedOpcode  = Integer.parseInt("0110011",2)
+    val RexpectedRd      = Integer.parseInt("10101",2)
     val RexpectedFunky3  = Integer.parseInt("000",2)
-    val RexpectedRs1     = Integer.parseInt("00101",2)
-    val RexpectedRs2     = Integer.parseInt("00000",2)
+    val RexpectedRs1     = Integer.parseInt("01011",2)
+    val RexpectedRs2     = Integer.parseInt("01010",2)
     val RexpectedFunky7  = Integer.parseInt("0000000",2)
-    val Rexpected_Imm    = 0x5 //Integer.parseInt("0000 0000 0000 0000 0000",2)
+    val Rexpected_Imm    = 0x0 //Integer.parseInt("0000 0000 0000 0000 0000",2)
 
 
         poke(d.io.fetchInstruction, RsampleInstruction)
         poke(d.io.fetchAddress, RsampleAddress)
         poke(d.io.fetchRobTag, RsampleRobTag) 
+	poke(d.io.fetchValid, 0)
 
         step(1)
         expect(d.io.decodeOpcode,  RexpectedOpcode)
@@ -434,13 +353,38 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
         expect(d.io.decode_Imm,   Rexpected_Imm)
         expect(d.io.decodeRobTag,  RsampleRobTag)
         expect(d.io.decodeAddress, RsampleAddress)
-        expect(d.io.decodeType,  1)
+        expect(d.io.decodeType,  0)
 //        expect(d.io.isI,  0)
 //        expect(d.io.isS,  0)
 //        expect(d.io.isSB, 0)
 //        expect(d.io.isU,  0)
 //        expect(d.io.isUJ, 0)
 	expect(d.io.decodeQueueSelect, 0)
+	expect(d.io.decodeValid, 0)
+///////////////valid test///////////////////////
+	poke(d.io.fetchValid, 1)
+
+        step(1)
+        expect(d.io.decodeOpcode,  RexpectedOpcode)
+        expect(d.io.decodeRd,      RexpectedRd)
+        expect(d.io.decodeFunky3,  RexpectedFunky3)
+        expect(d.io.decodeRs1,     RexpectedRs1)
+        expect(d.io.decodeRs2,     RexpectedRs2)
+        expect(d.io.decodeFunky7,  RexpectedFunky7)
+//        expect(d.io.decode_Imm, RexpectedImm_I_S)
+        expect(d.io.decode_Imm,   Rexpected_Imm)
+        expect(d.io.decodeRobTag,  RsampleRobTag)
+        expect(d.io.decodeAddress, RsampleAddress)
+        expect(d.io.decodeType,  0)
+//        expect(d.io.isI,  0)
+//        expect(d.io.isS,  0)
+//        expect(d.io.isSB, 0)
+//        expect(d.io.isU,  0)
+//        expect(d.io.isUJ, 0)
+	expect(d.io.decodeQueueSelect, 0)
+	expect(d.io.decodeValid, 1)
+
+
 
 /////////////S-Type Test///////////////////
 
