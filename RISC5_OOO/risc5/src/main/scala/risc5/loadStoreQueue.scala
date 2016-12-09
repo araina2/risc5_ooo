@@ -17,7 +17,7 @@ class LoadStoreQueueModule extends Module {
         val RenameLoadStoreValid1 = UInt(INPUT,1)
         val RenameLoadStoreValid2 = UInt(INPUT,1)
         val RenameLoadStoreValid3 = UInt(INPUT,1)
-        val LoadStoreFreeRow = UInt(OUTPUT,4)
+        val LoadStoreFreeRow = UInt(OUTPUT,5)
    
         // Source "A" parameters in the loadstore queue
         val RenameSourceAValue0 = UInt(INPUT,64)
