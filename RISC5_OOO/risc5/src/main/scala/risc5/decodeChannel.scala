@@ -323,18 +323,18 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
 
 
     //poke values
-   val RsampleInstruction = 0x00528093//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
+   val RsampleInstruction = 0x00A58AB3//Integer.parseInt("0000 000 01010 01011 000 10101 0110011",2)
    val RsampleAddress     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000001",2)
     val RsampleRobTag      = 0x2D //Integer.parseInt("101101",2)
 
     //expected values
-    val RexpectedOpcode  = Integer.parseInt("0010011",2)
-    val RexpectedRd      = Integer.parseInt("00001",2)
+    val RexpectedOpcode  = Integer.parseInt("0110011",2)
+    val RexpectedRd      = Integer.parseInt("10101",2)
     val RexpectedFunky3  = Integer.parseInt("000",2)
-    val RexpectedRs1     = Integer.parseInt("00101",2)
-    val RexpectedRs2     = Integer.parseInt("00000",2)
+    val RexpectedRs1     = Integer.parseInt("01011",2)
+    val RexpectedRs2     = Integer.parseInt("01010",2)
     val RexpectedFunky7  = Integer.parseInt("0000000",2)
-    val Rexpected_Imm    = 0x5 //Integer.parseInt("0000 0000 0000 0000 0000",2)
+    val Rexpected_Imm    = 0x0 //Integer.parseInt("0000 0000 0000 0000 0000",2)
 
 
         poke(d.io.fetchInstruction, RsampleInstruction)
