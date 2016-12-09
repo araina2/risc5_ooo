@@ -8,7 +8,10 @@ class RegAliasTable extends Module {
     val DecodeQueueSelect1 = Bool(INPUT)
     val DecodeQueueSelect2 = Bool(INPUT)
     val DecodeQueueSelect3 = Bool(INPUT)
-    val DecodeType  = UInt(INPUT,3)
+    val DecodeType0  = UInt(INPUT,3)
+    val DecodeType1  = UInt(INPUT,3)
+    val DecodeType2  = UInt(INPUT,3)
+    val DecodeType3  = UInt(INPUT,3)
     val Decode_dest_0 = UInt(INPUT,5)
     val Decode_dest_1 = UInt(INPUT,5)
     val Decode_dest_2 = UInt(INPUT,5)
@@ -74,7 +77,7 @@ class RegAliasTable extends Module {
                                                              
     val LoadStoreFull = UInt(INPUT,1)  //Tells if all the load store queue is full
     //Free Tag information from load/store queues
-    val LoadStoreBroadcastFreeTag0 = UInt(INPUT,7)
+    val LoadStoreBroadcastFreeRow0 = UInt(INPUT,5)
     //val LoadStoreBroadcastFreeTag1 = UInt(INPUT,7)
     
     val FUBranchMispredict = Bool(INPUT)
@@ -156,6 +159,18 @@ class RegAliasTable extends Module {
     val RenameStoreSelect1 = Bool(OUTPUT)
     val RenameStoreSelect2 = Bool(OUTPUT)
     val RenameStoreSelect3 = Bool(OUTPUT)
+
+//Added these signals as they are needed in the load/store queue for some reasons.
+    val RenameLoadStoreValid0 = UInt(OUTPUT,1)
+    val RenameLoadStoreValid1 = UInt(OUTPUT,1)
+    val RenameLoadStoreValid2 = UInt(OUTPUT,1)
+    val RenameLoadStoreValid3 = UInt(OUTPUT,1)
+
+
+    val RenameType0  = UInt(OUTPUT,3)
+    val RenameType1  = UInt(OUTPUT,3)
+    val RenameType2  = UInt(OUTPUT,3)
+    val RenameType3  = UInt(OUTPUT,3)
     //Added ports for testing whether the tags have the proper value 
     /*val Tmptag0 = UInt(OUTPUT,10)
     val Tmptag1 = UInt(OUTPUT,10)
@@ -254,7 +269,15 @@ class RegAliasTable extends Module {
     io.RenameStoreSelect1 := Bool(false)
     io.RenameStoreSelect2 := Bool(false)
     io.RenameStoreSelect3 := Bool(false)
-    
+    io.RenameLoadStoreValid0 := UInt(0)
+    io.RenameLoadStoreValid1 := UInt(0)
+    io.RenameLoadStoreValid2 := UInt(0)
+    io.RenameLoadStoreValid3 := UInt(0)
+   
+    io.RenameType0 := UInt(0)
+    io.RenameType1 := UInt(0)
+    io.RenameType2 := UInt(0)
+    io.RenameType3 := UInt(0)
     //Added ports to test whether the expected tags are generated 
     /*io.Tmptag0  := UInt(0)
     io.Tmptag1  := UInt(0)
@@ -386,7 +409,7 @@ class RegAliasTable extends Module {
         }
         //Updating the internal valid for the load/store queue
         for (j <- 0 until 32) {
-           when (Bool(io.LoadStoreBroadcastFreeTag0 != UInt(0)) && Bool(io.LoadStoreBroadcastFreeTag0 === UInt(j))) {
+           when (Bool(io.LoadStoreBroadcastFreeRow0 != UInt(0)) && Bool(io.LoadStoreBroadcastFreeRow0 === UInt(j))) {
             ldst_queue_valid_table(j) := UInt(1)
           }
            /*when (Bool(io.LoadStoreBroadcastFreeTag1 != UInt(0)) && Bool(io.LoadStoreBroadcastFreeTag1 === UInt(j))) {
@@ -502,6 +525,7 @@ class RegAliasTable extends Module {
           //printf("The value of loadstorerowselecttag0 is %d",io.RenameLoadStoreRowSelect0);
           //printf("\nThe value of tag(i) in Load Store dest_0 is %d", tag(i))
           //printf("\nThe value of renameloadstore(i) in Load Store dest_0 is %d", io.RenameDestTag0)
+          io.RenameLoadStoreValid0 := UInt(1)
         }
 
         when ((Bool(UInt(i) === io.Decode_dest_1) && Bool(io.DecodeQueueSelect1 === Bool(true)))) {
@@ -528,6 +552,7 @@ class RegAliasTable extends Module {
             io.RenameLoadStoreRowSelect1 := temp
           }*/
           ldst_queue_valid_table(io.RenameLoadStoreRowSelect1) := UInt(0)
+          io.RenameLoadStoreValid1 := UInt(1)
           //printf("The value of loadstorerowselecttag1 is %d",io.RenameLoadStoreRowSelect1);
           //printf("\nThe value of tag(i) in Load Store dest_1 is %d", tag(i))
           //printf("\nThe value of renameloadstore(i) in Load Store dest_1 is %d", io.RenameDestTag1)
@@ -567,6 +592,7 @@ class RegAliasTable extends Module {
             io.RenameLoadStoreRowSelect2 := temp
           }*/
           ldst_queue_valid_table(io.RenameLoadStoreRowSelect2) := UInt(0)
+          io.RenameLoadStoreValid2 := UInt(1)
           //printf("The value of loadstorerowselecttag2 is %d",io.RenameLoadStoreRowSelect2);
           //printf("\nThe value of tag(i) in Load Store dest_1 is %d", tag(i))
           //printf("\nThe value of renameloadstore(i) in Load Store dest_2 is %d", io.RenameDestTag2)
@@ -614,6 +640,7 @@ class RegAliasTable extends Module {
             io.RenameLoadStoreRowSelect3 := temp
           }*/
           ldst_queue_valid_table(io.RenameLoadStoreRowSelect3) := UInt(0)
+          io.RenameLoadStoreValid3 := UInt(1)
 
           //printf("The value of loadstorerowselecttag3 is %d",io.RenameLoadStoreRowSelect3);
           //printf("\nThe value of tag(i) in Load Store dest_1 is %d", tag(i))
@@ -658,6 +685,11 @@ class RegAliasTable extends Module {
     io.RenameStoreSelect1 := io.DecodeStoreSelect1
     io.RenameStoreSelect2 := io.DecodeStoreSelect2
     io.RenameStoreSelect3 := io.DecodeStoreSelect3
+
+    io.RenameType0 := io.DecodeType0
+    io.RenameType1 := io.DecodeType1
+    io.RenameType2 := io.DecodeType2
+    io.RenameType3 := io.DecodeType3
 }
 
 class RegAliasTableTests(c: RegAliasTable) extends Tester(c) {

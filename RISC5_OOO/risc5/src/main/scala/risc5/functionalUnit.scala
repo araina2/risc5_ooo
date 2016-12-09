@@ -38,9 +38,10 @@ class FunctionalUnit extends Module {
 		val FUBroadcastValue = UInt(OUTPUT, 64)
 		val FUBroadcastTag   = UInt(OUTPUT, 10)
 		val FUBroadcastValid = UInt(OUTPUT, 1)
+		val FUBusyBit        = UInt(OUTPUT, 1)
 
 	}
-		val valid = Reg(UInt())
+		val valid = Reg(UInt(0))
 
 
 		val destTag = Reg(next = io.issueDestTag)
@@ -58,8 +59,6 @@ class FunctionalUnit extends Module {
 		//Use R values
 		valueA := io.issueSourceValA
 		valueB := io.issueSourceValB
-
-
 	}
 	.elsewhen (io.issueType === UInt(0x1)){
 		//Use I Values
@@ -156,16 +155,6 @@ class FunctionalUnit extends Module {
 		}
 
 	}
-	.elsewhen(io.issueFUOpcode === UInt(0x3)){
-		// Opcode = 0000011
-		// LOAD Commands, Treat as no op.
-		valid := UInt(0x0)
-	}
-	.elsewhen(io.issueFUOpcode === UInt(0x23)){
-		// Opcode = 0100011
-		// STORE Commands, Treat as no op.
-		valid := UInt(0x0)
-	}
 	.elsewhen(io.issueFUOpcode === UInt(0x13)){ //matt
 	//I Type
         //~~~~~~~~~~~~~~~~~~~~~~
@@ -182,10 +171,17 @@ class FunctionalUnit extends Module {
 	// 101 | SRAI | 0100000
 	//~~~~~~~~~~~~~~~~~~~~~~~~
 		
+		//when(io.FUBroadcastValid === UInt(1)){
+		//	valid   := UInt(0)
+		//	destTag := UInt(0)
+		//	result  := UInt(0)
+		//}
+
 		when(io.issueFunc3 === UInt("b000")){
 		//ADDI
 		//Add Value A and Value B
 			result := valueA + valueB
+			valid  := UInt(1)
 		}
 
 		.elsewhen(io.issueFunc3 === UInt("b010")){
@@ -215,15 +211,17 @@ class FunctionalUnit extends Module {
 		.elsewhen(io.issueFunc3 === UInt("b100")){
 		//XORI
 			result := valueA^valueB
-				
+			valid := UInt(1)	
 		}
 
 		.elsewhen(io.issueFunc3 === UInt("b110")){
 		//ORI
 			result := valueA | valueB
+			valid  := UInt(1)
 		}
 		.elsewhen(io.issueFunc3 === UInt("b111")){
 			result := valueA & valueB
+			valid := UInt(1)
 		}
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x33)){ //matt
@@ -244,14 +242,17 @@ class FunctionalUnit extends Module {
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		when((io.issueFunc3 === UInt("b000")) && (io.issueFunc7 === UInt(0x0))){
 			result := valueA + valueB
+			valid := UInt(1)
 		}
 		
 		.elsewhen((io.issueFunc3 === UInt("b000")) && (io.issueFunc7 === UInt(0x20))){
 			result := valueA - valueB
+			valid := UInt(1)
 		}
 		.elsewhen(io.issueFunc3 === UInt("b001")){
 			// SLL
 			result := valueA << (valueB & UInt(0x1F))
+			valid := UInt(1)
 		}
 		.elsewhen(io.issueFunc3 === UInt("b010")){
 			//SLT
@@ -275,25 +276,30 @@ class FunctionalUnit extends Module {
 		}
 		.elsewhen(io.issueFunc3 === UInt("b100")){
 			result := valueA^valueB
+			valid := UInt(1)
 		}
 		.elsewhen(io.issueFunc3 === UInt("b101")){
 			val shiftAmmnt = valueB & UInt(0x1F)
 			when(io.issueFunc7 === UInt("b0000000")){
 				//SRL
 				result := (valueA >> shiftAmmnt) // & Cat(Fill(shiftAmmnt, 0x0), Fill(0x14 - shiftAmmnt, 0x1))
+				valid := UInt(1)
 			}
 			.elsewhen(io.issueFunc7 === UInt("b0100000")){
 				//SRA
 		//		val derp = SInt()
 				derp := valueA >> shiftAmmnt
 				result := derp	
+				valid := UInt(1)
 			}
 		}
 		.elsewhen(io.issueFunc3 === UInt("b110")){
 			result := valueA | valueB
+			valid := UInt(1)
 		}
 		.elsewhen(io.issueFunc3 === UInt("b111")){
 			result := valueA & valueB
+			valid := UInt(1)
 		}		
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x1B)){
@@ -323,11 +329,13 @@ class FunctionalUnit extends Module {
 			derp := valueA - valueB
 			result := Cat(Fill(32, derp(31)), derp)
 			}
+			valid := UInt(1)
 		}
 		.elsewhen(io.issueFunc3 === UInt("b001")){
 		//SLLW
 			derp := valueA << (valueB & UInt(0x1F))
 			result := Cat(Fill(32, derp(31)), derp)
+			valid := UInt(1)
 	
 		}
 		.elsewhen(io.issueFunc3 === UInt("b101")){
@@ -336,6 +344,7 @@ class FunctionalUnit extends Module {
 				// SRLW
 				derp := (valueA >> shiftAmmnt) 
 				result := Cat(Fill(32, derp(31)), derp)
+				valid := UInt(1)
 	
 			}
 			.elsewhen(io.issueFunc7 === UInt("b0100000")){
@@ -344,6 +353,7 @@ class FunctionalUnit extends Module {
 				derp2 := valueA >> shiftAmmnt
 					
 				result := Cat(Fill(32, derp2(31)), derp2)
+				valid := UInt(1)
 			}		
 		}		
 
@@ -464,6 +474,29 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	expect(f.io.FUBroadcastValue, expectedResult_sltiu)
 	expect(f.io.FUBroadcastValid, 0x1)
 
+/////////////////////////////////////////////
+//making sure that valid only is high for 1 cycle
+////////////////////////////////////////////
+
+	//this is garbage
+	poke(f.io.issueSourceValA, 0x3)
+	poke(f.io.issueSourceValB, 0x4)
+	poke(f.io.issueFUOpcode, 0x77)
+	poke(f.io.issueFunc3, 0x2)
+	poke(f.io.issueFunc7, 0x3)
+	poke(f.io.issueImm, 0x20)
+	poke(f.io.issueType, 0x2)
+	poke(f.io.issueDestTag, 0x8)
+	poke(f.io.issueFull, 0x1)
+	poke(f.io.issueValid, 0x1)
+
+	step(1)
+
+	expect(f.io.FUBroadcastValid, 0x0)
+
+
+
+
 ////////////////////////////////////////
 //		OPCODE 0x67
 ////////////////////////////////////////
@@ -520,7 +553,40 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 
 	step(1)
 
+
 	expect(f.io.FUBroadcastValid, 0x0)
+//////////////////////////////////////////////////////////
+	val sampleTag_xori2 = 0x869
+	val expectedTag_xori2 = 0x869
+	
+	val sampleOpcode_xori2  = 0x13
+	val sampleFunc3_xori2   = 0x4
+	val sampleImm_xori2     = 0x3
+	val sampleSourceA_xori2 = (-0x1)
+	val sampleSourceB_xori2 = 0x5
+	val sampleType_xori2    = 0x1
+	
+	val expectedResult_xori2 = (-0x4)
+
+
+	poke(f.io.issueDestTag, sampleTag_xori2)
+	poke(f.io.issueFUOpcode, sampleOpcode_xori2)
+	poke(f.io.issueFunc3, sampleFunc3_xori2)
+	poke(f.io.issueFunc7, 0x0)
+	poke(f.io.issueImm, sampleImm_xori2)
+	poke(f.io.issueSourceValA, sampleSourceA_xori2)
+	poke(f.io.issueSourceValB, sampleSourceB_xori2)
+	poke(f.io.issueType, sampleType_xori2)
+
+	step(1)
+
+	expect(f.io.FUBroadcastTag, expectedTag_xori2)
+	expect(f.io.FUBroadcastValue, expectedResult_xori2)
+	expect(f.io.FUBroadcastValid, 0x1)
+
+
+
+////////////////////////////////////////////////////////////
 	
 	// BNE
 	poke(f.io.issueSourceValA, 0x46)
@@ -681,7 +747,85 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	poke(f.io.issueFunc7, 0x0)
 	step(1)
 
-	expect(f.io.FUBroadcastValue, 0xFFFF) // THIS IS WRONG, BUT STILL PASSES
+	expect(f.io.FUBroadcastValue, 0xE)
+
+	// SRA
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x33)
+	poke(f.io.issueFunc3, 0x5)
+	poke(f.io.issueImm, 0x0)
+	poke(f.io.issueSourceValA, 0x1D)
+	poke(f.io.issueSourceValB, 0xE1)
+	poke(f.io.issueType, 0x1)
+	poke(f.io.issueFunc7, 0x20)
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0xE)
+
+	// ADDW
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x3B)
+	poke(f.io.issueFunc3, 0x0)
+	poke(f.io.issueImm, 0x0)
+	poke(f.io.issueSourceValA, 0xE)
+	poke(f.io.issueSourceValB, 0xF)
+	poke(f.io.issueType, 0x1)
+	poke(f.io.issueFunc7, 0x0)
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0x1D)
+
+	// SUBW
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x3B)
+	poke(f.io.issueFunc3, 0x0)
+	poke(f.io.issueImm, 0x0)
+	poke(f.io.issueSourceValA, 0x5)
+	poke(f.io.issueSourceValB, 0x1)
+	poke(f.io.issueType, 0x1)
+	poke(f.io.issueFunc7, 0x20)
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0x4)
+
+	// SLLW
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x3B)
+	poke(f.io.issueFunc3, 0x1)
+	poke(f.io.issueImm, 0x0)
+	poke(f.io.issueSourceValA, 0x3FFFFFFF)
+	poke(f.io.issueSourceValB, 0x81)
+	poke(f.io.issueType, 0x1)
+	poke(f.io.issueFunc7, 0x0)
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0x7FFFFFFE)
+
+	// SRLW
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x3B)
+	poke(f.io.issueFunc3, 0x5)
+	poke(f.io.issueImm, 0x0)
+	poke(f.io.issueSourceValA, 0xFFFFFFFE)
+	poke(f.io.issueSourceValB, 0x81)
+	poke(f.io.issueType, 0x1)
+	poke(f.io.issueFunc7, 0x0)
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0xFFFFFFFF)
+
+	// SRAW
+	poke(f.io.issueDestTag, 0x1)
+	poke(f.io.issueFUOpcode, 0x3B)
+	poke(f.io.issueFunc3, 0x5)
+	poke(f.io.issueImm, 0x0)
+	poke(f.io.issueSourceValA, 0x7FFFFFFE)
+	poke(f.io.issueSourceValB, 0x81)
+	poke(f.io.issueType, 0x1)
+	poke(f.io.issueFunc7, 0x20)
+	step(1)
+
+	expect(f.io.FUBroadcastValue, 0x3FFFFFFF)
 }
 
 class FunctionalModuleGenerator extends TestGenerator {

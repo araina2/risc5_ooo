@@ -147,7 +147,7 @@ class DecodeChannel extends Module {
 ////////////////////////////////////////////////////////
 //		Valid Register
 ////////////////////////////////////////////////////////
-    val valid = Reg(UInt())
+    val valid = Reg(init = UInt(0))
 
     when( (io.lSFull === UInt(1)) || (io.issueFull === UInt(1))){
 	valid := UInt(0)
@@ -254,6 +254,14 @@ class DecodeChannel extends Module {
 
 
 
+
+
+
+
+
+
+
+
     
 }
 
@@ -315,19 +323,19 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
 
 
     //poke values
-   val RsampleInstruction = 0x00A58AB3//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
+   val RsampleInstruction = 0x00528093//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
    val RsampleAddress     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000001",2)
     val RsampleRobTag      = 0x2D //Integer.parseInt("101101",2)
 
     //expected values
-    val RexpectedOpcode  = Integer.parseInt("0110011",2)
-    val RexpectedRd      = Integer.parseInt("10101",2)
+    val RexpectedOpcode  = Integer.parseInt("0010011",2)
+    val RexpectedRd      = Integer.parseInt("00001",2)
     val RexpectedFunky3  = Integer.parseInt("000",2)
-    val RexpectedRs1     = Integer.parseInt("01011",2)
-    val RexpectedRs2     = Integer.parseInt("01010",2)
+    val RexpectedRs1     = Integer.parseInt("00101",2)
+    val RexpectedRs2     = Integer.parseInt("00000",2)
     val RexpectedFunky7  = Integer.parseInt("0000000",2)
-    val Rexpected_Imm    = 0x00000 //Integer.parseInt("0000 0000 0000 0000 0000",2)
-	
+    val Rexpected_Imm    = 0x5 //Integer.parseInt("0000 0000 0000 0000 0000",2)
+
 
         poke(d.io.fetchInstruction, RsampleInstruction)
         poke(d.io.fetchAddress, RsampleAddress)
@@ -339,7 +347,7 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
         expect(d.io.decodeRd,      RexpectedRd)
         expect(d.io.decodeFunky3,  RexpectedFunky3)
         expect(d.io.decodeRs1,     RexpectedRs1)
-        expect(d.io.decodeRs2,     RexpectedRs2)
+        //expect(d.io.decodeRs2,     RexpectedRs2)
         expect(d.io.decodeFunky7,  RexpectedFunky7)
 //        expect(d.io.decode_Imm, RexpectedImm_I_S)
         expect(d.io.decode_Imm,   Rexpected_Imm)
