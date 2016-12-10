@@ -2,7 +2,7 @@ package risc5
 
 import Chisel._
 
-object RiscyMain extends App {
+object risc5Main extends App {
   // To run risc5 unit tests, pass "Test" as the first argument, followed
   // by the name of the module/tests generator for the module we want to test.
   if (args(0).equals("Test")) {

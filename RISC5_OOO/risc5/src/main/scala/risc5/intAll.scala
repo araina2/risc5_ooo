@@ -142,13 +142,17 @@ class intAll extends Module {
         r.io.DecodeStoreSelect1 := d1.io.decodeIsStore 
         r.io.DecodeStoreSelect2 := d2.io.decodeIsStore 
         r.io.DecodeStoreSelect3 := d3.io.decodeIsStore 
+        r.io.DecodeValid0 := d0.io.decodeValid
+        r.io.DecodeValid1 := d1.io.decodeValid
+        r.io.DecodeValid2 := d2.io.decodeValid
+        r.io.DecodeValid3 := d3.io.decodeValid
 
        //////////////////////////////////////////////
        //                ROB INPUTS                //
        //////////////////////////////////////////////
        //Should be done
        //////////////////////////////////////////////
-        rob.io.FUBroadcastValue0 := f0.io.FUBroadcastValue
+        /*rob.io.FUBroadcastValue0 := f0.io.FUBroadcastValue
         rob.io.FUBroadcastTag0 := f0.io.FUBroadcastTag
         rob.io.FUBroadcastValue1 := f1.io.FUBroadcastValue
         rob.io.FUBroadcastTag1 := f1.io.FUBroadcastTag
@@ -180,7 +184,7 @@ class intAll extends Module {
         rob.io.RenameStoreSelect0 := r.io.RenameStoreSelect0
         rob.io.RenameStoreSelect1 := r.io.RenameStoreSelect1
         rob.io.RenameStoreSelect2 := r.io.RenameStoreSelect2
-        rob.io.RenameStoreSelect3 := r.io.RenameStoreSelect3
+        rob.io.RenameStoreSelect3 := r.io.RenameStoreSelect3*/
         
         
         
@@ -309,7 +313,7 @@ class intAll extends Module {
         //Completed
         ///////////////////////////////////////////////////////
         //F0
-        f0.io.issueSourceValA := iss.io.IssueSourceValA_0
+        /*f0.io.issueSourceValA := iss.io.IssueSourceValA_0
         f0.io.issueSourceValB := iss.io.IssueSourceValB_0
         f0.io.issueFUOpcode := iss.io.IssueFUOpcode_0
         f0.io.issueFunc3 := iss.io.Issue_Func3_0
@@ -449,7 +453,7 @@ class intAll extends Module {
         lsq.io.Dcache_data_out := dmem.io.dout
         lsq.io.Dcache_Valid := dmem.io.valid
 
-
+*/
         
         ///////////////////////////////////////////////
         //              DCACHE                      //
@@ -471,4 +475,49 @@ TODO
 
 //NOTE: MOST TODOs are Really ASKS        
 
+}
+
+
+class intAllTests(c: intAll) extends Tester(c) {
+
+   val RsampleInstruction = 0x00528093//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
+   val RsampleAddress     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000001",2)
+    val RsampleRobTag      = 0x2D //Integer.parseInt("101101",2)
+
+    //expected values
+    val RexpectedOpcode  = Integer.parseInt("0010011",2)
+    val RexpectedRd      = Integer.parseInt("00001",2)
+    val RexpectedFunky3  = Integer.parseInt("000",2)
+    val RexpectedRs1     = Integer.parseInt("00101",2)
+    val RexpectedRs2     = Integer.parseInt("00000",2)
+    val RexpectedFunky7  = Integer.parseInt("0000000",2)
+    val Rexpected_Imm    = 0x5 //Integer.parseInt("0000 0000 0000 0000 0000",2)
+
+
+        poke(c.io.fetchInstructiond0, RsampleInstruction)
+        poke(c.io.fetchAddressd0, RsampleAddress)
+        poke(c.io.fetchRobTagd0, RsampleRobTag) 
+        poke(c.io.fetchValidd0, 1) 
+
+        step(1)
+        poke(c.io.fetchValidd0, 0) 
+        step(35)
+        /*expect(d.io.decodeOpcode,  RexpectedOpcode)
+        expect(d.io.decodeRd,      RexpectedRd)
+        expect(d.io.decodeFunky3,  RexpectedFunky3)
+        expect(d.io.decodeRs1,     RexpectedRs1)
+        //expect(d.io.decodeRs2,     RexpectedRs2)
+        expect(d.io.decodeFunky7,  RexpectedFunky7)
+//        expect(d.io.decode_Imm, RexpectedImm_I_S)
+        expect(d.io.decode_Imm,   Rexpected_Imm)
+        expect(d.io.decodeRobTag,  RsampleRobTag)
+        expect(d.io.decodeAddress, RsampleAddress)
+        expect(d.io.decodeType,  1)*/
+
+}
+  
+class intAllGenerator extends TestGenerator {
+    def genMod(): Module = Module(new intAll())
+      def genTest[T <: Module](c: T): Tester[T] =
+            (new intAllTests(c.asInstanceOf[intAll])).asInstanceOf[Tester[T]]
 }
