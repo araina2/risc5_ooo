@@ -12,12 +12,12 @@ class IssueQueueModule extends Module {
     val RenameRowSelect2 = UInt(INPUT,6)  
     val RenameRowSelect3 = UInt(INPUT,6)  
 
-    val RenameValid = UInt(INPUT,1)
+    //val RenameValid = UInt(INPUT,1)
     // Reservation Station 0
 
     //val RenameRowSelect_0 = UInt(INPUT,4)
 
-    //val RenameValid_0 = UInt(INPUT,1)
+    val RenameValid_0 = UInt(INPUT,1)
 
 
     val RenameSourceAValue_0 = UInt(INPUT,64)
@@ -62,7 +62,7 @@ class IssueQueueModule extends Module {
 
     //val RenameRowSelect_1 = UInt(INPUT,4)
 
-    //val RenameValid_1 = UInt(INPUT,1)
+    val RenameValid_1 = UInt(INPUT,1)
 
 
     val RenameSourceAValue_1 = UInt(INPUT,64)
@@ -107,7 +107,7 @@ class IssueQueueModule extends Module {
 
     //val RenameRowSelect_2 = UInt(INPUT,4)
 
-    //val RenameValid_2 = UInt(INPUT,1)
+    val RenameValid_2 = UInt(INPUT,1)
 
 
     val RenameSourceAValue_2 = UInt(INPUT,64)
@@ -152,7 +152,7 @@ class IssueQueueModule extends Module {
 
     //val RenameRowSelect_3 = UInt(INPUT,4)
 
-    //val RenameValid_3 = UInt(INPUT,1)
+    val RenameValid_3 = UInt(INPUT,1)
 
 
     val RenameSourceAValue_3 = UInt(INPUT,64)
@@ -263,7 +263,7 @@ class IssueQueueModule extends Module {
     val rS_0 = Module(new ReservationStationModule())
     
     //rS_0.io.RenameRowSelect := io.RenameRowSelect_0
-    //rS_0.io.RenameValid := io.RenameValid_0
+    rS_0.io.RenameValid := io.RenameValid_0
     
 
     rS_0.io.RenameSourceAValue := io.RenameSourceAValue_0
@@ -323,7 +323,7 @@ class IssueQueueModule extends Module {
     val rS_1 = Module(new ReservationStationModule())
     
     //rS_1.io.RenameRowSelect := io.RenameRowSelect_1
-    //rS_1.io.RenameValid := io.RenameValid_1
+    rS_1.io.RenameValid := io.RenameValid_1
     
 
     rS_1.io.RenameSourceAValue := io.RenameSourceAValue_1
@@ -382,7 +382,7 @@ class IssueQueueModule extends Module {
     val rS_2 = Module(new ReservationStationModule())
     
     //rS_2.io.RenameRowSelect := io.RenameRowSelect_2
-    //rS_2.io.RenameValid := io.RenameValid_2
+    rS_2.io.RenameValid := io.RenameValid_2
     
 
     rS_2.io.RenameSourceAValue := io.RenameSourceAValue_2
@@ -441,7 +441,7 @@ class IssueQueueModule extends Module {
     val rS_3 = Module(new ReservationStationModule())
     
     //rS_3.io.RenameRowSelect := io.RenameRowSelect_3
-    //rS_3.io.RenameValid := io.RenameValid_3
+    rS_3.io.RenameValid := io.RenameValid_3
     
 
     rS_3.io.RenameSourceAValue := io.RenameSourceAValue_3
@@ -504,84 +504,84 @@ class IssueQueueModule extends Module {
     rS_2.io.RenameRowSelect := UInt(0)
     rS_3.io.RenameRowSelect := UInt(0)
 
-    rS_0.io.RenameValid := UInt(0)
-    rS_1.io.RenameValid := UInt(0)
-    rS_2.io.RenameValid := UInt(0)
-    rS_3.io.RenameValid := UInt(0)
+    //rS_0.io.RenameValid := UInt(0)
+    //rS_1.io.RenameValid := UInt(0)
+    //rS_2.io.RenameValid := UInt(0)
+    //rS_3.io.RenameValid := UInt(0)
 
     when(io.RenameRowSelect0(5,4)===UInt(0)){
       rS_0.io.RenameRowSelect := io.RenameRowSelect0(3,0)
-      rS_0.io.RenameValid := io.RenameValid
+      //rS_0.io.RenameValid := io.RenameValid
     }
     when(io.RenameRowSelect0(5,4)===UInt(1)){
       rS_1.io.RenameRowSelect := io.RenameRowSelect0(3,0)
-      rS_1.io.RenameValid := io.RenameValid
+      //rS_1.io.RenameValid := io.RenameValid
     }
     when(io.RenameRowSelect0(5,4)===UInt(2)){
       rS_2.io.RenameRowSelect := io.RenameRowSelect0(3,0)
-      rS_2.io.RenameValid := io.RenameValid
+      //rS_2.io.RenameValid := io.RenameValid
     }
     when(io.RenameRowSelect0(5,4)===UInt(3)){
       rS_3.io.RenameRowSelect := io.RenameRowSelect0(3,0)
-      rS_3.io.RenameValid := io.RenameValid
+      //rS_3.io.RenameValid := io.RenameValid
     }
 
     when(io.RenameRowSelect1(5,4)===UInt(0)){
       rS_0.io.RenameRowSelect := io.RenameRowSelect1(3,0)
-      rS_0.io.RenameValid := io.RenameValid
+      //rS_0.io.RenameValid := io.RenameValid
     }
     when(io.RenameRowSelect1(5,4)===UInt(1)){
       rS_1.io.RenameRowSelect := io.RenameRowSelect1(3,0)
-      rS_1.io.RenameValid := io.RenameValid
+      //rS_1.io.RenameValid := io.RenameValid
     }
     when(io.RenameRowSelect1(5,4)===UInt(2)){
       rS_2.io.RenameRowSelect := io.RenameRowSelect1(3,0)
-      rS_2.io.RenameValid := io.RenameValid
+      //rS_2.io.RenameValid := io.RenameValid
     }
     when(io.RenameRowSelect1(5,4)===UInt(3)){
       rS_3.io.RenameRowSelect := io.RenameRowSelect1(3,0)
-      rS_3.io.RenameValid := io.RenameValid
+      //rS_3.io.RenameValid := io.RenameValid
     }
 
     when(io.RenameRowSelect2(5,4)===UInt(0)){
       rS_0.io.RenameRowSelect := io.RenameRowSelect2(3,0)
-      rS_0.io.RenameValid := io.RenameValid
+      //rS_0.io.RenameValid := io.RenameValid
     }
     when(io.RenameRowSelect2(5,4)===UInt(1)){
       rS_1.io.RenameRowSelect := io.RenameRowSelect2(3,0)
-      rS_1.io.RenameValid := io.RenameValid
+      //rS_1.io.RenameValid := io.RenameValid
     }
     when(io.RenameRowSelect2(5,4)===UInt(2)){
       rS_2.io.RenameRowSelect := io.RenameRowSelect2(3,0)
-      rS_2.io.RenameValid := io.RenameValid
+      //rS_2.io.RenameValid := io.RenameValid
     }
     when(io.RenameRowSelect2(5,4)===UInt(3)){
       rS_3.io.RenameRowSelect := io.RenameRowSelect2(3,0)
-      rS_3.io.RenameValid := io.RenameValid
+      //rS_3.io.RenameValid := io.RenameValid
     }
 
     when(io.RenameRowSelect3(5,4)===UInt(0)){
       rS_0.io.RenameRowSelect := io.RenameRowSelect3(3,0)
-      rS_0.io.RenameValid := io.RenameValid
+      //rS_0.io.RenameValid := io.RenameValid
     }
     when(io.RenameRowSelect3(5,4)===UInt(1)){
       rS_1.io.RenameRowSelect := io.RenameRowSelect3(3,0)
-      rS_1.io.RenameValid := io.RenameValid
+      //rS_1.io.RenameValid := io.RenameValid
     }
     when(io.RenameRowSelect3(5,4)===UInt(2)){
       rS_2.io.RenameRowSelect := io.RenameRowSelect3(3,0)
-      rS_2.io.RenameValid := io.RenameValid
+      //rS_2.io.RenameValid := io.RenameValid
     }
     when(io.RenameRowSelect3(5,4)===UInt(3)){
       rS_3.io.RenameRowSelect := io.RenameRowSelect3(3,0)
-      rS_3.io.RenameValid := io.RenameValid
+      //rS_3.io.RenameValid := io.RenameValid
     }
 }
 
 class IssueQueueTester(i:IssueQueueModule) extends Tester(i) {
   for(m<-0 until 64){
     poke(i.io.RenameRowSelect0,m)
-    poke(i.io.RenameValid,1)
+    poke(i.io.RenameValid_0,1)
     step(1)
   }
 
