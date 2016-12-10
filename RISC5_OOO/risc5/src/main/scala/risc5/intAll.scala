@@ -152,7 +152,7 @@ class intAll extends Module {
        //////////////////////////////////////////////
        //Should be done
        //////////////////////////////////////////////
-        /*rob.io.FUBroadcastValue0 := f0.io.FUBroadcastValue
+        rob.io.FUBroadcastValue0 := f0.io.FUBroadcastValue
         rob.io.FUBroadcastTag0 := f0.io.FUBroadcastTag
         rob.io.FUBroadcastValue1 := f1.io.FUBroadcastValue
         rob.io.FUBroadcastTag1 := f1.io.FUBroadcastTag
@@ -184,7 +184,7 @@ class intAll extends Module {
         rob.io.RenameStoreSelect0 := r.io.RenameStoreSelect0
         rob.io.RenameStoreSelect1 := r.io.RenameStoreSelect1
         rob.io.RenameStoreSelect2 := r.io.RenameStoreSelect2
-        rob.io.RenameStoreSelect3 := r.io.RenameStoreSelect3*/
+        rob.io.RenameStoreSelect3 := r.io.RenameStoreSelect3
         
         
         
@@ -316,7 +316,7 @@ class intAll extends Module {
         //Completed
         ///////////////////////////////////////////////////////
         //F0
-        /*f0.io.issueSourceValA := iss.io.IssueSourceValA_0
+        f0.io.issueSourceValA := iss.io.IssueSourceValA_0
         f0.io.issueSourceValB := iss.io.IssueSourceValB_0
         f0.io.issueFUOpcode := iss.io.IssueFUOpcode_0
         f0.io.issueFunc3 := iss.io.Issue_Func3_0
@@ -326,6 +326,9 @@ class intAll extends Module {
         f0.io.issueDestTag := iss.io.IssuedestTag_0
         f0.io.issueFull := iss.io.Full_0
         f0.io.issueValid := iss.io.Valid_0
+        when(f0.io.issueValid===UInt(1)){
+          //printf("rnayar: issueValid in the functional unit is set to ONE")
+        }
         //F1
         f1.io.issueSourceValA := iss.io.IssueSourceValA_1
         f1.io.issueSourceValB := iss.io.IssueSourceValB_1
@@ -366,7 +369,7 @@ class intAll extends Module {
         ///////////////////////////////////////////////
         //Think I got it all
         ///////////////////////////////////////////////
-        lsq.io.RenameLoadStoreRowSelect0 := r.io.RenameLoadStoreRowSelect0
+        /*lsq.io.RenameLoadStoreRowSelect0 := r.io.RenameLoadStoreRowSelect0
         lsq.io.RenameLoadStoreRowSelect1 := r.io.RenameLoadStoreRowSelect1
         lsq.io.RenameLoadStoreRowSelect2 := r.io.RenameLoadStoreRowSelect2
         lsq.io.RenameLoadStoreRowSelect3 := r.io.RenameLoadStoreRowSelect3
