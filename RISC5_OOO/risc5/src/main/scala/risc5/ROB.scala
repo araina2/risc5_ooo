@@ -56,6 +56,13 @@ class ROB extends Module {
    val LoadStoreDestAddress0 = UInt(INPUT,64)
    ////val LoadStoreDestAddress1 = UInt(INPUT,64)
 
+   //Inputs from dmem 
+    val dout = UInt(INPUT, 64)
+    val valid = Bool(INPUT)
+    val busy = Bool(INPUT)
+    val TAG_out = UInt(INPUT,7) 
+    
+
    //Output signals from ROB
    val ROBStoreSelect0 = Bool(OUTPUT)
    //val ROBStoreSelect1 = Bool(OUTPUT)
@@ -72,7 +79,14 @@ class ROB extends Module {
    val ROBValueValid0 = UInt(OUTPUT,1) 
    //val ROBValueValid1 = UInt(OUTPUT,1) 
    //val ROBValueValid2 = UInt(OUTPUT,1) 
-   //val ROBValueValid3 = UInt(OUTPUT,1) 
+   //val ROBValueValid3 = UInt(OUTPUT,1)
+
+   //Outputs to the memory for commit
+    val din  = UInt(OUTPUT, 64)
+    val addr  = UInt(OUTPUT, 64)
+    val en = Bool(OUTPUT)
+    val wr = Bool(OUTPUT)
+    val TAG_in = UInt(OUTPUT,7) 
    }
    
    io.ROBStoreSelect0 := Bool(false)
