@@ -91,6 +91,16 @@ class intAll extends Module {
         r.io.IssueBroadcastFreeRow1 := iss.io.IssueBroadCastFreeRow_1
         r.io.IssueBroadcastFreeRow2 := iss.io.IssueBroadCastFreeRow_2
         r.io.IssueBroadcastFreeRow3 := iss.io.IssueBroadCastFreeRow_3
+          
+        //Adding the valid signals pertaining to broadcast free row in Issue queue
+        r.io.IssueRowValid0 := iss.io.Valid_0
+        r.io.IssueRowValid1 := iss.io.Valid_1
+        r.io.IssueRowValid2 := iss.io.Valid_2
+        r.io.IssueRowValid3 := iss.io.Valid_3
+
+        //Adding the valid signals pertaining to broadcast free row in LS queue
+        r.io.LoadStoreRowValid := lsq.io.LoadStoreDestValid_out
+
         r.io.IssueFull0 := iss.io.Full_0
         r.io.IssueFull1 := iss.io.Full_1
         r.io.IssueFull2 := iss.io.Full_2

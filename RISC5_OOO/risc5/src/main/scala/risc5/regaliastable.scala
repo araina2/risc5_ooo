@@ -90,7 +90,16 @@ class RegAliasTable extends Module {
     val DecodeStoreSelect1 = Bool(INPUT)
     val DecodeStoreSelect2 = Bool(INPUT)
     val DecodeStoreSelect3 = Bool(INPUT)
-    
+   
+    //Valid Signals from the issue queue when it frees the entry
+    val IssueRowValid0 = UInt(INPUT, 1)
+    val IssueRowValid1 = UInt(INPUT, 1)
+    val IssueRowValid2 = UInt(INPUT, 1)
+    val IssueRowValid3 = UInt(INPUT, 1)
+
+    //Valid Signals from the load/store queue when it frees the entry
+    val LoadStoreRowValid = UInt(INPUT, 1)
+
     val RenameSourceAValue0 = UInt(OUTPUT,64)
     val RenameSourceAValue1 = UInt(OUTPUT,64)
     val RenameSourceAValue2 = UInt(OUTPUT,64)
@@ -424,22 +433,22 @@ class RegAliasTable extends Module {
 
         //Updating the internal valid for the issue queue
         for ( j <- 0 until 16 ) {
-           when ((Bool(io.IssueBroadcastFreeRow0 != UInt(0)) && (io.IssueBroadcastFreeRow0 === UInt(j)))) {
+           when ((Bool(io.IssueRowValid0 != UInt(0)) && (io.IssueBroadcastFreeRow0 === UInt(j)))) {
             arith_queue_valid_table(j) := UInt(1)
            }
-           when (Bool(io.IssueBroadcastFreeRow1 != UInt(0)) && Bool(io.IssueBroadcastFreeRow1 === UInt(j))) {
+           when (Bool(io.IssueRowValid1 != UInt(0)) && Bool(io.IssueBroadcastFreeRow1 === UInt(j))) {
             arith_queue_valid_table(j+16) := UInt(1)
            }
-           when (Bool(io.IssueBroadcastFreeRow2 != UInt(0)) && Bool(io.IssueBroadcastFreeRow2 === UInt(j))) {
+           when (Bool(io.IssueRowValid2 != UInt(0)) && Bool(io.IssueBroadcastFreeRow2 === UInt(j))) {
             arith_queue_valid_table(j+32) := UInt(1)
            }
-           when (Bool(io.IssueBroadcastFreeRow3 != UInt(0)) && Bool(io.IssueBroadcastFreeRow3 === UInt(j))) {
+           when (Bool(io.IssueRowValid3 != UInt(0)) && Bool(io.IssueBroadcastFreeRow3 === UInt(j))) {
             arith_queue_valid_table(j+48) := UInt(1)
            }
         }
         //Updating the internal valid for the load/store queue
         for (j <- 0 until 32) {
-           when (Bool(io.LoadStoreBroadcastFreeRow0 != UInt(0)) && Bool(io.LoadStoreBroadcastFreeRow0 === UInt(j))) {
+           when (Bool(io.LoadStoreRowValid != UInt(0)) && Bool(io.LoadStoreBroadcastFreeRow0 === UInt(j))) {
             ldst_queue_valid_table(j) := UInt(1)
           }
            /*when (Bool(io.LoadStoreBroadcastFreeTag1 != UInt(0)) && Bool(io.LoadStoreBroadcastFreeTag1 === UInt(j))) {
@@ -572,7 +581,7 @@ class RegAliasTable extends Module {
         }
 
         when (Bool(UInt(i) === io.Decode_dest_0 && io.DecodeValid0 === Bool(true)) && Bool(io.DecodeQueueSelect0 === Bool(true))) {
-          printf("\nComing in the load store valid 0\n")
+          //printf("\nComing in the load store valid 0\n")
           when (io.DecodeStoreSelect0 === Bool(false)) { 
             valid(i) := UInt(0)
             RenameDestTagLoadStore(0) := (tag(i) + UInt(1)) % UInt(32) + UInt(128)
