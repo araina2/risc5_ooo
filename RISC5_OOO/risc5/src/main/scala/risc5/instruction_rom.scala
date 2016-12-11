@@ -17,6 +17,11 @@ class instruction_rom(val n: Int) extends Module {
     val FetchInstruction2 = UInt(OUTPUT, 32)
     val FetchInstruction3 = UInt(OUTPUT, 32)
     
+    val FetchPC0 = UInt(OUTPUT, 64)
+    val FetchPC1 = UInt(OUTPUT, 64)
+    val FetchPC2 = UInt(OUTPUT, 64)
+    val FetchPC3 = UInt(OUTPUT, 64)
+
     val FetchROBTag0 = UInt(OUTPUT, 7)
     val FetchROBTag1 = UInt(OUTPUT, 7)
     val FetchROBTag2 = UInt(OUTPUT, 7)
@@ -36,9 +41,12 @@ class instruction_rom(val n: Int) extends Module {
   val pc_rom = Module(new Rom(makeROM("/tmp/pc.bin"), n, 64))
   val inst_rom = Module(new Rom(makeROM("/tmp/inst.bin"), n, 32))
 
-  //printf ("The value of index is %d",index)
+  printf ("The value of index is %d\n",index)
   pc_rom.io.addr := index
-  //io.pc := pc_rom.io.data
+  io.FetchPC0 := pc_rom.io.data
+  io.FetchPC1 := (pc_rom.io.data >> 64)
+  io.FetchPC2 := (pc_rom.io.data >> 128)
+  io.FetchPC3 := (pc_rom.io.data >> 192)
 
   inst_rom.io.addr := index
   
@@ -109,6 +117,10 @@ class instruction_rom_tests(c: instruction_rom) extends Tester(c) {
     peek(c.io.FetchInstruction1)
     peek(c.io.FetchInstruction2)
     peek(c.io.FetchInstruction3)
+    peek(c.io.FetchPC0)
+    peek(c.io.FetchPC1)
+    peek(c.io.FetchPC2)
+    peek(c.io.FetchPC3)
     peek(c.io.FetchROBTag0)
     peek(c.io.FetchROBTag1)
     peek(c.io.FetchROBTag2)
