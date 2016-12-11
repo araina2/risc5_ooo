@@ -1287,6 +1287,11 @@ class LoadStoreQueueTester(l:LoadStoreQueueModule) extends Tester(l) {
     poke(l.io.RenameROBtag0,0)
     step(51)
 
+    poke(l.io.Dcache_tag_out,12)
+    poke(l.io.Dcache_data_out,1234)
+    poke(l.io.Dcache_Valid,1)
+
+    step(51)
 
 
 
