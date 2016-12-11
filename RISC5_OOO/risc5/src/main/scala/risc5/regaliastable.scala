@@ -100,6 +100,12 @@ class RegAliasTable extends Module {
     //Valid Signals from the load/store queue when it frees the entry
     val LoadStoreRowValid = UInt(INPUT, 1)
 
+    //Adding the PC as input for AUIPC instruction 
+    val DecodePC0 = UInt(INPUT,64)
+    val DecodePC1 = UInt(INPUT,64)
+    val DecodePC2 = UInt(INPUT,64)
+    val DecodePC3 = UInt(INPUT,64)
+    
     val RenameSourceAValue0 = UInt(OUTPUT,64)
     val RenameSourceAValue1 = UInt(OUTPUT,64)
     val RenameSourceAValue2 = UInt(OUTPUT,64)
@@ -189,6 +195,13 @@ class RegAliasTable extends Module {
     val RenameType1  = UInt(OUTPUT,3)
     val RenameType2  = UInt(OUTPUT,3)
     val RenameType3  = UInt(OUTPUT,3)
+
+    //Outputting the PC for AUIPC instruction
+    val RenamePC0 = UInt(OUTPUT, 64)
+    val RenamePC1 = UInt(OUTPUT, 64)
+    val RenamePC2 = UInt(OUTPUT, 64)
+    val RenamePC3 = UInt(OUTPUT, 64)
+
     //Added ports for testing whether the tags have the proper value 
     /*val Tmptag0 = UInt(OUTPUT,10)
     val Tmptag1 = UInt(OUTPUT,10)
@@ -232,6 +245,9 @@ class RegAliasTable extends Module {
     val RenameIssueValid = Vec.fill(4) { Reg(init = UInt(0, width = 1)) } 
     val RenameLoadStoreValid = Vec.fill(4) { Reg(init = UInt(0, width = 1)) } 
 
+    //Registers for storing PC 
+    val RenamePC = Vec.fill(4) { Reg(init = UInt(0, width = 64)) }
+    
     //Rename_func3
     //Mandatory initialization for stupid Chisel 
     io.RenameSourceAValue0 := UInt(0)
@@ -829,6 +845,16 @@ class RegAliasTable extends Module {
     io.RenameType1 := RenameType(1)
     io.RenameType2 := RenameType(2)
     io.RenameType3 := RenameType(3)
+
+    RenamePC(0) := io.DecodePC0
+    RenamePC(1) := io.DecodePC1
+    RenamePC(2) := io.DecodePC2
+    RenamePC(3) := io.DecodePC3
+
+    io.RenamePC0 := RenamePC(0)
+    io.RenamePC1 := RenamePC(1)
+    io.RenamePC2 := RenamePC(2)
+    io.RenamePC3 := RenamePC(3)
 }
 
 class RegAliasTableTests(c: RegAliasTable) extends Tester(c) {
