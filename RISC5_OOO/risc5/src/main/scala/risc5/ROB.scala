@@ -46,6 +46,13 @@ class ROB extends Module {
    val FUBroadcastValue3 = UInt(INPUT,64)
    val FUBroadcastTag3 = UInt(INPUT,10)
 
+   val FUBroadcastValid0 = UInt(INPUT,1)
+   val FUBroadcastValid1 = UInt(INPUT,1)
+   val FUBroadcastValid2 = UInt(INPUT,1)
+   val FUBroadcastValid3 = UInt(INPUT,1)
+
+   val LoadStoreDestValid = UInt(INPUT,1)
+
    //Inputs coming from load/store queue
    val LoadStoreDestVal0 = UInt(INPUT,64)
    //val LoadStoreDestVal1 = UInt(INPUT,64)
@@ -121,27 +128,27 @@ class ROB extends Module {
 
   //Updating the value and valid bit in case of a broadcast
   for (i <- 0 until 96) {
-    when((io.FUBroadcastTag0 === tag(i)) && (io.FUBroadcastTag0 != UInt(0))) {
+    when((io.FUBroadcastTag0 === tag(i)) && (io.FUBroadcastValid0 != UInt(0))) {
       //printf("\nComing into io.FUBroadcastTag0 check\n");
       value(i) := io.FUBroadcastValue0
       valid(i) := UInt(1)
     }
-    when((io.FUBroadcastTag1 === tag(i)) && (io.FUBroadcastTag1 != UInt(0))) {
+    when((io.FUBroadcastTag1 === tag(i)) && (io.FUBroadcastValid1 != UInt(0))) {
       //printf("\nComing into io.FUBroadcastTag1 check\n");
       value(i) := io.FUBroadcastValue1
       valid(i) := UInt(1)
     }
-    when((io.FUBroadcastTag2 === tag(i)) && (io.FUBroadcastTag2 != UInt(0))) {
+    when((io.FUBroadcastTag2 === tag(i)) && (io.FUBroadcastValid2 != UInt(0))) {
       //printf("\nComing into io.FUBroadcastTag2 check\n");
       value(i) := io.FUBroadcastValue2
       valid(i) := UInt(1)
     }
-    when((io.FUBroadcastTag3 === tag(i)) && (io.FUBroadcastTag3 != UInt(0))) {
+    when((io.FUBroadcastTag3 === tag(i)) && (io.FUBroadcastValid3 != UInt(0))) {
       //printf("\nComing into io.FUBroadcastTag3 check\n");
       value(i) := io.FUBroadcastValue3
       valid(i) := UInt(1)
     }
-    when((io.LoadStoreDestTag0 === tag(i)) && (io.LoadStoreDestTag0 != UInt(0))) {
+    when((io.LoadStoreDestTag0 === tag(i)) && (io.LoadStoreDestValid != UInt(0))) {
       //printf("\nComing into io.LoadStoreDestTag0 check\n");
       value(i) := io.LoadStoreDestVal0
       valid(i) := UInt(1)
