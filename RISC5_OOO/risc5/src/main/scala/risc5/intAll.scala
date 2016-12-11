@@ -15,6 +15,20 @@ class intAll extends Module {
         val fetchBranchTakend0 = UInt(INPUT, 1)
         val fetchValidd0= UInt(INPUT, 1)
         }
+
+// register for the arbitor logic
+        val Cache_enable = Reg(init=UInt(0,1))
+        val Cache_Address = Reg(init=UInt(0,64))
+        val Cache_Compare = Reg(init=UInt(0,1))
+        val Cache_tag_in = Reg(init=UInt(0,7))
+        val Cache_valid_in = Reg(init=UInt(0,1))
+
+        val Cache_enable2 = Reg(init=UInt(0,1))
+        val Cache_Address2 = Reg(init=UInt(0,64))
+        val Cache_Compare2 = Reg(init=UInt(0,1))
+        val Cache_tag_in2 = Reg(init=UInt(0,7))
+        val Cache_valid_in2 = Reg(init=UInt(0,1))
+
         //need to run Perl script - can do in scala, but Chisel???
         
         //TODO: Fetch Module stuff
@@ -489,15 +503,119 @@ class intAll extends Module {
         //              DCACHE - inputs              //
         //////////////////////////////////////////////
         // only store instructions are pushed into dcache memory
-        dmem.io.din := rob.io.ROBValue0
-        dmem.io.addr := rob.io.ROBMemAddress0
-        dmem.io.en := (rob.io.ROBValueValid0===UInt(1)) && (rob.io.ROBStoreSelect0===Bool(true))
-        dmem.io.wr := rob.io.ROBStoreSelect0
 
+        dmem.io.din := UInt(0)
+        dmem.io.addr := UInt(0)
+        dmem.io.en := UInt(0)
+        dmem.io.wr := UInt(0)
+        dmem.io.TAG_in := UInt(0)
+
+
+        when(rob.io.ROBValueValid0===UInt(1) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(0)){
+          
+          dmem.io.din := rob.io.ROBValue0
+          dmem.io.addr := rob.io.ROBMemAddress0
+          dmem.io.en := (rob.io.ROBValueValid0===UInt(1)) && (rob.io.ROBStoreSelect0===Bool(true))
+          dmem.io.wr := rob.io.ROBStoreSelect0
+
+          Cache_enable := lsq.io.Cache_enable
+          Cache_Address := lsq.io.Cache_Address
+          Cache_Compare := lsq.io.Cache_Compare
+          Cache_tag_in := lsq.io.Cache_tag_in
+          Cache_valid_in := lsq.io.Cache_valid_in
+
+        }
+
+        when(rob.io.ROBValueValid0===UInt(0) && (lsq.io.Cache_valid_in===UInt(0)) && Cache_valid_in===UInt(1)){
+          
+          dmem.io.addr := Cache_Address
+          dmem.io.en := Cache_enable
+          dmem.io.wr := !(Cache_valid_in)
+          dmem.io.TAG_in := Cache_tag_in
+
+          Cache_enable := UInt(0)
+          Cache_Address := UInt(0)
+          Cache_Compare := UInt(0)
+          Cache_tag_in := UInt(0)
+          Cache_valid_in := UInt(0)
+        }
         
+        when(rob.io.ROBValueValid0===UInt(0) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(0)){
+          
+          dmem.io.addr := lsq.io.Cache_Address
+          dmem.io.en := lsq.io.Cache_enable
+          dmem.io.wr := UInt(0)
+          dmem.io.TAG_in := lsq.io.Cache_tag_in
+
+          Cache_enable := UInt(0)
+          Cache_Address := UInt(0)
+          Cache_Compare := UInt(0)
+          Cache_tag_in := UInt(0)
+          Cache_valid_in := UInt(0)
+        }
+
+        when(rob.io.ROBValueValid0===UInt(0) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(1)){
+          
+          dmem.io.addr := Cache_Address
+          dmem.io.en := Cache_enable
+          dmem.io.wr := !(Cache_valid_in)
+          dmem.io.TAG_in := Cache_tag_in
+
+          Cache_enable := lsq.io.Cache_enable
+          Cache_Address := lsq.io.Cache_Address
+          Cache_Compare := lsq.io.Cache_Compare
+          Cache_tag_in := lsq.io.Cache_tag_in
+          Cache_valid_in := lsq.io.Cache_valid_in
+        }
+        when(rob.io.ROBValueValid0===UInt(1) && (lsq.io.Cache_valid_in===UInt(0))){
+          
+          dmem.io.din := rob.io.ROBValue0
+          dmem.io.addr := rob.io.ROBMemAddress0
+          dmem.io.en := (rob.io.ROBValueValid0===UInt(1)) && (rob.io.ROBStoreSelect0===Bool(true))
+          dmem.io.wr := rob.io.ROBStoreSelect0
+
+        }
 
 
+        when(rob.io.ROBValueValid0===UInt(1) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(1)){
+          
+          dmem.io.din := rob.io.ROBValue0
+          dmem.io.addr := rob.io.ROBMemAddress0
+          dmem.io.en := (rob.io.ROBValueValid0===UInt(1)) && (rob.io.ROBStoreSelect0===Bool(true))
+          dmem.io.wr := rob.io.ROBStoreSelect0
 
+          Cache_enable2 := lsq.io.Cache_enable
+          Cache_Address2 := lsq.io.Cache_Address
+          Cache_Compare2 := lsq.io.Cache_Compare
+          Cache_tag_in2 := lsq.io.Cache_tag_in
+          Cache_valid_in2 := lsq.io.Cache_valid_in
+
+        }
+
+        when(rob.io.ROBValueValid0===UInt(0) && (lsq.io.Cache_valid_in===UInt(0)) && Cache_valid_in===UInt(0)){
+          
+          Cache_enable := Cache_enable2
+          Cache_Address := Cache_Address2
+          Cache_Compare := Cache_Compare2
+          Cache_tag_in := Cache_tag_in2
+          Cache_valid_in := Cache_valid_in2
+
+          Cache_enable2 := UInt(0)
+          Cache_Address2 := UInt(0)
+          Cache_Compare2 := UInt(0)
+          Cache_tag_in2 := UInt(0)
+          Cache_valid_in2 := UInt(0)
+        }
+
+
+        when(rob.io.ROBValueValid0===UInt(1) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(1) && Cache_valid_in2===UInt(1)){
+          
+          dmem.io.din := rob.io.ROBValue0
+          dmem.io.addr := rob.io.ROBMemAddress0
+          dmem.io.en := (rob.io.ROBValueValid0===UInt(1)) && (rob.io.ROBStoreSelect0===Bool(true))
+          dmem.io.wr := rob.io.ROBStoreSelect0
+        printf("ERROR:EMERGNECY: pipeline may stall LOAD instruction droped from arbitor to cache interface")
+        }
         ///////////////////////////////////////////
         //  TODO: Commit??
         //////////////////////////////////////////
