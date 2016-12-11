@@ -33,6 +33,7 @@ class FunctionalUnit extends Module {
 		val issueDestTag     = UInt(INPUT, 10)
 		val issueFull        = UInt(INPUT, 1)
 		val issueValid       = UInt(INPUT, 1)
+		val issuePC          = UInt(INPUT, 64)
 
 		//OUTPUTS
 		val FUBroadcastValue = UInt(OUTPUT, 64)
@@ -94,8 +95,19 @@ class FunctionalUnit extends Module {
 
 /////////////////////////////////////////////////////////////////////
 	when(io.issueFUOpcode === UInt(0x03)){
-		
+	// Opcode = 0000011
+	// Loads, not handled by functional units
+	// Treat as NoOp because it shouldn't be here anyways
+	valid := UInt(0x0)
 	
+	}
+	.elsewhen(io.issueFUOpcode === UInt(0x37)){
+		derp := io.issueImm << UInt(12)
+		result := Cat(Fill(32, derp(31)), derp)
+	}
+	.elsewhen(io.issueFUOpcode === UInt(0x17)){
+		derp := io.issueImm << UInt(12)
+		result := Cat(Fill(32, derp(31)), derp) + io.issuePC
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x67)){
 		// Opcode = 1100111
