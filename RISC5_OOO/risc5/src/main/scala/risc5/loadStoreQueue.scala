@@ -516,7 +516,7 @@ class LoadStoreQueueModule extends Module {
 
   for(b<-31 to 0 by -1){
       when((ValidEntry(b)===UInt(0) && (io.LoadStoreFull===UInt(0)))) {
-          io.LoadStoreFreeRow := UInt(b) 
+          io.LoadStoreFreeRow := UInt(b) - UInt(1) 
       
       }
     }
@@ -1069,10 +1069,10 @@ class LoadStoreQueueTester(l:LoadStoreQueueModule) extends Tester(l) {
      poke(l.io.RenameLoadStoreValid0,1)
      poke(l.io.RenameLoadStoreRowSelect0,0)
      poke(l.io.RenameSourceAValue0,SourceA)
-     poke(l.io.RenameSourceAValueValid0,0)
+     poke(l.io.RenameSourceAValueValid0,1)
      poke(l.io.RenameSourceATag0,0)
      poke(l.io.RenameSourceBValue0,SourceB)
-     poke(l.io.RenameSourceBValueValid0,0)
+     poke(l.io.RenameSourceBValueValid0,1)
      poke(l.io.RenameSourceBTag0,1)
 
      poke(l.io.Rename_Opcode_0,rand)
@@ -1100,7 +1100,7 @@ class LoadStoreQueueTester(l:LoadStoreQueueModule) extends Tester(l) {
      poke(l.io.Rename_Imm_0,0)
      poke(l.io.RenameStoreSelect0,false)
      poke(l.io.RenameROBtag0,0)
-     step(1)
+     step(51)
 
   //for(i<-0 until 4) {
 
@@ -1178,35 +1178,35 @@ class LoadStoreQueueTester(l:LoadStoreQueueModule) extends Tester(l) {
   //  
   //}
 
-        poke(l.io.FUBroadcastValid0,1)
-        poke(l.io.FUBroadcastTag0,0)
-        poke(l.io.FUBroadcastValue0,52)
-        
-        poke(l.io.FUBroadcastValid1,1)
-        poke(l.io.FUBroadcastTag1,1)
-        poke(l.io.FUBroadcastValue1,57)
-
-     step(1)
-     // selecting only one row select for load instruction
-     poke(l.io.RenameLoadStoreValid0,1)
-     poke(l.io.RenameLoadStoreRowSelect0,1)
-     poke(l.io.RenameSourceAValue0,SourceB)
-     poke(l.io.RenameSourceAValueValid0,1)
-     poke(l.io.RenameSourceATag0,0)
-     poke(l.io.RenameSourceBValue0,SourceA)
-     poke(l.io.RenameSourceBValueValid0,1)
-     poke(l.io.RenameSourceBTag0,1)
-
-     poke(l.io.Rename_Opcode_0,rand)
-     poke(l.io.Rename_destTag_0,rand)
-     poke(l.io.Rename_func3_0,rand)
-     poke(l.io.Rename_func7_0,rand)
-     poke(l.io.Rename_Imm_0,rand)
-     poke(l.io.RenameStoreSelect0,false)
-     poke(l.io.RenameROBtag0,15)
-     poke(l.io.Dcache_busy,1)
-
-     step(1)
+//        poke(l.io.FUBroadcastValid0,1)
+//        poke(l.io.FUBroadcastTag0,0)
+//        poke(l.io.FUBroadcastValue0,52)
+//        
+//        poke(l.io.FUBroadcastValid1,1)
+//        poke(l.io.FUBroadcastTag1,1)
+//        poke(l.io.FUBroadcastValue1,57)
+//
+//     step(1)
+//     // selecting only one row select for load instruction
+//     poke(l.io.RenameLoadStoreValid0,1)
+//     poke(l.io.RenameLoadStoreRowSelect0,1)
+//     poke(l.io.RenameSourceAValue0,SourceB)
+//     poke(l.io.RenameSourceAValueValid0,1)
+//     poke(l.io.RenameSourceATag0,0)
+//     poke(l.io.RenameSourceBValue0,SourceA)
+//     poke(l.io.RenameSourceBValueValid0,1)
+//     poke(l.io.RenameSourceBTag0,1)
+//
+//     poke(l.io.Rename_Opcode_0,rand)
+//     poke(l.io.Rename_destTag_0,rand)
+//     poke(l.io.Rename_func3_0,rand)
+//     poke(l.io.Rename_func7_0,rand)
+//     poke(l.io.Rename_Imm_0,rand)
+//     poke(l.io.RenameStoreSelect0,false)
+//     poke(l.io.RenameROBtag0,15)
+//     poke(l.io.Dcache_busy,1)
+//
+//     step(1)
      //poke(l.io.RenameLoadStoreValid0,0)
      //poke(l.io.RenameLoadStoreRowSelect0,0)
      //poke(l.io.RenameSourceAValue0,0)
@@ -1224,30 +1224,101 @@ class LoadStoreQueueTester(l:LoadStoreQueueModule) extends Tester(l) {
      //poke(l.io.RenameStoreSelect0,false)
      //poke(l.io.RenameROBtag0,0)
      //poke(l.io.Dcache_busy,0)
-     step(1)
-        
-        poke(l.io.FUBroadcastValid2,1)
-        poke(l.io.FUBroadcastTag2,8)
-        poke(l.io.FUBroadcastValue2,32)
-        
-        poke(l.io.LoadStoreDestValid,1)
-        poke(l.io.LoadStoreDestTag,14)
-        poke(l.io.LoadStoreDestVal,54)
-        
-     step(1)
-        poke(l.io.FUBroadcastValid3,1)
-        poke(l.io.FUBroadcastTag3,15)
-        poke(l.io.FUBroadcastValue3,93)
-        poke(l.io.Dcache_Valid,1)
-        poke(l.io.Dcache_busy,0)
-        poke(l.io.Dcache_tag_out,12)
-        poke(l.io.Dcache_data_out,83)
-     step(1)
-        poke(l.io.Dcache_Valid,0)
-        poke(l.io.Dcache_busy,1)
-        poke(l.io.Dcache_tag_out,12)
-        poke(l.io.Dcache_data_out,83)
-     step(20)
+//     step(1)
+//        
+//        poke(l.io.FUBroadcastValid2,1)
+//        poke(l.io.FUBroadcastTag2,8)
+//        poke(l.io.FUBroadcastValue2,32)
+//        
+//        poke(l.io.LoadStoreDestValid,1)
+//        poke(l.io.LoadStoreDestTag,14)
+//        poke(l.io.LoadStoreDestVal,54)
+//        
+//     step(1)
+//        poke(l.io.FUBroadcastValid3,1)
+//        poke(l.io.FUBroadcastTag3,15)
+//        poke(l.io.FUBroadcastValue3,93)
+//        poke(l.io.Dcache_Valid,1)
+//        poke(l.io.Dcache_busy,0)
+//        poke(l.io.Dcache_tag_out,12)
+//        poke(l.io.Dcache_data_out,83)
+//     step(1)
+//        poke(l.io.Dcache_Valid,0)
+//        poke(l.io.Dcache_busy,1)
+//        poke(l.io.Dcache_tag_out,12)
+//        poke(l.io.Dcache_data_out,83)
+//     step(20)
+
+
+    // selecting only one row select for store instruction
+    poke(l.io.RenameLoadStoreValid0,1)
+    poke(l.io.RenameLoadStoreRowSelect0,0)
+    poke(l.io.RenameSourceAValue0,SourceA)
+    poke(l.io.RenameSourceAValueValid0,1)
+    poke(l.io.RenameSourceATag0,0)
+    poke(l.io.RenameSourceBValue0,SourceB)
+    poke(l.io.RenameSourceBValueValid0,1)
+    poke(l.io.RenameSourceBTag0,1)
+                                                           
+    poke(l.io.Rename_Opcode_0,rand)
+    poke(l.io.Rename_destTag_0,rand)
+    poke(l.io.Rename_func3_0,rand)
+    poke(l.io.Rename_func7_0,rand)
+    poke(l.io.Rename_Imm_0,rand)
+    poke(l.io.RenameStoreSelect0,true)
+    poke(l.io.RenameROBtag0,12)
+                                                           
+    step(1)
+    poke(l.io.RenameLoadStoreValid0,0)
+    poke(l.io.RenameLoadStoreRowSelect0,0)
+    poke(l.io.RenameSourceAValue0,0)
+    poke(l.io.RenameSourceAValueValid0,0)
+    poke(l.io.RenameSourceATag0,0)
+    poke(l.io.RenameSourceBValue0,0)
+    poke(l.io.RenameSourceBValueValid0,0)
+    poke(l.io.RenameSourceBTag0,0)
+                                                           
+    poke(l.io.Rename_Opcode_0,0)
+    poke(l.io.Rename_destTag_0,0)
+    poke(l.io.Rename_func3_0,0)
+    poke(l.io.Rename_func7_0,0)
+    poke(l.io.Rename_Imm_0,0)
+    poke(l.io.RenameStoreSelect0,false)
+    poke(l.io.RenameROBtag0,0)
+    step(51)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 

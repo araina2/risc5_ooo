@@ -269,7 +269,7 @@ class ReservationStationModule extends Module {
 
   for(b<-15 to 0 by -1){
     when((ValidEntry(b)===UInt(0) && (io.Full===UInt(0)))) {
-        io.FreeRow := UInt(b) 
+        io.FreeRow := UInt(b) - UInt(1)
     
     }
   }
