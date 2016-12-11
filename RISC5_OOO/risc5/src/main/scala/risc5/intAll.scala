@@ -210,6 +210,9 @@ class intAll extends Module {
         rob.io.RenameLoadStoreValid1 := r.io.RenameLoadStoreValid1
         rob.io.RenameLoadStoreValid2 := r.io.RenameLoadStoreValid2
         rob.io.RenameLoadStoreValid3 := r.io.RenameLoadStoreValid3
+
+        // Connecting the dmem busy output port to ROB input
+        rob.io.dmembusy := dmem.io.busy
         
         
         
@@ -352,7 +355,7 @@ class intAll extends Module {
         f0.io.issueFull := iss.io.Full_0
         f0.io.issueValid := iss.io.Valid_0
         when(f0.io.issueValid===UInt(1)){
-          //printf("rnayar: issueValid in the functional unit is set to ONE")
+          printf("rnayar: issueValid in the functional unit is set to ONE")
         }
         //F1
         f1.io.issueSourceValA := iss.io.IssueSourceValA_1
@@ -487,15 +490,16 @@ class intAll extends Module {
 
         
         ///////////////////////////////////////////////
-        //              DCACHE                      //
+        //              DCACHE - inputs              //
         //////////////////////////////////////////////
- /*       dmem.io.din := 
-        dmem.io.addre :=
-        dmem.io.en :=
-        dmem.io.wr
-        dmem.io.TAG_in
-TODO
-*/
+        // only store instructions are pushed into dcache memory
+        dmem.io.din := rob.io.ROBValue0
+        dmem.io.addr := rob.io.ROBMemAddress0
+        dmem.io.en := (rob.io.ROBValueValid0===UInt(1)) && (rob.io.ROBStoreSelect0===Bool(true))
+        dmem.io.wr := rob.io.ROBStoreSelect0
+
+        
+
 
 
         ///////////////////////////////////////////

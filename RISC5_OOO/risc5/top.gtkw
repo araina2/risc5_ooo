@@ -1,23 +1,31 @@
 [*]
 [*] GTKWave Analyzer v3.3.76 (w)1999-2016 BSI
-[*] Sat Dec 10 22:02:48 2016
+[*] Sun Dec 11 20:05:57 2016
 [*]
 [dumpfile] "/afs/cs.wisc.edu/u/r/r/rrahulnayar/risc5_ooo/RISC5_OOO/risc5/intAll.vcd"
-[dumpfile_mtime] "Sat Dec 10 21:39:46 2016"
-[dumpfile_size] 172041
-[savefile] "/afs/cs.wisc.edu/u/r/r/rrahulnayar/risc5_ooo/RISC5_OOO/risc5/Decode.gtkw"
-[timestart] 4
+[dumpfile_mtime] "Sun Dec 11 20:05:33 2016"
+[dumpfile_size] 182081
+[savefile] "/afs/cs.wisc.edu/u/r/r/rrahulnayar/risc5_ooo/RISC5_OOO/risc5/top.gtkw"
+[timestart] 0
 [size] 1855 1176
 [pos] -1 -1
-*-3.667667 20 20 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-4.000000 22 12 14 16 18 20 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[markername] Adecode_output
+[markername] Brename_output
+[markername] Cissue_output
+[markername] DFU output
+[markername] EROB output
 [treeopen] intAll.
 [treeopen] intAll.iss.
 [sst_width] 326
-[signals_width] 428
+[signals_width] 454
 [sst_expanded] 1
 [sst_vpaned_height] 362
 @28
 intAll.clk
+@200
+-
+-
 @22
 intAll.io_fetchAddressd0[63:0]
 @28
@@ -118,7 +126,6 @@ intAll.r.io_RenameSourceBValue0[63:0]
 @28
 intAll.r.io_RenameSourceBValueValid0
 intAll.r.io_RenameStoreSelect0
-intAll.r.io_RenameType0[2:0]
 intAll.r.io_RenameValid
 @22
 intAll.r.io_Rename_Imm_0[19:0]
@@ -173,7 +180,7 @@ intAll.iss.rS_0.ValidEntry_14
 intAll.iss.rS_0.ValidEntry_15
 @22
 intAll.iss.rS_0.io_FreeRow[3:0]
-@29
+@28
 intAll.iss.rS_0.io_Full
 @22
 intAll.iss.rS_0.io_IssuedestTag[9:0]
@@ -188,9 +195,12 @@ intAll.iss.rS_0.io_Issue_Func7[6:0]
 intAll.iss.rS_0.io_IssueFUOpcode[6:0]
 intAll.iss.rS_0.io_IssueSourceValA[63:0]
 intAll.iss.rS_0.io_IssueSourceValB[63:0]
+@28
+intAll.iss.io_Valid_0
 @200
 -iss_rs0_output
 -
+@201
 -
 @22
 intAll.f0.io_FUBroadcastTag[9:0]
@@ -207,24 +217,39 @@ intAll.f0.valid
 -
 @22
 intAll.rob.io_ROBMemAddress0[63:0]
-intAll.rob.io_ROBMemAddress1[63:0]
-intAll.rob.io_ROBMemAddress2[63:0]
-intAll.rob.io_ROBMemAddress3[63:0]
 @28
 intAll.rob.io_ROBStoreSelect0
-intAll.rob.io_ROBStoreSelect1
-intAll.rob.io_ROBStoreSelect2
-intAll.rob.io_ROBStoreSelect3
 @22
 intAll.rob.io_ROBValue0[63:0]
-intAll.rob.io_ROBValue1[63:0]
-intAll.rob.io_ROBValue2[63:0]
-intAll.rob.io_ROBValue3[63:0]
 @28
 intAll.rob.io_ROBValueValid0
-intAll.rob.io_ROBValueValid1
-intAll.rob.io_ROBValueValid2
-intAll.rob.io_ROBValueValid3
+@200
+-
+@22
+intAll.rob.io_ROBMemAddress0[63:0]
+@28
+intAll.rob.io_ROBStoreSelect0
+@22
+intAll.rob.io_ROBValue0[63:0]
+@28
+intAll.rob.io_ROBValueValid0
+@200
+-ROB output
+-
+@28
+intAll.dmem.io_en
+@22
+intAll.dmem.io_din[63:0]
+intAll.dmem.io_addr[63:0]
+@28
+intAll.dmem.io_wr
+intAll.dmem.io_busy
+@22
+intAll.dmem.io_TAG_in[6:0]
+@28
+intAll.dmem.io_valid
+@22
+intAll.dmem.io_dout[63:0]
 @200
 -
 [pattern_trace] 1
