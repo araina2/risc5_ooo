@@ -325,6 +325,7 @@ class IssueQueueModule extends Module {
     
     io.IssuedestTag_0 := rS_0.io.IssuedestTag
     io.Valid_0 := rS_0.io.Valid
+    io.IssuePC0 := rS_0.io.IssuePC
     io.IssueBroadCastFreeRow_0 := rS_0.io.FreeRow
     io.Full_0 := rS_0.io.Full
 
@@ -386,6 +387,7 @@ class IssueQueueModule extends Module {
     
     io.IssuedestTag_1 := rS_1.io.IssuedestTag
     io.Valid_1 := rS_1.io.Valid
+    io.IssuePC1 := rS_1.io.IssuePC
     io.IssueBroadCastFreeRow_1 := rS_1.io.FreeRow
     io.Full_1 := rS_1.io.Full
 
@@ -446,6 +448,7 @@ class IssueQueueModule extends Module {
     
     io.IssuedestTag_2 := rS_2.io.IssuedestTag
     io.Valid_2 := rS_2.io.Valid
+    io.IssuePC2 := rS_2.io.IssuePC
     io.IssueBroadCastFreeRow_2 := rS_2.io.FreeRow
     io.Full_2 := rS_2.io.Full
 
@@ -506,6 +509,7 @@ class IssueQueueModule extends Module {
     
     io.IssuedestTag_3 := rS_3.io.IssuedestTag
     io.Valid_3 := rS_3.io.Valid
+    io.IssuePC3 := rS_3.io.IssuePC
     io.IssueBroadCastFreeRow_3 := rS_3.io.FreeRow
     io.Full_3 := rS_3.io.Full
 
