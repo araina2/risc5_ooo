@@ -184,7 +184,7 @@ class intAll extends Module {
         rob.io.FUBroadcastValid1 := f1.io.FUBroadcastValid
         rob.io.FUBroadcastValue2 := f2.io.FUBroadcastValue
         rob.io.FUBroadcastTag2 := f2.io.FUBroadcastTag
-        rob.io.FUBroradcastValid2 := f2.io.FUBroadcastValid
+        rob.io.FUBroadcastValid2 := f2.io.FUBroadcastValid
         rob.io.FUBroadcastValue3 := f3.io.FUBroadcastValue
         rob.io.FUBroadcastTag3 := f3.io.FUBroadcastTag
         rob.io.FUBroadcastValid3 := f3.io.FUBroadcastValid
@@ -632,10 +632,14 @@ class intAll extends Module {
 
 
 class intAllTests(c: intAll) extends Tester(c) {
-
+//ADDI R1 R5 0x5
    val RsampleInstruction = 0x00528093//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
    val RsampleAddress     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000001",2)
     val RsampleRobTag      = 0x2D //Integer.parseInt("101101",2)
+//LUI R4 0x1000
+   val RsampleInstruction2 = 0x01000237//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
+   val RsampleAddress2     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000001",2)
+    val RsampleRobTag2      = 0x2F //Integer.parseInt("101101",2)
 
     //expected values
     val RexpectedOpcode  = Integer.parseInt("0010011",2)
@@ -654,7 +658,7 @@ class intAllTests(c: intAll) extends Tester(c) {
 
         step(1)
         poke(c.io.fetchValidd0, 0) 
-        step(35)
+        step(85)
         /*expect(d.io.decodeOpcode,  RexpectedOpcode)
         expect(d.io.decodeRd,      RexpectedRd)
         expect(d.io.decodeFunky3,  RexpectedFunky3)
@@ -666,7 +670,14 @@ class intAllTests(c: intAll) extends Tester(c) {
         expect(d.io.decodeRobTag,  RsampleRobTag)
         expect(d.io.decodeAddress, RsampleAddress)
         expect(d.io.decodeType,  1)*/
+        poke(c.io.fetchInstructiond0, RsampleInstruction2)
+        poke(c.io.fetchAddressd0, RsampleAddress2)
+        poke(c.io.fetchRobTagd0, RsampleRobTag2) 
+        poke(c.io.fetchValidd0, 1) 
 
+        step(1)
+        poke(c.io.fetchValidd0, 0) 
+        step(85)
 }
   
 class intAllGenerator extends TestGenerator {

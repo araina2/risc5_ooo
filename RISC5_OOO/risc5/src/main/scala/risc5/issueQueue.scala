@@ -57,6 +57,7 @@ class IssueQueueModule extends Module {
     val FUBroadcastTag3_0 = UInt(INPUT,7)
     val FUBroadcastValid3_0 = UInt(INPUT,1)
     val FUisBusy_0 = UInt(INPUT,1)
+    val RenamePC0 = UInt(INPUT,64)
   
     // Reservation Station 1
 
@@ -102,6 +103,7 @@ class IssueQueueModule extends Module {
     val FUBroadcastTag3_1 = UInt(INPUT,7)
     val FUBroadcastValid3_1 = UInt(INPUT,1)
     val FUisBusy_1 = UInt(INPUT,1)
+    val RenamePC1 = UInt(INPUT,64)
 
     // Reservation Station 2
 
@@ -147,6 +149,7 @@ class IssueQueueModule extends Module {
     val FUBroadcastTag3_2 = UInt(INPUT,7)
     val FUBroadcastValid3_2 = UInt(INPUT,1)
     val FUisBusy_2 = UInt(INPUT,1)
+    val RenamePC2 = UInt(INPUT,64)
 
     // Reservation Station 3
 
@@ -192,6 +195,7 @@ class IssueQueueModule extends Module {
     val FUBroadcastTag3_3 = UInt(INPUT,7)
     val FUBroadcastValid3_3 = UInt(INPUT,1)
     val FUisBusy_3 = UInt(INPUT,1)
+    val RenamePC3 = UInt(INPUT,64)
 
 
     // All OUTPUT ports
@@ -211,6 +215,7 @@ class IssueQueueModule extends Module {
     val IssuedestTag_0 = UInt(OUTPUT,10)
     val Full_0 = UInt(OUTPUT,1)
     val Valid_0 = UInt(OUTPUT,1)
+    val IssuePC0 = UInt(OUTPUT,64)
   
     val IssueBroadCastFreeRow_0 = UInt(OUTPUT,4)
 
@@ -227,6 +232,7 @@ class IssueQueueModule extends Module {
     val IssuedestTag_1 = UInt(OUTPUT,10)
     val Full_1 = UInt(OUTPUT,1)
     val Valid_1 = UInt(OUTPUT,1)
+    val IssuePC1 = UInt(OUTPUT,64)
     val IssueBroadCastFreeRow_1 = UInt(OUTPUT,4)
   
     // Reservation Station 2
@@ -242,6 +248,7 @@ class IssueQueueModule extends Module {
     val IssuedestTag_2 = UInt(OUTPUT,10)
     val Full_2 = UInt(OUTPUT,1)
     val Valid_2 = UInt(OUTPUT,1)
+    val IssuePC2 = UInt(OUTPUT,64)
     val IssueBroadCastFreeRow_2 = UInt(OUTPUT,4)
   
     // Reservation Station 3
@@ -257,6 +264,7 @@ class IssueQueueModule extends Module {
     val IssuedestTag_3 = UInt(OUTPUT,10)
     val Full_3 = UInt(OUTPUT,1)
     val Valid_3 = UInt(OUTPUT,1)
+    val IssuePC3 = UInt(OUTPUT,64)
     val IssueBroadCastFreeRow_3 = UInt(OUTPUT,4)
   
   }
@@ -303,6 +311,7 @@ class IssueQueueModule extends Module {
     rS_0.io.FUBroadcastTag3 := io.FUBroadcastTag3_0
     rS_0.io.FUBroadcastValid3 := io.FUBroadcastValue3_0
     rS_0.io.FUisBusy := io.FUisBusy_0
+    rS_0.io.RenamePC := io.RenamePC0
 
 
     io.IssueSourceValA_0 := rS_0.io.IssueSourceValA
@@ -363,6 +372,7 @@ class IssueQueueModule extends Module {
     rS_1.io.FUBroadcastTag3 := io.FUBroadcastTag3_1
     rS_1.io.FUBroadcastValid3 := io.FUBroadcastValue3_1
     rS_1.io.FUisBusy := io.FUisBusy_1
+    rS_1.io.RenamePC := io.RenamePC1
 
 
     io.IssueSourceValA_1 := rS_1.io.IssueSourceValA
@@ -422,6 +432,7 @@ class IssueQueueModule extends Module {
     rS_2.io.FUBroadcastTag3 := io.FUBroadcastTag3_2
     rS_2.io.FUBroadcastValid3 := io.FUBroadcastValue3_2
     rS_2.io.FUisBusy := io.FUisBusy_2
+    rS_2.io.RenamePC := io.RenamePC2
 
 
     io.IssueSourceValA_2 := rS_2.io.IssueSourceValA
@@ -481,6 +492,7 @@ class IssueQueueModule extends Module {
     rS_3.io.FUBroadcastTag3 := io.FUBroadcastTag3_3
     rS_3.io.FUBroadcastValid3 := io.FUBroadcastValue3_3
     rS_3.io.FUisBusy := io.FUisBusy_3
+    rS_3.io.RenamePC := io.RenamePC3
 
 
     io.IssueSourceValA_3 := rS_3.io.IssueSourceValA
