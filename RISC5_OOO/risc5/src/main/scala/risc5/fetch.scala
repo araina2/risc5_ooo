@@ -29,10 +29,10 @@ class FetchModule extends Module {
     val FetchBranchTakenTag1 = UInt(OUTPUT,1)
     val FetchBranchTakenTag2 = UInt(OUTPUT,1)
     val FetchBranchTakenTag3 = UInt(OUTPUT,1)
-    val ROBTag0 = UInt(OUTPUT,8)
-    val ROBTag1 = UInt(OUTPUT,8)
-    val ROBTag2 = UInt(OUTPUT,8)
-    val ROBTag3 = UInt(OUTPUT,8)
+    val ROBTag0 = UInt(OUTPUT,7)
+    val ROBTag1 = UInt(OUTPUT,7)
+    val ROBTag2 = UInt(OUTPUT,7)
+    val ROBTag3 = UInt(OUTPUT,7)
     val Valid = UInt(OUTPUT,1)
     
   }
