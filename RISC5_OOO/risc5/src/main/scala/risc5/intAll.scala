@@ -178,12 +178,16 @@ class intAll extends Module {
        //////////////////////////////////////////////
         rob.io.FUBroadcastValue0 := f0.io.FUBroadcastValue
         rob.io.FUBroadcastTag0 := f0.io.FUBroadcastTag
+        rob.io.FUBroadcastValid0 := f0.io.FUBroadcastValid
         rob.io.FUBroadcastValue1 := f1.io.FUBroadcastValue
         rob.io.FUBroadcastTag1 := f1.io.FUBroadcastTag
+        rob.io.FUBroadcastValid1 := f1.io.FUBroadcastValid
         rob.io.FUBroadcastValue2 := f2.io.FUBroadcastValue
         rob.io.FUBroadcastTag2 := f2.io.FUBroadcastTag
+        rob.io.FUBroradcastValid2 := f2.io.FUBroadcastValid
         rob.io.FUBroadcastValue3 := f3.io.FUBroadcastValue
         rob.io.FUBroadcastTag3 := f3.io.FUBroadcastTag
+        rob.io.FUBroadcastValid3 := f3.io.FUBroadcastValid
         rob.io.LoadStoreDestVal0 := lsq.io.LoadStoreDestValue
         rob.io.LoadStoreDestTag0 := lsq.io.LoadStoreDestTag_out
        // rob.io.LoadStoreDestReg0 := lsq.io.LoadStoreDestReg //Currently not using
