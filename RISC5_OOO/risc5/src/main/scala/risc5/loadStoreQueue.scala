@@ -1250,13 +1250,13 @@ class LoadStoreQueueTester(l:LoadStoreQueueModule) extends Tester(l) {
 //     step(20)
 
 
-    // selecting only one row select for store instruction
+    // selecting only one row select for load instruction
     poke(l.io.RenameLoadStoreValid0,1)
     poke(l.io.RenameLoadStoreRowSelect0,0)
-    poke(l.io.RenameSourceAValue0,SourceA)
+    poke(l.io.RenameSourceAValue0,SourceB)
     poke(l.io.RenameSourceAValueValid0,1)
     poke(l.io.RenameSourceATag0,0)
-    poke(l.io.RenameSourceBValue0,SourceB)
+    poke(l.io.RenameSourceBValue0,SourceA)
     poke(l.io.RenameSourceBValueValid0,1)
     poke(l.io.RenameSourceBTag0,1)
                                                            
@@ -1265,7 +1265,7 @@ class LoadStoreQueueTester(l:LoadStoreQueueModule) extends Tester(l) {
     poke(l.io.Rename_func3_0,rand)
     poke(l.io.Rename_func7_0,rand)
     poke(l.io.Rename_Imm_0,rand)
-    poke(l.io.RenameStoreSelect0,true)
+    poke(l.io.RenameStoreSelect0,false)
     poke(l.io.RenameROBtag0,12)
                                                            
     step(1)

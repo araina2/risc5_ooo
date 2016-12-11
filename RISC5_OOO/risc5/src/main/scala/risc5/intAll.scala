@@ -185,6 +185,17 @@ class intAll extends Module {
         rob.io.RenameStoreSelect1 := r.io.RenameStoreSelect1
         rob.io.RenameStoreSelect2 := r.io.RenameStoreSelect2
         rob.io.RenameStoreSelect3 := r.io.RenameStoreSelect3
+
+        //Adding the valid signals for issue and load store queue in ROB
+        rob.io.RenameIssueValid0 := r.io.RenameIssueValid0  
+        rob.io.RenameIssueValid1 := r.io.RenameIssueValid1  
+        rob.io.RenameIssueValid2 := r.io.RenameIssueValid2  
+        rob.io.RenameIssueValid3 := r.io.RenameIssueValid3  
+         
+        rob.io.RenameLoadStoreValid0 := r.io.RenameLoadStoreValid0
+        rob.io.RenameLoadStoreValid1 := r.io.RenameLoadStoreValid1
+        rob.io.RenameLoadStoreValid2 := r.io.RenameLoadStoreValid2
+        rob.io.RenameLoadStoreValid3 := r.io.RenameLoadStoreValid3
         
         
         
@@ -369,7 +380,7 @@ class intAll extends Module {
         ///////////////////////////////////////////////
         //Think I got it all
         ///////////////////////////////////////////////
-        /*lsq.io.RenameLoadStoreRowSelect0 := r.io.RenameLoadStoreRowSelect0
+        lsq.io.RenameLoadStoreRowSelect0 := r.io.RenameLoadStoreRowSelect0
         lsq.io.RenameLoadStoreRowSelect1 := r.io.RenameLoadStoreRowSelect1
         lsq.io.RenameLoadStoreRowSelect2 := r.io.RenameLoadStoreRowSelect2
         lsq.io.RenameLoadStoreRowSelect3 := r.io.RenameLoadStoreRowSelect3
@@ -459,7 +470,7 @@ class intAll extends Module {
         lsq.io.Dcache_data_out := dmem.io.dout
         lsq.io.Dcache_Valid := dmem.io.valid
 
-*/
+
         
         ///////////////////////////////////////////////
         //              DCACHE                      //
