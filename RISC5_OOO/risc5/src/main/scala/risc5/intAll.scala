@@ -164,12 +164,16 @@ class intAll extends Module {
        //////////////////////////////////////////////
         rob.io.FUBroadcastValue0 := f0.io.FUBroadcastValue
         rob.io.FUBroadcastTag0 := f0.io.FUBroadcastTag
+        rob.io.FUBroadcastValid0 := f0.io.FUBroadcastValid
         rob.io.FUBroadcastValue1 := f1.io.FUBroadcastValue
         rob.io.FUBroadcastTag1 := f1.io.FUBroadcastTag
+        rob.io.FUBroadcastValid1 := f1.io.FUBroadcastValid
         rob.io.FUBroadcastValue2 := f2.io.FUBroadcastValue
         rob.io.FUBroadcastTag2 := f2.io.FUBroadcastTag
+        rob.io.FUBroradcastValid2 := f2.io.FUBroadcastValid
         rob.io.FUBroadcastValue3 := f3.io.FUBroadcastValue
         rob.io.FUBroadcastTag3 := f3.io.FUBroadcastTag
+        rob.io.FUBroadcastValid3 := f3.io.FUBroadcastValid
         rob.io.LoadStoreDestVal0 := lsq.io.LoadStoreDestValue
         rob.io.LoadStoreDestTag0 := lsq.io.LoadStoreDestTag_out
        // rob.io.LoadStoreDestReg0 := lsq.io.LoadStoreDestReg //Currently not using
@@ -206,6 +210,9 @@ class intAll extends Module {
         rob.io.RenameLoadStoreValid1 := r.io.RenameLoadStoreValid1
         rob.io.RenameLoadStoreValid2 := r.io.RenameLoadStoreValid2
         rob.io.RenameLoadStoreValid3 := r.io.RenameLoadStoreValid3
+
+        // Connecting the dmem busy output port to ROB input
+        rob.io.dmembusy := dmem.io.busy
         
         
         
@@ -348,7 +355,7 @@ class intAll extends Module {
         f0.io.issueFull := iss.io.Full_0
         f0.io.issueValid := iss.io.Valid_0
         when(f0.io.issueValid===UInt(1)){
-          //printf("rnayar: issueValid in the functional unit is set to ONE")
+          printf("rnayar: issueValid in the functional unit is set to ONE")
         }
         //F1
         f1.io.issueSourceValA := iss.io.IssueSourceValA_1
@@ -483,15 +490,16 @@ class intAll extends Module {
 
         
         ///////////////////////////////////////////////
-        //              DCACHE                      //
+        //              DCACHE - inputs              //
         //////////////////////////////////////////////
- /*       dmem.io.din := 
-        dmem.io.addre :=
-        dmem.io.en :=
-        dmem.io.wr
-        dmem.io.TAG_in
-TODO
-*/
+        // only store instructions are pushed into dcache memory
+        dmem.io.din := rob.io.ROBValue0
+        dmem.io.addr := rob.io.ROBMemAddress0
+        dmem.io.en := (rob.io.ROBValueValid0===UInt(1)) && (rob.io.ROBStoreSelect0===Bool(true))
+        dmem.io.wr := rob.io.ROBStoreSelect0
+
+        
+
 
 
         ///////////////////////////////////////////

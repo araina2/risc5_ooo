@@ -64,10 +64,7 @@ class ROB extends Module {
    ////val LoadStoreDestAddress1 = UInt(INPUT,64)
 
    //Inputs from dmem 
-    val dout = UInt(INPUT, 64)
-    val valid = Bool(INPUT)
-    val busy = Bool(INPUT)
-    val TAG_out = UInt(INPUT,7) 
+    val dmembusy = Bool(INPUT)
     
 
    //Output signals from ROB
@@ -89,11 +86,10 @@ class ROB extends Module {
    //val ROBValueValid3 = UInt(OUTPUT,1)
 
    //Outputs to the memory for commit
-    val din  = UInt(OUTPUT, 64)
-    val addr  = UInt(OUTPUT, 64)
-    val en = Bool(OUTPUT)
-    val wr = Bool(OUTPUT)
-    val TAG_in = UInt(OUTPUT,7) 
+   // val din  = UInt(OUTPUT, 64)
+   // val addr  = UInt(OUTPUT, 64)
+   // val en = Bool(OUTPUT)
+   // val wr = Bool(OUTPUT)
    }
    
    io.ROBStoreSelect0 := Bool(false)
@@ -567,7 +563,7 @@ class ROB extends Module {
     }
   }*/
 
-  when((valid(0) === UInt(1)) /*&& (valid(1) != UInt(1))
+  when((valid(0) === UInt(1)) && io.dmembusy===UInt(0) /*&& (valid(1) != UInt(1))
         && (valid(2) != UInt(1)) && (valid(3) != UInt(1))*/) {
     //printf("\nComing in the 3 less valid check\n")
     io.ROBValueValid0 := UInt(1)

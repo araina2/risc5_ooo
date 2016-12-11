@@ -17,10 +17,10 @@ class instruction_rom(val n: Int) extends Module {
     val FetchInstruction2 = UInt(OUTPUT, 32)
     val FetchInstruction3 = UInt(OUTPUT, 32)
     
-    val FetchROBTag0 = UInt(OUTPUT, 8)
-    val FetchROBTag1 = UInt(OUTPUT, 8)
-    val FetchROBTag2 = UInt(OUTPUT, 8)
-    val FetchROBTag3 = UInt(OUTPUT, 8)
+    val FetchROBTag0 = UInt(OUTPUT, 7)
+    val FetchROBTag1 = UInt(OUTPUT, 7)
+    val FetchROBTag2 = UInt(OUTPUT, 7)
+    val FetchROBTag3 = UInt(OUTPUT, 7)
     val FetchValid = UInt(OUTPUT,1)
     //val inst = UInt(OUTPUT, 32*n)
   }
