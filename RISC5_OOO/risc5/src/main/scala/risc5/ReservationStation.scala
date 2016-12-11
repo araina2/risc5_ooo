@@ -22,6 +22,8 @@ class ReservationStationModule extends Module {
 
         val RenameDestTag = UInt(INPUT,10)
 
+        val RenamePC = UInt(INPUT,64)
+
 	val LoadStoreDestVal = UInt(INPUT,64)
 	val LoadStoreDestTag = UInt(INPUT,10)
 	val LoadStoreDestValid = UInt(INPUT,1) // need to be added in the document
@@ -65,6 +67,7 @@ class ReservationStationModule extends Module {
         val Full = UInt(OUTPUT,1)
         val Valid = UInt(OUTPUT,1) // one valid bit need to be added
         val FreeRow = UInt(OUTPUT,4)
+        val IssuePC = UInt(OUTPUT,64)
         
 
     
@@ -89,6 +92,8 @@ class ReservationStationModule extends Module {
   val Decode_Func7 = Vec.fill(16){Reg(init = UInt(0,width=7))}
   val Decode_Imm = Vec.fill(16){Reg(init = UInt(0,width=20))}
   val DecodeType = Vec.fill(16){Reg(init = UInt(0,width=3))}
+  
+  val PC = Vec.fill(16){Reg(init = UInt(0,width=64))}
 
   val ValidEntry = Vec.fill(16){Reg(init = UInt(0,width=1))}
 
@@ -108,6 +113,7 @@ class ReservationStationModule extends Module {
   io.Issue_Func7 := UInt(0)
   io.Issue_Imm := UInt(0)
   io.Issue_Type:= UInt(0)
+  io.IssuePC:= UInt(0)
  
   // reset all the register values
   when(reset) {
@@ -130,6 +136,7 @@ class ReservationStationModule extends Module {
       DecodeType(i) := UInt(0)
 
       ValidEntry(i) := UInt(0)
+      PC(i) := UInt(0)
     }
 
       Full := UInt(0)
@@ -258,6 +265,7 @@ class ReservationStationModule extends Module {
         Decode_Func7(rownumber) := io.Decode_Func7
         Decode_Imm(rownumber) := io.Decode_Imm
         DecodeType(rownumber) := io.DecodeType
+        PC(rownumber) := io.RenamePC
       }
 
 
@@ -282,6 +290,7 @@ class ReservationStationModule extends Module {
       io.IssueSourceValB := IssueSourceValB(k)
       io.IssueFUOpcode := Decode_Opcode(k)
       io.IssuedestTag := DestTag(k)
+      io.IssuePC := PC(k)
       io.Valid := UInt(1) 
 
       io.Issue_Func3 := Decode_Func3(k)
@@ -319,6 +328,7 @@ class ReservationStationModule extends Module {
           IssueSourceValBTag(t):= IssueSourceValBTag(t+1)
           Decode_Opcode(t):= Decode_Opcode(t+1)
           DestTag(t):= DestTag(t+1)
+          PC(t):= PC(t+1)
           Decode_Func3(t):= Decode_Func3(t+1)
           Decode_Func7(t):= Decode_Func7(t+1)
           Decode_Imm(t):= Decode_Imm(t+1)
@@ -336,6 +346,7 @@ class ReservationStationModule extends Module {
           IssueSourceValBTag(15):= UInt(0)
           Decode_Opcode(15):= UInt(0)
           DestTag(15):= UInt(0)
+          PC(15):= UInt(0)
           Decode_Func3(15):= UInt(0)
           Decode_Func7(15):= UInt(0)
           Decode_Imm(15):= UInt(0)
