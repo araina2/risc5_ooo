@@ -618,7 +618,7 @@ class RegAliasTable extends Module {
           //printf("\nThe value of tag(i) in Load Store dest_0 is %d", tag(i))
           //printf("\nThe value of renameloadstore(i) in Load Store dest_0 is %d", io.RenameDestTag0)
           RenameLoadStoreValid(0) := UInt(1)
-          io.RenameLoadStoreValid0 := RenameIssueValid(0)
+          io.RenameLoadStoreValid0 := RenameLoadStoreValid(0)
           
           when (io.LoadStoreFull === UInt(1)) {
             io.RenameValid := UInt(0)
