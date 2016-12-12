@@ -219,7 +219,7 @@ class DecodeChannel extends Module {
 		iType := UInt(0x0) //R-Type
 		immediate := UInt("h0")
 	}
-        .elsewhen((fetchOpcode === UInt(0x13))||(fetchOpcode === UInt(0x1B))||(fetchOpcode === UInt(0x67))){
+        .elsewhen((fetchOpcode === UInt(0x3)) || (fetchOpcode === UInt(0x13))||(fetchOpcode === UInt(0x1B))||(fetchOpcode === UInt(0x67))){
 		iType := UInt(0x1) //I-Type
 		immediate := io.fetchInstruction(31,20)
 	}
