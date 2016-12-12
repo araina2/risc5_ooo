@@ -357,15 +357,13 @@ class FunctionalUnit extends Module {
 			when(io.issueFunc7 === UInt("b0000000")){
 				// SRLW
 				derp := (valueA >> shiftAmmnt) 
-				result := Cat(Fill(32, derp(31)), derp)
+				result := Cat(Fill(32, UInt(0x0)), derp)
 				valid := UInt(1)
 	
 			}
 			.elsewhen(io.issueFunc7 === UInt("b0100000")){
 				// SRAW
-			//	val derp = SInt()
 				derp2 := valueA >> shiftAmmnt
-					
 				result := Cat(Fill(32, derp2(31)), derp2)
 				valid := UInt(1)
 			}		
@@ -806,7 +804,7 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	poke(f.io.issueImm, 0x0)
 	poke(f.io.issueSourceValA, 0x1D)
 	poke(f.io.issueSourceValB, 0xE1)
-	poke(f.io.issueType, 0x1)
+	poke(f.io.issueType, 0x0)
 	poke(f.io.issueFunc7, 0x0)
 	step(1)
 
@@ -819,7 +817,7 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	poke(f.io.issueImm, 0x0)
 	poke(f.io.issueSourceValA, 0x1D)
 	poke(f.io.issueSourceValB, 0xE1)
-	poke(f.io.issueType, 0x1)
+	poke(f.io.issueType, 0x0)
 	poke(f.io.issueFunc7, 0x20)
 	step(1)
 
@@ -832,7 +830,7 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	poke(f.io.issueImm, 0x0)
 	poke(f.io.issueSourceValA, 0xE)
 	poke(f.io.issueSourceValB, 0xF)
-	poke(f.io.issueType, 0x1)
+	poke(f.io.issueType, 0x0)
 	poke(f.io.issueFunc7, 0x0)
 	step(1)
 
@@ -845,7 +843,7 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	poke(f.io.issueImm, 0x0)
 	poke(f.io.issueSourceValA, 0x5)
 	poke(f.io.issueSourceValB, 0x1)
-	poke(f.io.issueType, 0x1)
+	poke(f.io.issueType, 0x0)
 	poke(f.io.issueFunc7, 0x20)
 	step(1)
 
@@ -858,7 +856,7 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	poke(f.io.issueImm, 0x0)
 	poke(f.io.issueSourceValA, 0x3FFFFFFF)
 	poke(f.io.issueSourceValB, 0x81)
-	poke(f.io.issueType, 0x1)
+	poke(f.io.issueType, 0x0)
 	poke(f.io.issueFunc7, 0x0)
 	step(1)
 
@@ -871,11 +869,11 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	poke(f.io.issueImm, 0x0)
 	poke(f.io.issueSourceValA, 0xFFFFFFFE)
 	poke(f.io.issueSourceValB, 0x81)
-	poke(f.io.issueType, 0x1)
+	poke(f.io.issueType, 0x0)
 	poke(f.io.issueFunc7, 0x0)
 	step(1)
 
-	expect(f.io.FUBroadcastValue, 0xFFFFFFFF)
+	expect(f.io.FUBroadcastValue, 0x7FFFFFFF)
 
 	// SRAW
 	poke(f.io.issueDestTag, 0x1)
@@ -883,8 +881,8 @@ class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
 	poke(f.io.issueFunc3, 0x5)
 	poke(f.io.issueImm, 0x0)
 	poke(f.io.issueSourceValA, 0x7FFFFFFE)
-	poke(f.io.issueSourceValB, 0x81)
-	poke(f.io.issueType, 0x1)
+	poke(f.io.issueSourceValB, 0x1)
+	poke(f.io.issueType, 0x0)
 	poke(f.io.issueFunc7, 0x20)
 	step(1)
 
