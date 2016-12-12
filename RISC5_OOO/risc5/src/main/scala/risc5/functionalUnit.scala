@@ -33,6 +33,7 @@ class FunctionalUnit extends Module {
 		val issueDestTag     = UInt(INPUT, 10)
 		val issueFull        = UInt(INPUT, 1)
 		val issueValid       = UInt(INPUT, 1)
+		val issuePC          = UInt(INPUT, 64)
 
 		//OUTPUTS
 		val FUBroadcastValue = UInt(OUTPUT, 64)
@@ -42,7 +43,7 @@ class FunctionalUnit extends Module {
 
 	}
 		val valid = Reg(UInt(0))
-
+		val issueValid = Reg(next = io.issueValid)
 
 		val destTag = Reg(next = io.issueDestTag)
 		io.FUBroadcastTag := destTag
@@ -94,8 +95,21 @@ class FunctionalUnit extends Module {
 
 /////////////////////////////////////////////////////////////////////
 	when(io.issueFUOpcode === UInt(0x03)){
-		
+	// Opcode = 0000011
+	// Loads, not handled by functional units
+	// Treat as NoOp because it shouldn't be here anyways
+	valid := UInt(0x0)
 	
+	}
+	.elsewhen(io.issueFUOpcode === UInt(0x37)){
+		derp := io.issueImm << UInt(12)
+		result := Cat(Fill(32, derp(31)), derp)
+		valid := UInt(0x1)
+	}
+	.elsewhen(io.issueFUOpcode === UInt(0x17)){
+		derp := io.issueImm << UInt(12)
+		result := Cat(Fill(32, derp(31)), derp) + io.issuePC
+		valid := UInt(0x1)
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x67)){
 		// Opcode = 1100111
@@ -372,7 +386,7 @@ class FunctionalUnit extends Module {
 
 
 io.FUBroadcastValue := result
-io.FUBroadcastValid := valid
+io.FUBroadcastValid := valid & issueValid
 
 }
 
@@ -382,6 +396,55 @@ io.FUBroadcastValid := valid
 
 
 class FunctionalUnitTester(f:FunctionalUnit) extends Tester(f) {
+
+//////////////////////////////////////
+//		OPCODE 0x37
+/////////////////////////////////////
+
+	val sampleTag_lui = 0xBAD
+	val expectedTag_lui = 0x3AD
+	
+	val sampleOpcode_lui = 0x37
+	val sampleImm_lui = 0xFFFFF
+	val expectedResult_lui = -4096 
+
+	poke(f.io.issueDestTag, sampleTag_lui)
+	poke(f.io.issueFUOpcode, sampleOpcode_lui)
+	poke(f.io.issueImm, sampleImm_lui)
+	poke(f.io.issueType, 4)
+	poke(f.io.issueValid, 1)
+
+	step(1)
+
+	expect(f.io.FUBroadcastTag, expectedTag_lui)
+	expect(f.io.FUBroadcastValue, expectedResult_lui)
+	expect(f.io.FUBroadcastValid, 1)
+
+////////////////////////////////////////
+//		Opcode 0x17
+////////////////////////////////////////
+
+	val sampleTag_auipc = 0xBA1
+	val expectedTag_auipc = 0x3A1
+	
+	val sampleOpcode_auipc = 0x17
+	val sampleImm_auipc = 0xFFFFF
+	val samplePc_auipc = 0x6
+	val expectedResult_auipc = -4090 
+
+	poke(f.io.issueDestTag, sampleTag_auipc)
+	poke(f.io.issueFUOpcode, sampleOpcode_auipc)
+	poke(f.io.issueImm, sampleImm_auipc)
+	poke(f.io.issueType, 4)
+	poke(f.io.issueValid, 1)
+	poke(f.io.issuePC, samplePc_auipc)
+
+	step(1)
+
+	expect(f.io.FUBroadcastTag, expectedTag_auipc)
+	expect(f.io.FUBroadcastValue, expectedResult_auipc)
+	expect(f.io.FUBroadcastValid, 1)
+	
 
 
 /////////////////////////////////////////

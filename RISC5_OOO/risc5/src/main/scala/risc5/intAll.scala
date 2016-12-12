@@ -113,7 +113,7 @@ class intAll extends Module {
         r.io.IssueRowValid3 := iss.io.Valid_3
 
         //Adding the valid signals pertaining to broadcast free row in LS queue
-        r.io.LoadStoreRowValid := lsq.io.LoadStoreDestValid_out
+        r.io.LoadStoreRowValid := lsq.io.LoadStoreDestFUValid_out
 
         r.io.IssueFull0 := iss.io.Full_0
         r.io.IssueFull1 := iss.io.Full_1
@@ -190,6 +190,7 @@ class intAll extends Module {
         rob.io.FUBroadcastValid3 := f3.io.FUBroadcastValid
         rob.io.LoadStoreDestVal0 := lsq.io.LoadStoreDestValue
         rob.io.LoadStoreDestTag0 := lsq.io.LoadStoreDestTag_out
+        rob.io.LoadStoreDestValid := lsq.io.LoadStoreDestValid_out
        // rob.io.LoadStoreDestReg0 := lsq.io.LoadStoreDestReg //Currently not using
         rob.io.LoadStoreDestAddress0 := lsq.io.LoadStoreDestAddress
         rob.io.RenameDestTag0 := r.io.RenameDestTag0
@@ -250,7 +251,7 @@ class intAll extends Module {
         iss.io.FUBroadcastTag3_0 := f3.io.FUBroadcastTag
         iss.io.LoadStoreDestVal_0 := lsq.io.LoadStoreDestValue
         iss.io.LoadStoreDestTag_0 := lsq.io.LoadStoreDestTag_out
-        iss.io.LoadStoreDestValid_0 := lsq.io.LoadStoreDestValid_out
+        iss.io.LoadStoreDestValid_0 := lsq.io.LoadStoreDestFUValid_out
         iss.io.FUBroadcastValid0_0 := f0.io.FUBroadcastValid
         //TODO iss.io.FUisBusy_0 := f0.io.busy
         iss.io.RenameRowSelect0 := r.io.RenameIssueRowSelectTag0
@@ -278,7 +279,7 @@ class intAll extends Module {
         iss.io.FUBroadcastTag3_1 := f3.io.FUBroadcastTag
         iss.io.LoadStoreDestVal_1 := lsq.io.LoadStoreDestValue
         iss.io.LoadStoreDestTag_1 := lsq.io.LoadStoreDestTag_out
-        iss.io.LoadStoreDestValid_1 := lsq.io.LoadStoreDestValid_out
+        iss.io.LoadStoreDestValid_1 := lsq.io.LoadStoreDestFUValid_out
         iss.io.FUBroadcastValid0_1 := f1.io.FUBroadcastValid
         //TODOiss.io.FUisBusy_1 := f1.io.busy
         iss.io.RenameRowSelect1 := r.io.RenameIssueRowSelectTag1
@@ -306,7 +307,7 @@ class intAll extends Module {
         iss.io.FUBroadcastTag3_2 := f3.io.FUBroadcastTag
         iss.io.LoadStoreDestVal_2 := lsq.io.LoadStoreDestValue
         iss.io.LoadStoreDestTag_2 := lsq.io.LoadStoreDestTag_out
-        iss.io.LoadStoreDestValid_2 := lsq.io.LoadStoreDestValid_out
+        iss.io.LoadStoreDestValid_2 := lsq.io.LoadStoreDestFUValid_out
         iss.io.FUBroadcastValid0_2 := f2.io.FUBroadcastValid
        //TODO: iss.io.FUisBusy_2 := f2.io.busy
         iss.io.RenameRowSelect2 := r.io.RenameIssueRowSelectTag2
@@ -334,7 +335,7 @@ class intAll extends Module {
         iss.io.FUBroadcastTag3_3 := f3.io.FUBroadcastTag
         iss.io.LoadStoreDestVal_3 := lsq.io.LoadStoreDestValue
         iss.io.LoadStoreDestTag_3 := lsq.io.LoadStoreDestTag_out
-        iss.io.LoadStoreDestValid_3 := lsq.io.LoadStoreDestValid_out
+        iss.io.LoadStoreDestValid_3 := lsq.io.LoadStoreDestFUValid_out
         iss.io.FUBroadcastValid0_3 := f3.io.FUBroadcastValid
        //TODO iss.io.FUisBusy_3 := f3.io.busy
         iss.io.RenameRowSelect3:= r.io.RenameIssueRowSelectTag3
@@ -494,7 +495,7 @@ class intAll extends Module {
         lsq.io.FUBroadcastValid3 := f3.io.FUBroadcastValid
         lsq.io.LoadStoreDestTag := lsq.io.LoadStoreDestTag_out
         lsq.io.LoadStoreDestVal := lsq.io.LoadStoreDestValue
-        lsq.io.LoadStoreDestValid := lsq.io.LoadStoreDestValid_out
+        lsq.io.LoadStoreDestValid := lsq.io.LoadStoreDestFUValid_out
 
         lsq.io.Dcache_busy := dmem.io.busy
         lsq.io.Dcache_tag_out := dmem.io.TAG_out
@@ -508,11 +509,6 @@ class intAll extends Module {
         //////////////////////////////////////////////
         // only store instructions are pushed into dcache memory
 
-        dmem.io.din := UInt(0)
-        dmem.io.addr := UInt(0)
-        dmem.io.en := UInt(0)
-        dmem.io.wr := UInt(0)
-        dmem.io.TAG_in := UInt(0)
 
 
         when(rob.io.ROBValueValid0===UInt(1) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(0)){
@@ -530,7 +526,7 @@ class intAll extends Module {
 
         }
 
-        when(rob.io.ROBValueValid0===UInt(0) && (lsq.io.Cache_valid_in===UInt(0)) && Cache_valid_in===UInt(1)){
+        .elsewhen(rob.io.ROBValueValid0===UInt(0) && (lsq.io.Cache_valid_in===UInt(0)) && Cache_valid_in===UInt(1)){
           
           dmem.io.addr := Cache_Address
           dmem.io.en := Cache_enable
@@ -544,7 +540,7 @@ class intAll extends Module {
           Cache_valid_in := UInt(0)
         }
         
-        when(rob.io.ROBValueValid0===UInt(0) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(0)){
+        .elsewhen(rob.io.ROBValueValid0===UInt(0) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(0)){
           
           dmem.io.addr := lsq.io.Cache_Address
           dmem.io.en := lsq.io.Cache_enable
@@ -558,7 +554,7 @@ class intAll extends Module {
           Cache_valid_in := UInt(0)
         }
 
-        when(rob.io.ROBValueValid0===UInt(0) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(1)){
+        .elsewhen(rob.io.ROBValueValid0===UInt(0) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(1)){
           
           dmem.io.addr := Cache_Address
           dmem.io.en := Cache_enable
@@ -571,7 +567,7 @@ class intAll extends Module {
           Cache_tag_in := lsq.io.Cache_tag_in
           Cache_valid_in := lsq.io.Cache_valid_in
         }
-        when(rob.io.ROBValueValid0===UInt(1) && (lsq.io.Cache_valid_in===UInt(0))){
+        .elsewhen(rob.io.ROBValueValid0===UInt(1) && (lsq.io.Cache_valid_in===UInt(0))){
           
           dmem.io.din := rob.io.ROBValue0
           dmem.io.addr := rob.io.ROBMemAddress0
@@ -581,7 +577,7 @@ class intAll extends Module {
         }
 
 
-        when(rob.io.ROBValueValid0===UInt(1) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(1)){
+        .elsewhen(rob.io.ROBValueValid0===UInt(1) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(1)){
           
           dmem.io.din := rob.io.ROBValue0
           dmem.io.addr := rob.io.ROBMemAddress0
@@ -596,7 +592,7 @@ class intAll extends Module {
 
         }
 
-        when(rob.io.ROBValueValid0===UInt(0) && (lsq.io.Cache_valid_in===UInt(0)) && Cache_valid_in===UInt(0)){
+        .elsewhen(rob.io.ROBValueValid0===UInt(0) && (lsq.io.Cache_valid_in===UInt(0)) && Cache_valid_in===UInt(0)){
           
           Cache_enable := Cache_enable2
           Cache_Address := Cache_Address2
@@ -612,13 +608,20 @@ class intAll extends Module {
         }
 
 
-        when(rob.io.ROBValueValid0===UInt(1) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(1) && Cache_valid_in2===UInt(1)){
+        .elsewhen(rob.io.ROBValueValid0===UInt(1) && (lsq.io.Cache_valid_in===UInt(1)) && Cache_valid_in===UInt(1) && Cache_valid_in2===UInt(1)){
           
           dmem.io.din := rob.io.ROBValue0
           dmem.io.addr := rob.io.ROBMemAddress0
           dmem.io.en := (rob.io.ROBValueValid0===UInt(1)) && (rob.io.ROBStoreSelect0===Bool(true))
           dmem.io.wr := rob.io.ROBStoreSelect0
         printf("ERROR:EMERGNECY: pipeline may stall LOAD instruction droped from arbitor to cache interface")
+        }
+        .otherwise{
+          dmem.io.din := UInt(0)
+          dmem.io.addr := UInt(0)
+          dmem.io.en := UInt(0)
+          dmem.io.wr := UInt(0)
+          dmem.io.TAG_in := UInt(0)
         }
         ///////////////////////////////////////////
         //  TODO: Commit??
@@ -636,8 +639,8 @@ class intAllTests(c: intAll) extends Tester(c) {
    val RsampleInstruction = 0x00528093//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
    val RsampleAddress     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000001",2)
     val RsampleRobTag      = 0x2D //Integer.parseInt("101101",2)
-//LUI R4 0x1000
-   val RsampleInstruction2 = 0x01000237//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
+//LB R4,R2 0x10
+   val RsampleInstruction2 = 0x00a10403//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
    val RsampleAddress2     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000001",2)
     val RsampleRobTag2      = 0x2F //Integer.parseInt("101101",2)
 

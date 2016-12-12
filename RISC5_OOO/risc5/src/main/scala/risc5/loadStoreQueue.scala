@@ -152,6 +152,7 @@ class LoadStoreQueueModule extends Module {
         val LoadStoreDestAddress = UInt(OUTPUT,64)
         val LoadStoreDestValue = UInt(OUTPUT,64)
         val LoadStoreDestValid_out = UInt(OUTPUT,1)
+        val LoadStoreDestFUValid_out = UInt(OUTPUT,1)
 
         val LoadStoreSelect = Bool(OUTPUT)
         val LoadStoreROBTag = UInt(OUTPUT,7)
@@ -215,6 +216,7 @@ class LoadStoreQueueModule extends Module {
         io.LoadStoreDestAddress := UInt(0)
         io.LoadStoreDestValue := UInt(0)
         io.LoadStoreDestValid_out := UInt(0)
+        io.LoadStoreDestFUValid_out := UInt(0)
 
         io.LoadStoreSelect := Bool(false)
         io.LoadStoreROBTag := UInt(0)
@@ -375,7 +377,7 @@ class LoadStoreQueueModule extends Module {
           DestValue(j):= Cat(sign_extended_value0,io.Dcache_data_out(7,0))
           DestValueValid(j):=UInt(1)
           io.LoadStoreDestTag_out := DestTag(j)
-          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestFUValid_out := UInt(1)
           io.LoadStoreDestValue := Cat(sign_extended_value0,io.Dcache_data_out(7,0))
         }
         .elsewhen(io.Dcache_data_out(7)===UInt(0)){
@@ -384,7 +386,7 @@ class LoadStoreQueueModule extends Module {
           DestValue(j):= Cat(sign_extended_value0,io.Dcache_data_out(7,0))
           DestValueValid(j):=UInt(1)
           io.LoadStoreDestTag_out :=  DestTag(j)
-          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestFUValid_out := UInt(1)
           io.LoadStoreDestValue := Cat(sign_extended_value0,io.Dcache_data_out(7,0))
         }
       
@@ -398,7 +400,7 @@ class LoadStoreQueueModule extends Module {
           DestValue(j):= Cat(sign_extended_value1,io.Dcache_data_out(15,0))
           DestValueValid(j):=UInt(1)
           io.LoadStoreDestTag_out := DestTag(j) 
-          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestFUValid_out := UInt(1)
           io.LoadStoreDestValue := Cat(sign_extended_value1,io.Dcache_data_out(15,0))
         }
         .elsewhen(io.Dcache_data_out(15)===UInt(0)){
@@ -407,7 +409,7 @@ class LoadStoreQueueModule extends Module {
           DestValue(j):= Cat(sign_extended_value1,io.Dcache_data_out(15,0))
           DestValueValid(j):=UInt(1)
           io.LoadStoreDestTag_out := DestTag(j)
-          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestFUValid_out := UInt(1)
           io.LoadStoreDestValue := Cat(sign_extended_value1,io.Dcache_data_out(15,0))
         }
       
@@ -421,7 +423,7 @@ class LoadStoreQueueModule extends Module {
           DestValue(j):= Cat(sign_extended_value2,io.Dcache_data_out(31,0))
           DestValueValid(j):=UInt(1)
           io.LoadStoreDestTag_out := DestTag(j)
-          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestFUValid_out := UInt(1)
           io.LoadStoreDestValue := Cat(sign_extended_value2,io.Dcache_data_out(31,0))
         }
         .elsewhen(io.Dcache_data_out(32)===UInt(0)){
@@ -430,7 +432,7 @@ class LoadStoreQueueModule extends Module {
           DestValue(j):= Cat(sign_extended_value2,io.Dcache_data_out(31,0))
           DestValueValid(j):=UInt(1)
           io.LoadStoreDestTag_out := DestTag(j)
-          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestFUValid_out := UInt(1)
           io.LoadStoreDestValue := Cat(sign_extended_value2,io.Dcache_data_out(31,0))
         }
       
@@ -441,7 +443,7 @@ class LoadStoreQueueModule extends Module {
         DestValue(j):= io.Dcache_data_out
         DestValueValid(j):=UInt(1)
         io.LoadStoreDestTag_out := DestTag(j)
-        io.LoadStoreDestValid_out := UInt(1)
+        io.LoadStoreDestFUValid_out := UInt(1)
         io.LoadStoreDestValue := io.Dcache_data_out
       }
       // LBU instruction take 8 bits from rs2 sign extend it to 64 bit
@@ -452,7 +454,7 @@ class LoadStoreQueueModule extends Module {
           DestValue(j):= Cat(sign_extended_value0,io.Dcache_data_out(7,0))
           DestValueValid(j):=UInt(1)
           io.LoadStoreDestTag_out := DestTag(j)
-          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestFUValid_out := UInt(1)
           io.LoadStoreDestValue := Cat(sign_extended_value0,io.Dcache_data_out(7,0))
       
       }
@@ -464,7 +466,7 @@ class LoadStoreQueueModule extends Module {
           DestValue(j):= Cat(sign_extended_value1,io.Dcache_data_out(15,0))
           DestValueValid(j):=UInt(1)
           io.LoadStoreDestTag_out := DestTag(j)
-          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestFUValid_out := UInt(1)
           io.LoadStoreDestValue := Cat(sign_extended_value1,io.Dcache_data_out(15,0))
       
       }
@@ -476,7 +478,7 @@ class LoadStoreQueueModule extends Module {
           DestValue(j):= Cat(sign_extended_value2,io.Dcache_data_out(31,0))
           DestValueValid(j):=UInt(1)
           io.LoadStoreDestTag_out := DestTag(j)
-          io.LoadStoreDestValid_out := UInt(1)
+          io.LoadStoreDestFUValid_out := UInt(1)
           io.LoadStoreDestValue := Cat(sign_extended_value2,io.Dcache_data_out(31,0))
     
       }
