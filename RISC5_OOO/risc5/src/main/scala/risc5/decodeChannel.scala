@@ -149,7 +149,7 @@ class DecodeChannel extends Module {
 ////////////////////////////////////////////////////////
     val valid = Reg(init = UInt(0))
 
-    when( (io.lSFull === UInt(1)) || (io.issueFull === UInt(1))){
+    when( (io.lSFull === UInt(1)) || (io.issueFull === UInt(1)) ||(io.fetchInstruction(6,0) === UInt(0x63))){
 	valid := UInt(0)
 	}
     .otherwise{
@@ -542,6 +542,25 @@ class DecodeTester(d:DecodeChannel) extends Tester(d) {
  //       expect(d.io.isSB, 0)
  //       expect(d.io.isU,  0)
  //       expect(d.io.isUJ, 1)
+
+
+/////////////////Branch Test/////////////////
+
+	val branchSampleInstruction = 0xAC34DE63
+	val branchSampleAddress = 0x0000000000000005
+	val branchSampleRobTag = 0x22
+	
+	val branchExpectedOpcode = 0x22
+
+	poke(d.io.fetchInstruction, branchSampleInstruction)
+	poke(d.io.fetchAddress, branchSampleAddress)
+	poke(d.io.fetchRobTag, branchSampleRobTag)
+
+	step(1)
+	println("branch test")
+
+	expect(d.io.decodeValid, 0)
+	
 
 
 }
