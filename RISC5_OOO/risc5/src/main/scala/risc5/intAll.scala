@@ -85,7 +85,7 @@ class intAll extends Module {
       ////////////////////////////////////////////////////////
       //        Deocde Channles - Make 4 :)                 //
       ///////////////////////////////////////////////////////
-
+       fetch.io.stall := UInt(iss.io.IssueQueueFull) | UInt(lsq.io.LoadStoreFull)
        io.fetchInstruction0 := fetch.io.FetchInstruction0
        io.fetchInstruction1 := fetch.io.FetchInstruction1
        io.fetchInstruction2 := fetch.io.FetchInstruction2
@@ -106,6 +106,7 @@ class intAll extends Module {
        d1.io.fetchValid := fetch.io.FetchValid
        d2.io.fetchValid := fetch.io.FetchValid
        d3.io.fetchValid := fetch.io.FetchValid
+       d0.io.fetchValid := fetch.io.FetchValid
        d0.io.fetchPC := fetch.io.FetchPC0
        d1.io.fetchPC := fetch.io.FetchPC1
        d2.io.fetchPC := fetch.io.FetchPC2
@@ -114,7 +115,10 @@ class intAll extends Module {
        d0.io.lSFull := lsq.io.LoadStoreFull
        //d0.io.fetchInstruction := io.fetchInstructiond0 
        //d0.io.fetchAddress := io.fetchAddressd0
-       //d0.io.fetchRobTag  := io.fetchRobTagd0
+       d0.io.fetchRobTag  := fetch.io.FetchROBTag0
+       d1.io.fetchRobTag  := fetch.io.FetchROBTag1
+       d2.io.fetchRobTag  := fetch.io.FetchROBTag2
+       d3.io.fetchRobTag  := fetch.io.FetchROBTag3
        //d0.io.fetchBranchTaken := io.fetchBranchTakend0
        //d0.io.fetchValid := io.fetchValidd0
       
