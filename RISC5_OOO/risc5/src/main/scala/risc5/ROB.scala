@@ -164,7 +164,7 @@ class ROB extends Module {
     //printf("\nThe value of index for 1st instruction is %d\n", index)
    //For 1st instruction 
     //printf("\nThe value of 1st index is %d\n", index)
-    when(io.RenameDestTag0 != UInt(0) && ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1)))) {
+    when(/*io.RenameDestTag0 != UInt(0) &&*/ ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1)))) {
     valid(index) := UInt(0)
     value(index) := UInt(0)
     tag(index) := io.RenameDestTag0
@@ -188,7 +188,8 @@ class ROB extends Module {
     }
     
     //For 2nd instruction
-    when(io.RenameDestTag0 != UInt(0) && io.RenameDestTag1 != UInt(0) && ((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1)))) {
+    when(((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1)))
+               && ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1)))) {
       val res = index + UInt(1)
       //printf("\nThe value of 2nd index if one is there is %d\n", res)
       valid(res) := UInt(0)
@@ -212,8 +213,7 @@ class ROB extends Module {
 
       rob_tag(res) := io.RenameROBtag1
     }
-    .elsewhen(io.RenameDestTag0 === UInt(0) && io.RenameDestTag1 != UInt(0) && ((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1)))) {
-      //printf("\nThe value of 2nd index if one is not there is %d\n", index)
+      .elsewhen((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1))) {
       valid(index) := UInt(0)
       value(index) := UInt(0)
       tag(index) := io.RenameDestTag1
@@ -236,7 +236,9 @@ class ROB extends Module {
     }
 
     //For 3rd instruction
-    when(io.RenameDestTag0 != UInt(0) && io.RenameDestTag1 != UInt(0) && io.RenameDestTag2 != UInt(0) && ((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1)))) {
+    when(((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) 
+            && (((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1)))
+             && ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1))))) {
       val res = index + UInt(2)
       //printf("\nThe value of 3rd index is %d\n", res)
       valid(res) := UInt(0)
@@ -259,7 +261,9 @@ class ROB extends Module {
       
       rob_tag(res) := io.RenameROBtag2
     }
-    .elsewhen(io.RenameDestTag0 != UInt(0) || io.RenameDestTag1 != UInt(0) && io.RenameDestTag2 != UInt(0) && ((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1)))) {
+      
+    .elsewhen(((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) && 
+             (((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1))))) { 
       val res = index + UInt(1)
       //printf("\nThe value of 3rd index is %d\n", res)
       valid(res) := UInt(0)
@@ -283,8 +287,7 @@ class ROB extends Module {
       //store_address(res) := io.LoadStoreDestAddress2
       rob_tag(res) := io.RenameROBtag2
     }
-    .elsewhen(io.RenameDestTag0 === UInt(0) && io.RenameDestTag1 === UInt(0) && io.RenameDestTag2 != UInt(0) && ((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1)))) {
-      //printf("\nThe value of 3rd index is %d\n", index)
+    .elsewhen((io.RenameIssueValid2 === UInt(1))) {
       valid(index) := UInt(0)
       value(index) := UInt(0)
       tag(index) := io.RenameDestTag2
@@ -308,7 +311,8 @@ class ROB extends Module {
     }
 
     //For 4th instruction
-    when(io.RenameDestTag0 != UInt(0) && io.RenameDestTag1 != UInt(0) && io.RenameDestTag2 != UInt(0) && io.RenameDestTag3 != UInt(0) && ((io.RenameIssueValid3 === UInt(1)) || (io.RenameLoadStoreValid3 === UInt(1)))) {
+    when(((io.RenameIssueValid3 === UInt(1)) && (io.RenameLoadStoreValid2 === UInt(1))) && (((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) && ((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1))) && ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1))))) 
+      {
       val res = index + UInt(3)
       //printf("\nThe value of 4th index is %d\n", res)
       valid(res) := UInt(0)
@@ -331,9 +335,11 @@ class ROB extends Module {
       
       rob_tag(res) := io.RenameROBtag3
     }
-    .elsewhen((io.RenameDestTag0 != UInt(0) && io.RenameDestTag1 != UInt(0)) || (io.RenameDestTag1 != UInt(0) && io.RenameDestTag2 != UInt(0))
-                                                                             || (io.RenameDestTag0 != UInt(0) && io.RenameDestTag2 != UInt(0)) && io.RenameDestTag3 != UInt(0) 
-                                                                             && ((io.RenameIssueValid3 === UInt(1)) || (io.RenameLoadStoreValid3 === UInt(1)))) {
+    .elsewhen(((io.RenameIssueValid3 === UInt(1)) || (io.RenameLoadStoreValid3 === UInt(1))) && 
+             ((((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) && ((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1)))) 
+          || (((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) && ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1)))) 
+          || (((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1))) && ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1))))))
+      {
       val res = index + UInt(2)
       //printf("\nThe value of 4th index is %d\n", res)
       valid(res) := UInt(0)
@@ -358,10 +364,13 @@ class ROB extends Module {
       //store_address(res) := io.LoadStoreDestAddress3
       rob_tag(res) := io.RenameROBtag3
     }
-    .elsewhen(io.RenameDestTag0 != UInt(0) || io.RenameDestTag1 != UInt(0) || io.RenameDestTag2 != UInt(0) && io.RenameDestTag3 != UInt(0) && ((io.RenameIssueValid3 === UInt(1)) || (io.RenameLoadStoreValid3 === UInt(1)))) {
+    .elsewhen(((io.RenameIssueValid3 === UInt(1)) || (io.RenameLoadStoreValid3 === UInt(1))) && 
+          ((((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) || ((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1)))) 
+          || (((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) || ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1)))) 
+          || (((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1))) || ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1)))))) 
+      {//printf("\nThe value of 4th index is %d\n", res)
       val res = index + UInt(1)
-      //printf("\nThe value of 4th index is %d\n", res)
-      valid(res) := UInt(0)
+      valid(res) := UInt(1)
       value(res) := UInt(0)
       tag(res) := io.RenameDestTag3
       store_select(res) := io.RenameStoreSelect3
@@ -382,14 +391,23 @@ class ROB extends Module {
       //store_address(res) := io.LoadStoreDestAddress3
       rob_tag(res) := io.RenameROBtag3
     }
-    .elsewhen(io.RenameDestTag0 != UInt(0) && io.RenameDestTag1 != UInt(0) && io.RenameDestTag2 != UInt(0) && io.RenameDestTag0 != UInt(0) && ((io.RenameIssueValid3 === UInt(1)) || (io.RenameLoadStoreValid3 === UInt(1)))) {
+    .elsewhen (io.RenameIssueValid3 === UInt(1)) {
+      valid(index) := UInt(1)
+      value(index) := UInt(0)
+      tag(index) := io.RenameDestTag3
+      store_select(index) := io.RenameStoreSelect3
+      rob_tag(index) := io.RenameROBtag3
+    }
+
+
+    /*.elsewhen(io.RenameDestTag0 != UInt(0) && io.RenameDestTag1 != UInt(0) && io.RenameDestTag2 != UInt(0) && io.RenameDestTag0 != UInt(0) && ((io.RenameIssueValid3 === UInt(1)) || (io.RenameLoadStoreValid3 === UInt(1)))) {
       //printf("\nThe value of 4th index is %d\n", index)
       valid(index) := UInt(0)
       value(index) := UInt(0)
       tag(index) := io.RenameDestTag3
       store_select(index) := io.RenameStoreSelect3
       rob_tag(index) := io.RenameROBtag3
-    }
+    }*/
     
 
   /*when((valid(0) === UInt(1)) && (valid(1) === UInt(1))
