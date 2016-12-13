@@ -9,11 +9,20 @@ class intAll extends Module {
         
         val io = new Bundle {
 
-        val fetchInstructiond0 = UInt(INPUT,32) 
-        val fetchAddressd0 = UInt(INPUT, 64)
-        val fetchRobTagd0  = UInt(INPUT, 7)
-        val fetchBranchTakend0 = UInt(INPUT, 1)
-        val fetchValidd0= UInt(INPUT, 1)
+        val fetchInstruction0 = UInt(OUTPUT,32) 
+        val fetchInstruction1 = UInt(OUTPUT,32) 
+        val fetchInstruction2 = UInt(OUTPUT,32) 
+        val fetchInstruction3 = UInt(OUTPUT,32) 
+        val fetchPC0 = UInt(OUTPUT, 64)
+        val fetchPC1 = UInt(OUTPUT, 64)
+        val fetchPC2 = UInt(OUTPUT, 64)
+        val fetchPC3 = UInt(OUTPUT, 64)
+        //val fetchRobTagd0  = UInt(INPUT, 7)
+        //val fetchBranchTakend0 = UInt(INPUT, 1)
+        val fetchValid0= UInt(OUTPUT, 1)
+        val fetchValid1= UInt(OUTPUT, 1)
+        val fetchValid2= UInt(OUTPUT, 1)
+        val fetchValid3= UInt(OUTPUT, 1)
         }
 
 // register for the arbitor logic
@@ -35,12 +44,13 @@ class intAll extends Module {
         //Sorry, spent so much time matching up other signals, didn't get to the perl script
 
 
-
+             
 
         /////////////////////////////////
         // Module INstantiation
         //4 decodes go to one rename.....
         ///////////////////////////////////
+        val fetch = Module(new instruction_rom(4)) 
         val d0 = Module(new DecodeChannel())
         val d1 = Module(new DecodeChannel())
         val d2 = Module(new DecodeChannel())
@@ -76,13 +86,37 @@ class intAll extends Module {
       //        Deocde Channles - Make 4 :)                 //
       ///////////////////////////////////////////////////////
 
+       io.fetchInstruction0 := fetch.io.FetchInstruction0
+       io.fetchInstruction1 := fetch.io.FetchInstruction1
+       io.fetchInstruction2 := fetch.io.FetchInstruction2
+       io.fetchInstruction3 := fetch.io.FetchInstruction3
+       io.fetchPC0 := fetch.io.FetchPC0
+       io.fetchPC1 := fetch.io.FetchPC1
+       io.fetchPC2 := fetch.io.FetchPC2
+       io.fetchPC3 := fetch.io.FetchPC3
+       io.fetchValid0 := fetch.io.FetchValid
+       io.fetchValid1 := fetch.io.FetchValid
+       io.fetchValid2 := fetch.io.FetchValid
+       io.fetchValid3 := fetch.io.FetchValid
+       d0.io.fetchInstruction := fetch.io.FetchInstruction0
+       d1.io.fetchInstruction := fetch.io.FetchInstruction1
+       d2.io.fetchInstruction := fetch.io.FetchInstruction2
+       d3.io.fetchInstruction := fetch.io.FetchInstruction3
+       d0.io.fetchValid := fetch.io.FetchValid
+       d1.io.fetchValid := fetch.io.FetchValid
+       d2.io.fetchValid := fetch.io.FetchValid
+       d3.io.fetchValid := fetch.io.FetchValid
+       d0.io.fetchPC := fetch.io.FetchPC0
+       d1.io.fetchPC := fetch.io.FetchPC1
+       d2.io.fetchPC := fetch.io.FetchPC2
+       d3.io.fetchPC := fetch.io.FetchPC3
        d0.io.issueFull := iss.io.IssueQueueFull
        d0.io.lSFull := lsq.io.LoadStoreFull
-       d0.io.fetchInstruction := io.fetchInstructiond0 
-       d0.io.fetchAddress := io.fetchAddressd0
-       d0.io.fetchRobTag  := io.fetchRobTagd0
-       d0.io.fetchBranchTaken := io.fetchBranchTakend0
-       d0.io.fetchValid := io.fetchValidd0
+       //d0.io.fetchInstruction := io.fetchInstructiond0 
+       //d0.io.fetchAddress := io.fetchAddressd0
+       //d0.io.fetchRobTag  := io.fetchRobTagd0
+       //d0.io.fetchBranchTaken := io.fetchBranchTakend0
+       //d0.io.fetchValid := io.fetchValidd0
       
       
 
@@ -170,6 +204,11 @@ class intAll extends Module {
         r.io.DecodeValid1 := d1.io.decodeValid
         r.io.DecodeValid2 := d2.io.decodeValid
         r.io.DecodeValid3 := d3.io.decodeValid
+    
+        r.io.DecodePC0 := d0.io.decodePC
+        r.io.DecodePC1 := d1.io.decodePC
+        r.io.DecodePC2 := d2.io.decodePC
+        r.io.DecodePC3 := d3.io.decodePC
 
        //////////////////////////////////////////////
        //                ROB INPUTS                //
@@ -353,6 +392,11 @@ class intAll extends Module {
         iss.io.DecodeROB_3 := r.io.RenameROBtag3
         iss.io.DecodeType_3 := d3.io.decodeType
 
+        // PC connections
+        iss.io.RenamePC0 := r.io.RenamePC0
+        iss.io.RenamePC1 := r.io.RenamePC1
+        iss.io.RenamePC2 := r.io.RenamePC2
+        iss.io.RenamePC3 := r.io.RenamePC3
         ////////////////////////////////////////////////////////
         //          Functional Units Time                     //
         ////////////////////////////////////////////////////////
@@ -636,7 +680,7 @@ class intAll extends Module {
 
 class intAllTests(c: intAll) extends Tester(c) {
 //ADDI R1 R5 0x5
-   val RsampleInstruction = 0x00528093//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
+   /*val RsampleInstruction = 0x00528093//Integer.parseInt("0000 0000 1010 0101 1000 1010 1011 0011",2)
    val RsampleAddress     = 0x0000000000000000 //Integer.parseInt("0000000000000000000000000000000000000000000000000000000000000001",2)
     val RsampleRobTag      = 0x2D //Integer.parseInt("101101",2)
 //LB R4,R2 0x10
@@ -661,7 +705,7 @@ class intAllTests(c: intAll) extends Tester(c) {
 
         step(1)
         poke(c.io.fetchValidd0, 0) 
-        step(85)
+        step(85)*/
         /*expect(d.io.decodeOpcode,  RexpectedOpcode)
         expect(d.io.decodeRd,      RexpectedRd)
         expect(d.io.decodeFunky3,  RexpectedFunky3)
@@ -673,14 +717,29 @@ class intAllTests(c: intAll) extends Tester(c) {
         expect(d.io.decodeRobTag,  RsampleRobTag)
         expect(d.io.decodeAddress, RsampleAddress)
         expect(d.io.decodeType,  1)*/
-        poke(c.io.fetchInstructiond0, RsampleInstruction2)
+        /*poke(c.io.fetchInstructiond0, RsampleInstruction2)
         poke(c.io.fetchAddressd0, RsampleAddress2)
         poke(c.io.fetchRobTagd0, RsampleRobTag2) 
         poke(c.io.fetchValidd0, 1) 
 
         step(1)
         poke(c.io.fetchValidd0, 0) 
-        step(85)
+        step(85)*/
+        for (i <- 0 until 20) {
+          peek(c.io.fetchInstruction0)
+          peek(c.io.fetchInstruction1)
+          peek(c.io.fetchInstruction2)
+          peek(c.io.fetchInstruction3)
+          peek(c.io.fetchPC0)
+          peek(c.io.fetchPC1)
+          peek(c.io.fetchPC2)
+          peek(c.io.fetchPC3)
+          peek(c.io.fetchValid0)
+          peek(c.io.fetchValid1)
+          peek(c.io.fetchValid2)
+          peek(c.io.fetchValid3)
+          step(1)
+        }
 }
   
 class intAllGenerator extends TestGenerator {
