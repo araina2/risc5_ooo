@@ -118,7 +118,7 @@ class ROB extends Module {
   //ROB Tag
   val rob_tag = Vec.fill(96) { Reg(init = UInt(0, width = 7)) }
   //Field telling that whether an instruction is store or not 
-  val store_select = Vec.fill(96) { Reg(init = UInt(0, width = 1)) }
+  val store_select = Vec.fill(96) { Reg(init = Bool(false)) }
   //Field telling the address of store  
   val store_address = Vec.fill(96) { Reg(init = UInt(0, width = 64)) }
 
@@ -263,7 +263,8 @@ class ROB extends Module {
     }
       
     .elsewhen(((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) && 
-             (((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1))))) { 
+             (((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1))) || 
+             ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1))))) { 
       val res = index + UInt(1)
       //printf("\nThe value of 3rd index is %d\n", res)
       valid(res) := UInt(0)
@@ -311,7 +312,7 @@ class ROB extends Module {
     }
 
     //For 4th instruction
-    when(((io.RenameIssueValid3 === UInt(1)) && (io.RenameLoadStoreValid2 === UInt(1))) && (((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) && ((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1))) && ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1))))) 
+    when(((io.RenameIssueValid3 === UInt(1)) && ((io.RenameLoadStoreValid3 === UInt(1)))) && (((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) && ((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1))) && ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1))))) 
       {
       val res = index + UInt(3)
       //printf("\nThe value of 4th index is %d\n", res)
