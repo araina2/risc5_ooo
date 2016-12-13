@@ -123,7 +123,7 @@ class ROB extends Module {
   val store_address = Vec.fill(96) { Reg(init = UInt(0, width = 64)) }
 
   //Updating the value and valid bit in case of a broadcast
-  for (i <- 0 until 96) {
+  /*for (i <- 0 until 96) {
     when((io.FUBroadcastTag0 === tag(i)) && (io.FUBroadcastValid0 != UInt(0))) {
       //printf("\nComing into io.FUBroadcastTag0 check\n");
       value(i) := io.FUBroadcastValue0
@@ -150,7 +150,7 @@ class ROB extends Module {
       valid(i) := UInt(1)
       store_address(i) := io.LoadStoreDestAddress0
     }
-  }
+  }*/
 
   //Putting the new entry in the ROB
   val index = UInt(width=10) //Reg(init = UInt(0, width = 10)
@@ -581,6 +581,34 @@ class ROB extends Module {
       store_address(i) := UInt(0)
     }
   }*/
+  for (i <- 0 until 96) {
+    when((io.FUBroadcastTag0 === tag(i)) && (io.FUBroadcastValid0 != UInt(0))) {
+      //printf("\nComing into io.FUBroadcastTag0 check\n");
+      value(i) := io.FUBroadcastValue0
+      valid(i) := UInt(1)
+    }
+    when((io.FUBroadcastTag1 === tag(i)) && (io.FUBroadcastValid1 != UInt(0))) {
+      //printf("\nComing into io.FUBroadcastTag1 check\n");
+      value(i) := io.FUBroadcastValue1
+      valid(i) := UInt(1)
+    }
+    when((io.FUBroadcastTag2 === tag(i)) && (io.FUBroadcastValid2 != UInt(0))) {
+      //printf("\nComing into io.FUBroadcastTag2 check\n");
+      value(i) := io.FUBroadcastValue2
+      valid(i) := UInt(1)
+    }
+    when((io.FUBroadcastTag3 === tag(i)) && (io.FUBroadcastValid3 != UInt(0))) {
+      //printf("\nComing into io.FUBroadcastTag3 check\n");
+      value(i) := io.FUBroadcastValue3
+      valid(i) := UInt(1)
+    }
+    when((io.LoadStoreDestTag0 === tag(i)) && (io.LoadStoreDestValid != UInt(0))) {
+      //printf("\nComing into io.LoadStoreDestTag0 check\n");
+      value(i) := io.LoadStoreDestVal0
+      valid(i) := UInt(1)
+      store_address(i) := io.LoadStoreDestAddress0
+    }
+  }
 
   when((valid(0) === UInt(1)) && io.dmembusy===UInt(0) /*&& (valid(1) != UInt(1))
         && (valid(2) != UInt(1)) && (valid(3) != UInt(1))*/) {
