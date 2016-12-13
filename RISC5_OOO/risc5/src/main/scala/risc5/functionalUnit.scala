@@ -102,11 +102,13 @@ class FunctionalUnit extends Module {
 	
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x37)){
-		derp := io.issueImm << UInt(12)
+		//LUI
+		derp := io.issueImm << UInt(12)//derp is a temporary value
 		result := Cat(Fill(32, derp(31)), derp)
 		valid := UInt(0x1)
 	}
 	.elsewhen(io.issueFUOpcode === UInt(0x17)){
+		//AUIPC
 		derp := io.issueImm << UInt(12)
 		result := Cat(Fill(32, derp(31)), derp) + io.issuePC
 		valid := UInt(0x1)

@@ -155,14 +155,31 @@ class DecodeChannel extends Module {
     when( (io.lSFull === UInt(1)) || (io.issueFull === UInt(1)) ||(io.fetchInstruction(6,0) === UInt(0x63))){
 	valid := UInt(0)
 	}
-    .otherwise{
-	when(io.fetchValid === UInt(1)){
-	valid := UInt(1)
+    .elsewhen((io.fetchInstruction(6,0) === UInt(0x3))|| (io.fetchInstruction(6,0) === UInt(0x23)) || (io.fetchInstruction(6,0) === UInt(0x13)) || (io.fetchInstruction(6,0) === UInt(0x33)) || (io.fetchInstruction(6,0) === UInt(0x73))){
+		when(io.fetchValid === UInt(0x1)){	
+		valid := UInt(1)
+		}
+		.otherwise{
+		valid := UInt(0)
+		}
 	}
 	.otherwise{
-	valid := UInt(0)
+		valid := UInt(0)
 	}
-    }
+
+
+
+
+
+
+//    .otherwise{
+//	when(io.fetchValid === UInt(1)){
+//	valid := UInt(1)
+//	}
+//	.otherwise{
+//	valid := UInt(0)
+//	}
+  //  }
 
      io.decodeValid := valid
 /////////////////////////////////////////////////////////
