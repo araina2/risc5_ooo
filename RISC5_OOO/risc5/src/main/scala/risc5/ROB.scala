@@ -121,9 +121,11 @@ class ROB extends Module {
   val store_select = Vec.fill(96) { Reg(init = Bool(false)) }
   //Field telling the address of store  
   val store_address = Vec.fill(96) { Reg(init = UInt(0, width = 64)) }
+  //Tag array in the ROB 
+  val check_valid = Vec.fill(96) { Reg(init = UInt(0, width = 10)) }
 
   //Updating the value and valid bit in case of a broadcast
-  /*for (i <- 0 until 96) {
+  for (i <- 0 until 96) {
     when((io.FUBroadcastTag0 === tag(i)) && (io.FUBroadcastValid0 != UInt(0))) {
       //printf("\nComing into io.FUBroadcastTag0 check\n");
       value(i) := io.FUBroadcastValue0
@@ -150,13 +152,13 @@ class ROB extends Module {
       valid(i) := UInt(1)
       store_address(i) := io.LoadStoreDestAddress0
     }
-  }*/
+  }
 
   //Putting the new entry in the ROB
   val index = UInt(width=10) //Reg(init = UInt(0, width = 10)
   index := UInt(0)
   for (i <- 95 to 0 by -1) {
-    when(tag(i) === UInt(0)) {
+    when(check_valid(i) === UInt(0)) {
       index := UInt(i)
     }
   }
@@ -165,11 +167,12 @@ class ROB extends Module {
    //For 1st instruction 
     //printf("\nThe value of 1st index is %d\n", index)
     when(/*io.RenameDestTag0 != UInt(0) &&*/ ((io.RenameIssueValid0 === UInt(1)) || (io.RenameLoadStoreValid0 === UInt(1)))) {
+    //printf("\nComing in the ROB valid0\n")
     valid(index) := UInt(0)
     value(index) := UInt(0)
     tag(index) := io.RenameDestTag0
     store_select(index) := io.RenameStoreSelect0
-
+    check_valid(index) := UInt(1)
     /*when(index < UInt(4) && (io.RenameStoreSelect0 === Bool(true)) && index === UInt(0)) {
         io.ROBStoreSelect0 := Bool(true)
     }
@@ -212,6 +215,7 @@ class ROB extends Module {
       }*/
 
       rob_tag(res) := io.RenameROBtag1
+      check_valid(res) := UInt(1)
     }
       .elsewhen((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1))) {
       valid(index) := UInt(0)
@@ -233,6 +237,7 @@ class ROB extends Module {
       }*/
 
       rob_tag(index) := io.RenameROBtag1
+      check_valid(index) := UInt(1)
     }
 
     //For 3rd instruction
@@ -260,6 +265,7 @@ class ROB extends Module {
       }*/
       
       rob_tag(res) := io.RenameROBtag2
+      check_valid(res) := UInt(1)
     }
       
     .elsewhen(((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) && 
@@ -287,6 +293,7 @@ class ROB extends Module {
 
       //store_address(res) := io.LoadStoreDestAddress2
       rob_tag(res) := io.RenameROBtag2
+      check_valid(res) := UInt(1)
     }
     .elsewhen((io.RenameIssueValid2 === UInt(1))) {
       valid(index) := UInt(0)
@@ -309,6 +316,7 @@ class ROB extends Module {
 
       //store_address(index) := io.LoadStoreDestAddress2
       rob_tag(index) := io.RenameROBtag2
+      check_valid(index) := UInt(1)
     }
 
     //For 4th instruction
@@ -335,6 +343,7 @@ class ROB extends Module {
       }*/
       
       rob_tag(res) := io.RenameROBtag3
+      check_valid(res) := UInt(1)
     }
     .elsewhen(((io.RenameIssueValid3 === UInt(1)) || (io.RenameLoadStoreValid3 === UInt(1))) && 
              ((((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) && ((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1)))) 
@@ -364,6 +373,7 @@ class ROB extends Module {
       //}
       //store_address(res) := io.LoadStoreDestAddress3
       rob_tag(res) := io.RenameROBtag3
+      check_valid(res) := UInt(1)
     }
     .elsewhen(((io.RenameIssueValid3 === UInt(1)) || (io.RenameLoadStoreValid3 === UInt(1))) && 
           ((((io.RenameIssueValid2 === UInt(1)) || (io.RenameLoadStoreValid2 === UInt(1))) || ((io.RenameIssueValid1 === UInt(1)) || (io.RenameLoadStoreValid1 === UInt(1)))) 
@@ -391,6 +401,7 @@ class ROB extends Module {
 
       //store_address(res) := io.LoadStoreDestAddress3
       rob_tag(res) := io.RenameROBtag3
+      check_valid(res) := UInt(1)
     }
     .elsewhen (io.RenameIssueValid3 === UInt(1)) {
       valid(index) := UInt(1)
@@ -398,6 +409,7 @@ class ROB extends Module {
       tag(index) := io.RenameDestTag3
       store_select(index) := io.RenameStoreSelect3
       rob_tag(index) := io.RenameROBtag3
+      check_valid(index) := UInt(1)
     }
 
 
@@ -581,7 +593,7 @@ class ROB extends Module {
       store_address(i) := UInt(0)
     }
   }*/
-  for (i <- 0 until 96) {
+  /*for (i <- 0 until 96) {
     when((io.FUBroadcastTag0 === tag(i)) && (io.FUBroadcastValid0 != UInt(0))) {
       //printf("\nComing into io.FUBroadcastTag0 check\n");
       value(i) := io.FUBroadcastValue0
@@ -603,12 +615,12 @@ class ROB extends Module {
       valid(i) := UInt(1)
     }
     when((io.LoadStoreDestTag0 === tag(i)) && (io.LoadStoreDestValid != UInt(0))) {
-      //printf("\nComing into io.LoadStoreDestTag0 check\n");
+      printf("\nComing into io.LoadStoreDestTag0 check. The tag is %d\n", tag(i));
       value(i) := io.LoadStoreDestVal0
       valid(i) := UInt(1)
       store_address(i) := io.LoadStoreDestAddress0
     }
-  }
+  }*/
 
   when((valid(0) === UInt(1)) && io.dmembusy===UInt(0) /*&& (valid(1) != UInt(1))
         && (valid(2) != UInt(1)) && (valid(3) != UInt(1))*/) {
@@ -700,14 +712,15 @@ class ROBTests(c: ROB) extends Tester(c) {
   poke(c.io.RenameROBtag1, 6)
   poke(c.io.RenameROBtag2, 7)
   poke(c.io.RenameROBtag3, 9)
-  poke(c.io.RenameQueueSelect0, false)
-  poke(c.io.RenameQueueSelect1, false)
-  poke(c.io.RenameQueueSelect2, false)
-  poke(c.io.RenameQueueSelect3, true)
-  poke(c.io.RenameStoreSelect0, false)
-  poke(c.io.RenameStoreSelect1, false)
-  poke(c.io.RenameStoreSelect2, false)
-  poke(c.io.RenameStoreSelect3, true)
+  poke(c.io.RenameQueueSelect0, true)
+  poke(c.io.RenameLoadStoreValid0, 1)
+  //poke(c.io.RenameQueueSelect1, false)
+  //poke(c.io.RenameQueueSelect2, false)
+  //poke(c.io.RenameQueueSelect3, true)
+  poke(c.io.RenameStoreSelect0, true)
+  //poke(c.io.RenameStoreSelect1, false)
+  //poke(c.io.RenameStoreSelect2, false)
+  //poke(c.io.RenameStoreSelect3, true)
   poke(c.io.FUBroadcastValue0, 2)
   poke(c.io.FUBroadcastValue1, 4)
   poke(c.io.FUBroadcastValue2, 6)
@@ -716,11 +729,12 @@ class ROBTests(c: ROB) extends Tester(c) {
   poke(c.io.FUBroadcastTag1, 4)
   poke(c.io.FUBroadcastTag2, 5)
   poke(c.io.FUBroadcastTag3, 0)
-  poke(c.io.LoadStoreDestTag0, 7)
+  poke(c.io.LoadStoreDestTag0, 1)
   poke(c.io.LoadStoreDestVal0, 5)
   poke(c.io.LoadStoreDestAddress0, 0x50)
+  poke(c.io.LoadStoreDestValid, 1)
   step(2)
-  expect(c.io.ROBStoreSelect0, false)
+  expect(c.io.ROBStoreSelect0, true)
   //expect(c.io.ROBStoreSelect1, false)
   //expect(c.io.ROBStoreSelect2, false)
   //expect(c.io.ROBStoreSelect3, true)
@@ -728,7 +742,7 @@ class ROBTests(c: ROB) extends Tester(c) {
   //expect(c.io.ROBValueValid1, 1)
   //expect(c.io.ROBValueValid2, 1)
   //expect(c.io.ROBValueValid3, 1)
-  expect(c.io.ROBMemAddress0, 0)
+  //expect(c.io.ROBMemAddress0, 0)
   //expect(c.io.ROBMemAddress1, 0)
   //expect(c.io.ROBMemAddress2, 0x0)
   //expect(c.io.ROBMemAddress3, 0x50)
