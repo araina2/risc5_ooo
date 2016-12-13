@@ -1,22 +1,27 @@
 [*]
 [*] GTKWave Analyzer v3.3.76 (w)1999-2016 BSI
-[*] Sun Dec 11 20:05:57 2016
+[*] Tue Dec 13 00:25:35 2016
 [*]
 [dumpfile] "/afs/cs.wisc.edu/u/r/r/rrahulnayar/risc5_ooo/RISC5_OOO/risc5/intAll.vcd"
-[dumpfile_mtime] "Sun Dec 11 20:05:33 2016"
-[dumpfile_size] 182081
+[dumpfile_mtime] "Mon Dec 12 23:37:00 2016"
+[dumpfile_size] 229128
 [savefile] "/afs/cs.wisc.edu/u/r/r/rrahulnayar/risc5_ooo/RISC5_OOO/risc5/top.gtkw"
-[timestart] 0
+[timestart] 173
 [size] 1855 1176
 [pos] -1 -1
-*-4.000000 22 12 14 16 18 20 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-2.767203 188 12 14 16 18 20 184 186 188 190 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [markername] Adecode_output
 [markername] Brename_output
 [markername] Cissue_output
 [markername] DFU output
 [markername] EROB output
+[markername] Fdecode2
+[markername] Grename2
+[markername] Hissue2
+[markername] Ilook
 [treeopen] intAll.
 [treeopen] intAll.iss.
+[treeopen] intAll.iss.rS_0.
 [sst_width] 326
 [signals_width] 454
 [sst_expanded] 1
@@ -105,17 +110,14 @@ intAll.r.io_RenameLoadStoreValid3
 @200
 -rename_output_valid
 -
+@28
+intAll.r.io_RenameIssueValid0
+intAll.r.io_RenameLoadStoreValid0
 @22
 intAll.r.io_RenameDestTag0[9:0]
 intAll.r.io_RenameIssueRowSelectTag0[6:0]
-@28
-intAll.r.io_RenameIssueValid0
-@22
+intAll.r.RenameROBtag_0[6:0]
 intAll.r.io_RenameLoadStoreRowSelect0[4:0]
-@28
-intAll.r.io_RenameLoadStoreValid0
-intAll.r.io_RenameQueueSelect0
-@22
 intAll.r.io_RenameSourceATag0[9:0]
 intAll.r.io_RenameSourceAValue0[63:0]
 @28
@@ -195,12 +197,11 @@ intAll.iss.rS_0.io_Issue_Func7[6:0]
 intAll.iss.rS_0.io_IssueFUOpcode[6:0]
 intAll.iss.rS_0.io_IssueSourceValA[63:0]
 intAll.iss.rS_0.io_IssueSourceValB[63:0]
-@28
+@29
 intAll.iss.io_Valid_0
 @200
 -iss_rs0_output
 -
-@201
 -
 @22
 intAll.f0.io_FUBroadcastTag[9:0]
@@ -250,6 +251,20 @@ intAll.dmem.io_TAG_in[6:0]
 intAll.dmem.io_valid
 @22
 intAll.dmem.io_dout[63:0]
+@28
+intAll.lsq.DestAddressValid_0
+@200
+-
+@22
+intAll.rob.io_ROBMemAddress0[63:0]
+@28
+intAll.rob.io_ROBStoreSelect0
+@22
+intAll.rob.io_ROBValue0[63:0]
+@28
+intAll.rob.io_ROBValueValid0
+@22
+intAll.lsq.DestAddress_0[63:0]
 @200
 -
 [pattern_trace] 1

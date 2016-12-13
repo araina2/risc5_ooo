@@ -674,7 +674,12 @@ class intAll extends Module {
         ///////////////////////////////////////////
         //  TODO: Commit??
         //////////////////////////////////////////
-
+    when(rob.io.ROBValueValid0===UInt(1)){
+      printf("\n INSTRUCTION commit:\n")
+      printf("\n ROBStoreSelect:%d",rob.io.ROBValueValid0)
+      printf("\n ROBMemAddress0:%d",rob.io.ROBMemAddress0)
+      printf("\n ROBValue0:%d",rob.io.ROBValue0)
+    }
 
 
 //NOTE: MOST TODOs are Really ASKS        
@@ -744,6 +749,7 @@ class intAllTests(c: intAll) extends Tester(c) {
           peek(c.io.fetchValid3)
           step(1)
         }
+          step(201)
 }
   
 class intAllGenerator extends TestGenerator {
