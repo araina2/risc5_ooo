@@ -497,10 +497,10 @@ class RegAliasTable extends Module {
           RenameIssueValid(0) := UInt(1)
           io.RenameIssueValid0 := RenameIssueValid(0)
         }
-        .elsewhen (io.DecodeValid0 === Bool(false)) {
+        .elsewhen (io.DecodeValid0 === Bool(false) || io.DecodeQueueSelect0 === Bool(true)) {
           RenameIssueValid(0) := UInt(0)
           io.RenameIssueValid0 := RenameIssueValid(0)
-          io.RenameDestTag0 := RenameDestTagIssue(0)
+          //io.RenameDestTag0 := RenameDestTagIssue(0)
         }
 
         when ((Bool(UInt(i) === io.Decode_dest_1  && io.DecodeValid1 === Bool(true)) && Bool(io.DecodeQueueSelect1 === Bool(false)))) {
@@ -528,10 +528,10 @@ class RegAliasTable extends Module {
           RenameIssueValid(1) := UInt(1)
           io.RenameIssueValid1 := RenameIssueValid(1)
         }
-        .elsewhen (io.DecodeValid1 === Bool(false)) {
+        .elsewhen (io.DecodeValid1 === Bool(false) || io.DecodeQueueSelect1 === Bool(true)) {
           RenameIssueValid(1) := UInt(0)
           io.RenameIssueValid1 := RenameIssueValid(1)
-          io.RenameDestTag1 := RenameDestTagIssue(1)
+          //io.RenameDestTag1 := RenameDestTagIssue(1)
         }
 
         when ((Bool(UInt(i) === io.Decode_dest_2  && io.DecodeValid2 === Bool(true)) && Bool(io.DecodeQueueSelect2 === Bool(false)))) {
@@ -559,10 +559,10 @@ class RegAliasTable extends Module {
           RenameIssueValid(2) := UInt(1)
           io.RenameIssueValid2 := RenameIssueValid(2)
         }
-        .elsewhen (io.DecodeValid2 === Bool(false)) {
+        .elsewhen (io.DecodeValid2 === Bool(false) || io.DecodeQueueSelect2 === Bool(true)) {
           RenameIssueValid(2) := UInt(0)
           io.RenameIssueValid2 := RenameIssueValid(2)
-          io.RenameDestTag2 := RenameDestTagIssue(2)
+          //io.RenameDestTag2 := RenameDestTagIssue(2)
         }
 
         when ((Bool(UInt(i) === io.Decode_dest_3  && io.DecodeValid3 === Bool(true)) && Bool(io.DecodeQueueSelect3 === Bool(false)))) {
@@ -590,10 +590,10 @@ class RegAliasTable extends Module {
           RenameIssueValid(3) := UInt(1)
           io.RenameIssueValid3 := RenameIssueValid(3)
         }
-        .elsewhen (io.DecodeValid3 === Bool(false)) {
+        .elsewhen (io.DecodeValid3 === Bool(false) || io.DecodeQueueSelect3 === Bool(true)) {
           RenameIssueValid(3) := UInt(0)
           io.RenameIssueValid3 := RenameIssueValid(3)
-          io.RenameDestTag3 := RenameDestTagIssue(3)
+          //io.RenameDestTag3 := RenameDestTagIssue(3)
         }
 
         when (Bool(UInt(i) === io.Decode_dest_0 && io.DecodeValid0 === Bool(true)) && Bool(io.DecodeQueueSelect0 === Bool(true))) {
@@ -624,7 +624,7 @@ class RegAliasTable extends Module {
             io.RenameValid := UInt(0)
           }
         }
-        .elsewhen (io.DecodeValid0 === Bool(false)) {
+        .elsewhen (io.DecodeValid0 === Bool(false) || io.DecodeQueueSelect0 === Bool(false)) {
           RenameLoadStoreValid(0) := UInt(0)
           io.RenameLoadStoreValid0 := RenameLoadStoreValid(0)
         }
@@ -663,7 +663,7 @@ class RegAliasTable extends Module {
             io.RenameValid := UInt(0)
           }
         }
-        .elsewhen (io.DecodeValid1 === Bool(false)) {
+        .elsewhen (io.DecodeValid1 === Bool(false) || io.DecodeQueueSelect1 === Bool(false)) {
           RenameLoadStoreValid(1) := UInt(0)
           io.RenameLoadStoreValid1 := RenameLoadStoreValid(1)
         }
@@ -709,7 +709,7 @@ class RegAliasTable extends Module {
             io.RenameValid := UInt(0)
           }
         }
-        .elsewhen (io.DecodeValid2 === Bool(false)) {
+        .elsewhen (io.DecodeValid2 === Bool(false) || io.DecodeQueueSelect2 === Bool(false)) {
           RenameLoadStoreValid(2) := UInt(0)
           io.RenameLoadStoreValid2 := RenameLoadStoreValid(2)
         }
@@ -764,7 +764,7 @@ class RegAliasTable extends Module {
             io.RenameValid := UInt(0)
           }
         }
-        .elsewhen (io.DecodeValid3 === Bool(false)) {
+        .elsewhen (io.DecodeValid3 === Bool(false) || io.DecodeQueueSelect3 === Bool(false)) {
           RenameLoadStoreValid(3) := UInt(0)
           io.RenameLoadStoreValid3 := RenameLoadStoreValid(3)
         }
