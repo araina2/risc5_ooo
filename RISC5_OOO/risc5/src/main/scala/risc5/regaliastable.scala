@@ -210,6 +210,8 @@ class RegAliasTable extends Module {
   }
   //Valid array in the register map table
   val valid = Vec.fill(32) { Reg(init = UInt(1, width = 1)) }
+  //Temporary Valid array in the register map table
+  val temp_valid = Vec.fill(32) { Reg(init = UInt(1, width = 1)) }
   //Tag array in the register map table 
   //val tag = Vec.tabulate(32) { Reg(init = UInt(0, width = 7)) }
   val tag = Vec.fill(32) { Reg(init = UInt(0, width = 10)) }
@@ -365,27 +367,32 @@ class RegAliasTable extends Module {
     //Updating the value, tag and valid bit in the register map table when FUBroadcastTagX arrives
     when (tag(i) === io.FUBroadcastTag0 && (tag(i) != UInt(0))) { 
       valid(i) := UInt(1)
+      temp_valid(i) := UInt(1)
       tag(i) := UInt(0)
       value(i) := io.FUBroadcastValue0 
     }
     when (tag(i) === io.FUBroadcastTag1 && (tag(i) != UInt(0))) {
       valid(i) := UInt(1)
+      temp_valid(i) := UInt(1)
       tag(i) := UInt(0)
       value(i) := io.FUBroadcastValue1
     }
     when (tag(i) === io.FUBroadcastTag2 && (tag(i) != UInt(0))) { 
       valid(i) := UInt(1)
+      temp_valid(i) := UInt(1)
       tag(i) := UInt(0)
       value(i) := io.FUBroadcastValue2
     }
     when (tag(i) === io.FUBroadcastTag3 && (tag(i) != UInt(0))) { 
       valid(i) := UInt(1)
+      temp_valid(i) := UInt(1)
       tag(i) := UInt(0)
       value(i) := io.FUBroadcastValue3
     }
     //Updating the value, tag and valid bit in the register map table when LoadStoreDestTagX arrives
     when (tag(i) === io.LoadStoreDestTag0 && (tag(i) != UInt(0))) {
       valid(i) := UInt(1)
+      temp_valid(i) := UInt(1)
       tag(i) := UInt(0)
       value(i) := io.LoadStoreDestVal0
     } 
@@ -400,51 +407,98 @@ class RegAliasTable extends Module {
       //printf("\nIn the decodesource1_0. The value is %d\n", valid(i))
       io.RenameSourceAValue0 := value(i)
       io.RenameSourceATag0 := tag(i) 
-      io.RenameSourceAValueValid0 := valid(i)
+      when(io.Decode_Opcode_0 === UInt(0x37) || io.Decode_Opcode_0 === UInt(0x17)) {
+        temp_valid(i) := UInt(1)
+      }
+      .otherwise {
+        temp_valid(i) := valid(i)
+      }
+      io.RenameSourceAValueValid0 := temp_valid(i)
     }
     when (UInt(i) === io.DecodeSource1_1) {
       //printf("\nIn the decodesource1_1. The value is %d\n", valid(i))
       io.RenameSourceAValue1 := value(i)
       io.RenameSourceATag1 := tag(i) 
-      io.RenameSourceAValueValid1 := valid(i)
+      when(io.Decode_Opcode_1 === UInt(0x37) || io.Decode_Opcode_1 === UInt(0x17)) {
+        temp_valid(i) := UInt(1)
+      }
+      .otherwise {
+        temp_valid(i) := valid(i)
+      }
+      io.RenameSourceAValueValid1 := temp_valid(i)
     }
     when (UInt(i) === io.DecodeSource1_2) {
       //printf("\nIn the decodesour))
       io.RenameSourceAValue2 := value(i)
       io.RenameSourceATag2 := tag(i) 
-      io.RenameSourceAValueValid2 := valid(i)
+      when(io.Decode_Opcode_2 === UInt(0x37) || io.Decode_Opcode_2 === UInt(0x17)) {
+        temp_valid(i) := UInt(1)
+      }
+      .otherwise {
+        temp_valid(i) := valid(i)
+      }
+      io.RenameSourceAValueValid2 := temp_valid(i)
     }
     when (UInt(i) === io.DecodeSource1_3) {
       //printf("\nIn the decodesource1_3. The value is %d\n", valid(i))
       io.RenameSourceAValue3 := value(i)
       io.RenameSourceATag3 := tag(i) 
-      io.RenameSourceAValueValid3 := valid(i)
+      when(io.Decode_Opcode_3 === UInt(0x37) || io.Decode_Opcode_3 === UInt(0x17)) {
+        temp_valid(i) := UInt(1)
+      }
+      .otherwise {
+        temp_valid(i) := valid(i)
+      }
+      io.RenameSourceAValueValid3 := temp_valid(i)
     }
-
 
     when (UInt(i) === io.DecodeSource2_0) {
       //printf("\nIn the decodesource2_0. The value is %d\n", valid(i))
       io.RenameSourceBValue0 := value(i)
       io.RenameSourceBTag0 := tag(i) 
-      io.RenameSourceBValueValid0 := valid(i)
+      when(io.Decode_Opcode_0 === UInt(0x37) || io.Decode_Opcode_0 === UInt(0x17)) {
+        temp_valid(i) := UInt(1)
+      }
+      .otherwise {
+        temp_valid(i) := valid(i)
+      }
+      io.RenameSourceBValueValid0 := temp_valid(i)
     }
     when (UInt(i) === io.DecodeSource2_1) {
       //printf("\nIn the decodesource2_1. The value is %d\n", valid(i))
       io.RenameSourceBValue1 := value(i)
       io.RenameSourceBTag1 := tag(i) 
-      io.RenameSourceBValueValid1 := valid(i)
+      when(io.Decode_Opcode_1 === UInt(0x37) || io.Decode_Opcode_1 === UInt(0x17)) {
+        temp_valid(i) := UInt(1)
+      }
+      .otherwise {
+        temp_valid(i) := valid(i)
+      }
+      io.RenameSourceBValueValid1 := temp_valid(i)
     }
     when (UInt(i) === io.DecodeSource2_2) {
       //printf("\nIn the decodesource2_2. The value is %d\n", valid(i))
       io.RenameSourceBValue2 := value(i)
       io.RenameSourceBTag2 := tag(i) 
-      io.RenameSourceBValueValid2 := valid(i)
+      when(io.Decode_Opcode_2 === UInt(0x37) || io.Decode_Opcode_2 === UInt(0x17)) {
+        temp_valid(i) := UInt(1)
+      }
+      .otherwise {
+        temp_valid(i) := valid(i)
+      }
+      io.RenameSourceBValueValid2 := temp_valid(i)
     }
     when (UInt(i) === io.DecodeSource2_3) {
       //printf("\nIn the decodesource2_3. The value is %d\n", valid(i))
       io.RenameSourceBValue3 := value(i)
       io.RenameSourceBTag3 := tag(i)
-      io.RenameSourceBValueValid3 := valid(i)
+      when(io.Decode_Opcode_3 === UInt(0x37) || io.Decode_Opcode_3 === UInt(0x17)) {
+        temp_valid(i) := UInt(1)
+      }
+      .otherwise {
+        temp_valid(i) := valid(i)
+      }
+      io.RenameSourceBValueValid3 := temp_valid(i)
     }
 
         //Updating the internal valid for the issue queue
@@ -476,6 +530,7 @@ class RegAliasTable extends Module {
   //Updating the tag for destination registers which is different from the issue queue tag
         when ((Bool(UInt(i) === io.Decode_dest_0 && io.DecodeValid0 === Bool(true)) && Bool(io.DecodeQueueSelect0 === Bool(false)))) {
           valid(i) := UInt(0)        
+          temp_valid(i) := UInt(0)        
           RenameDestTagIssue(0) := (tag(i) + UInt(1)) % UInt(32)
           //count_issue_tag0 := (count_issue_tag0 + UInt(1)) % UInt(32)
           io.RenameDestTag0 := RenameDestTagIssue(0)
@@ -500,11 +555,14 @@ class RegAliasTable extends Module {
         .elsewhen (io.DecodeValid0 === Bool(false) || io.DecodeQueueSelect0 === Bool(true)) {
           RenameIssueValid(0) := UInt(0)
           io.RenameIssueValid0 := RenameIssueValid(0)
-          //io.RenameDestTag0 := RenameDestTagIssue(0)
+          when (io.DecodeValid0 === Bool(false)) {
+            io.RenameDestTag0 := RenameDestTagIssue(0)
+          }
         }
 
         when ((Bool(UInt(i) === io.Decode_dest_1  && io.DecodeValid1 === Bool(true)) && Bool(io.DecodeQueueSelect1 === Bool(false)))) {
           valid(i) := UInt(0)        
+          temp_valid(i) := UInt(0)        
           RenameDestTagIssue(1) := (tag(i) + UInt(1)) % UInt(32) + UInt(32)
           //count_issue_tag1 := (count_issue_tag1 + UInt(1)) % UInt(32) + UInt(32)
           io.RenameDestTag1 := RenameDestTagIssue(1)
@@ -531,11 +589,14 @@ class RegAliasTable extends Module {
         .elsewhen (io.DecodeValid1 === Bool(false) || io.DecodeQueueSelect1 === Bool(true)) {
           RenameIssueValid(1) := UInt(0)
           io.RenameIssueValid1 := RenameIssueValid(1)
-          //io.RenameDestTag1 := RenameDestTagIssue(1)
+          when (io.DecodeValid1 === Bool(false)) {
+            io.RenameDestTag1 := RenameDestTagIssue(1)
+          }
         }
 
         when ((Bool(UInt(i) === io.Decode_dest_2  && io.DecodeValid2 === Bool(true)) && Bool(io.DecodeQueueSelect2 === Bool(false)))) {
           valid(i) := UInt(0)        
+          temp_valid(i) := UInt(0)        
           RenameDestTagIssue(2) := (tag(i) + UInt(1)) % UInt(32) + UInt(64)
           //count_issue_tag2 := ((count_issue_tag2 + UInt(1)) % UInt(32)) + UInt(64)
           io.RenameDestTag2 := RenameDestTagIssue(2)
@@ -562,11 +623,14 @@ class RegAliasTable extends Module {
         .elsewhen (io.DecodeValid2 === Bool(false) || io.DecodeQueueSelect2 === Bool(true)) {
           RenameIssueValid(2) := UInt(0)
           io.RenameIssueValid2 := RenameIssueValid(2)
-          //io.RenameDestTag2 := RenameDestTagIssue(2)
+          when (io.DecodeValid2 === Bool(false)) {
+            io.RenameDestTag2 := RenameDestTagIssue(2)
+          }
         }
 
         when ((Bool(UInt(i) === io.Decode_dest_3  && io.DecodeValid3 === Bool(true)) && Bool(io.DecodeQueueSelect3 === Bool(false)))) {
           valid(i) := UInt(0)        
+          temp_valid(i) := UInt(0)        
           RenameDestTagIssue(3) := (tag(i) + UInt(1)) % UInt(32) + UInt(96)
           //count_issue_tag3 := (count_issue_tag3 + UInt(1)) % UInt(32) + UInt(96)
           io.RenameDestTag3 := RenameDestTagIssue(3)
@@ -593,13 +657,16 @@ class RegAliasTable extends Module {
         .elsewhen (io.DecodeValid3 === Bool(false) || io.DecodeQueueSelect3 === Bool(true)) {
           RenameIssueValid(3) := UInt(0)
           io.RenameIssueValid3 := RenameIssueValid(3)
-          //io.RenameDestTag3 := RenameDestTagIssue(3)
+          when (io.DecodeValid3 === Bool(false)) {
+            io.RenameDestTag3 := RenameDestTagIssue(3)
+          }
         }
 
         when (Bool(UInt(i) === io.Decode_dest_0 && io.DecodeValid0 === Bool(true)) && Bool(io.DecodeQueueSelect0 === Bool(true))) {
           //printf("\nComing in the load store valid 0\n")
           when (io.DecodeStoreSelect0 === Bool(false)) { 
             valid(i) := UInt(0)
+            temp_valid(i) := UInt(0)        
             RenameDestTagLoadStore(0) := (tag(i) + UInt(1)) % UInt(32) + UInt(128)
             //count_loadstore_tag0 := (count_loadstore_tag0 + UInt(1)) % UInt(32) + UInt(128)
             io.RenameDestTag0 := RenameDestTagLoadStore(0)
@@ -632,6 +699,7 @@ class RegAliasTable extends Module {
         when ((Bool(UInt(i) === io.Decode_dest_1 && io.DecodeValid1 === Bool(true)) && Bool(io.DecodeQueueSelect1 === Bool(true)))) {
           when (io.DecodeStoreSelect1 === Bool(false)) { 
             valid(i) := UInt(0)
+            temp_valid(i) := UInt(0)        
             RenameDestTagLoadStore(1) := (tag(i) + UInt(1)) % UInt(32) + UInt(160)
             //count_loadstore_tag1 := (count_loadstore_tag1 + UInt(1)) % UInt(32) + UInt(160)
             io.RenameDestTag1 := RenameDestTagLoadStore(1)
@@ -671,6 +739,7 @@ class RegAliasTable extends Module {
         when ((Bool(UInt(i) === io.Decode_dest_2 && io.DecodeValid2 === Bool(true)) && Bool(io.DecodeQueueSelect2 === Bool(true)))) {
           when (io.DecodeStoreSelect2 === Bool(false)) { 
             valid(i) := UInt(0)
+            temp_valid(i) := UInt(0)        
             RenameDestTagLoadStore(2) := (tag(i) + UInt(1)) % UInt(32) + UInt(192)
             io.RenameDestTag2 := RenameDestTagLoadStore(2)
             tag(i) := (tag(i) + UInt(1)) % UInt(32) + UInt(192)
@@ -717,6 +786,7 @@ class RegAliasTable extends Module {
         when ((Bool(UInt(i) === io.Decode_dest_3 && io.DecodeValid3 === Bool(true)) && Bool(io.DecodeQueueSelect3 === Bool(true)))) {
           when (io.DecodeStoreSelect3 === Bool(false)) { 
             valid(i) := UInt(0)
+            temp_valid(i) := UInt(0)        
             RenameDestTagLoadStore(3) := (tag(i) + UInt(1)) % UInt(32) + UInt(224)
             io.RenameDestTag3 := RenameDestTagLoadStore(3)
             tag(i) := (tag(i) + UInt(1)) % UInt(32) + UInt(224)
