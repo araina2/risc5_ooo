@@ -722,6 +722,18 @@ class LoadStoreQueueModule extends Module {
       }
 
       when(io.RenameLoadStoreValid0===UInt(1)){
+        Imm(rownumber0) := io.Rename_Imm_0
+      }
+      when(io.RenameLoadStoreValid1===UInt(1)){
+        Imm(rownumber1) := io.Rename_Imm_1
+      }
+      when(io.RenameLoadStoreValid2===UInt(1)){
+        Imm(rownumber2) := io.Rename_Imm_2
+      }
+      when(io.RenameLoadStoreValid3===UInt(1)){
+        Imm(rownumber3) := io.Rename_Imm_3
+      }
+      when(io.RenameLoadStoreValid0===UInt(1)){
         DestLoadstoreSelect(rownumber0) := Bool(io.RenameStoreSelect0)
       }
       when(io.RenameLoadStoreValid1===UInt(1)){
