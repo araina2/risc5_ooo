@@ -41,7 +41,7 @@ class instruction_rom(val n: Int) extends Module {
   val pc_rom = Module(new Rom(makeROM("/tmp/pc.bin"), n, 64))
   val inst_rom = Module(new Rom(makeROM("/tmp/inst.bin"), n, 32))
 
-  printf ("The value of index is %d\n",index)
+  //printf ("The value of index is %d\n",index)
   pc_rom.io.addr := index
   io.FetchPC0 := pc_rom.io.data
   io.FetchPC1 := (pc_rom.io.data >> 64)

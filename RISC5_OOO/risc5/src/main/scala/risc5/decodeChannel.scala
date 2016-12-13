@@ -116,7 +116,8 @@ class DecodeChannel extends Module {
 	val fetchValid = UInt(INPUT, 1)
 	val lSFull = UInt(INPUT, 1)
 	val issueFull = UInt(INPUT, 1)       	
-
+        //Adding the PC to decode 
+        val fetchPC = UInt(INPUT, 64)
  
         //Outputs
         val decodeBranchTaken = UInt(OUTPUT, 1)
@@ -134,6 +135,8 @@ class DecodeChannel extends Module {
         val decodeAddress = UInt(OUTPUT, 64)
 	val decodeQueueSelect = UInt(OUTPUT, 1)	
 	val decodeIsStore = UInt(OUTPUT, 1)
+        //Adding the PC to decode 
+        val decodePC = UInt(OUTPUT, 64)
 	//the following 6 bits are used to indicate which riscV instruction format the decoded instruction is
 	}    
 
@@ -251,11 +254,11 @@ class DecodeChannel extends Module {
 	io.decodeType := iType
 	io.decode_Imm := immediate(19,0)
 
-
-
-
-
-
+        
+        
+        val Decode_PC = Reg(init = UInt(0, width = 64))
+        Decode_PC := io.fetchPC
+        io.decodePC := Decode_PC
 
 
 
